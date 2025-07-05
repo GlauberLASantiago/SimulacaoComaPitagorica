@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O Círculo Imperfeito: Investigação da Coma Pitagórica</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tone.js for audio synthesis -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+
+    <style>
+        /* Custom styles using the provided color palette */
+        body {
+            background-color: #E7F0C7; /* Light greenish cream */
+            color: #000000; /* Black */
+            font-family: 'Inter', sans-serif;
+        }
+        .btn-action {
+            background-color: #C87F8B; /* Muted pink/red */
+            color: #FFFFFF; /* White */
+            transition: background-color 0.3s;
+        }
+        .btn-action:hover {
+            background-color: #b36a76;
+        }
+        .btn-play {
+            background-color: #E9A97F; /* Muted orange */
+            color: #FFFFFF; /* White */
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .btn-play:hover {
+            background-color: #d4956a;
+        }
+        .btn-stop {
+            background-color: #C87F8B; /* Muted pink/red, same as action for consistency */
+            color: #FFFFFF;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .card {
+            background-color: #FFFFFF; /* White */
+            border-left: 5px solid #E9A97F; /* Muted orange */
+        }
+        .highlight-card {
+            background-color: #BCDFB9; /* Light green */
+            border-left: 5px solid #C87F8B; /* Muted pink/red */
+        }
+        .title-color {
+            color: #C87F8B; /* Muted pink/red */
+        }
+        .scroll-container {
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .select-input {
+             border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E9A97F] focus:border-transparent transition p-2;
+        }
+        .explanation-box {
+            background-color: rgba(255, 255, 255, 0.7);
+        }
+        /* Accordion styles */
+        #accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        #accordion-content.open {
+            max-height: 1200px; /* A large enough value to show all content */
+            padding-top: 1.5rem; /* 24px */
+            padding-bottom: 1.5rem; /* 24px */
+        }
+    </style>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+<body class="antialiased">
+
+    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+
+        <!-- Accordion for Explanation -->
+        <div class="max-w-4xl mx-auto mb-8">
+            <button id="accordion-toggle" class="w-full flex justify-between items-center p-4 bg-white rounded-xl shadow-lg text-left text-2xl font-bold title-color focus:outline-none">
+                <span>O Círculo Imperfeito: Uma Investigação da Coma Pitagórica</span>
+                <span id="accordion-icon" class="transform transition-transform duration-300">▾</span>
+            </button>
+            <div id="accordion-content" class="explanation-box p-6 rounded-b-xl shadow-lg text-left text-gray-800 leading-relaxed mt-[-8px]">
+                <h2 class="text-2xl font-bold title-color mb-3">Introdução ao Experimento</h2>
+                <p class="mb-4">Esta simulação explora um dos problemas mais fundamentais e fascinantes da teoria musical: a impossibilidade de construir uma escala perfeitamente afinada usando apenas os intervalos mais puros e consonantes da natureza. O experimento demonstra o surgimento da <strong>Coma Pitagórica</strong>, uma pequena, mas audível, dissonância que revela por que os sistemas de afinação modernos, como o temperamento igual, foram desenvolvidos.</p>
+                
+                <h2 class="text-2xl font-bold title-color mb-3">Os Blocos de Construção: Intervalos Puros</h2>
+                <p class="mb-4">A música ocidental é construída sobre a relação harmoniosa entre as frequências. Dois dos intervalos mais importantes e "puros" são:</p>
+                <ul class="list-disc list-inside mb-4 space-y-2 pl-4">
+                    <li><strong>A Oitava Perfeita:</strong> Considerado o intervalo mais puro, uma oitava representa a duplicação da frequência (uma razão de 2/1). Notas separadas por uma oitava soam tão semelhantes que recebem o mesmo nome (ex: Dó4 e Dó5).</li>
+                    <li><strong>A Quinta Perfeita:</strong> O segundo intervalo mais consonante, com uma relação de frequência de 3/2. É a base para a harmonia e a construção de acordes em muitas culturas.</li>
+                </ul>
+
+                <h2 class="text-2xl font-bold title-color mb-3">A Tentativa de Construir um Sistema Perfeito</h2>
+                <p class="mb-4">Os antigos gregos, notadamente os seguidores de Pitágoras, tentaram criar uma escala musical completa usando apenas a pureza da quinta perfeita. A ideia era simples: partindo de uma nota, sobe-se uma quinta; da nova nota, sobe-se outra quinta, e assim por diante. Após doze quintas, a expectativa era retornar à nota original, várias oitavas acima.</p>
+                <p class="mb-4">É aqui que o problema aparece. Matematicamente, a jornada se parece com isto:</p>
+                <ul class="list-disc list-inside mb-4 space-y-2 pl-4">
+                    <li><strong>Subir 12 Quintas:</strong> Equivale a multiplicar a frequência inicial por (3/2) doze vezes, ou seja, (1.5)<sup>12</sup> &approx; 139.73 vezes a frequência original.</li>
+                    <li><strong>Subir 7 Oitavas:</strong> A nota correspondente no ciclo das oitavas perfeitas seria a frequência inicial multiplicada por (2) sete vezes, ou seja, 2<sup>7</sup> = 128 vezes a frequência original.</li>
+                </ul>
+
+                <h2 class="text-2xl font-bold title-color mb-3">A Coma Pitagórica e a "Quinta do Lobo"</h2>
+                <p class="mb-4">Como você pode ver, 139.73 não é igual a 128. A nota alcançada após doze quintas é visivelmente mais aguda do que a nota alcançada após sete oitavas. Essa pequena diferença é a <strong>Coma Pitagórica</strong>.</p>
+                <p class="mb-4">Em sistemas de afinação antigos que tentavam usar quintas puras (como a afinação pitagórica), essa diferença precisava ser "escondida" em algum lugar. Os construtores de instrumentos normalmente desafinavam um dos doze intervalos de quinta para forçar o "fechamento" do círculo. Essa quinta dissonante e "uivante" ficou conhecida como a <strong>Quinta do Lobo</strong>, pois soava desagradável e era evitada pelos músicos.</p>
+                <p>Esta simulação permite que você ouça e meça essa discrepância, entendendo na prática por que o sistema de temperamento igual — que "tempera" ou desafina ligeiramente todas as quintas para que o círculo se feche perfeitamente — se tornou o padrão dominante na música ocidental.</p>
+            </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex flex-col items-center justify-center gap-6 mb-8 p-6 bg-white rounded-xl shadow-lg">
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                <div class="flex flex-col items-center">
+                    <label class="font-semibold text-lg">Nota Base (Lá4 = 440Hz):</label>
+                    <div class="flex gap-2 mt-1">
+                        <select id="baseNoteSelect" class="select-input"></select>
+                        <select id="baseOctaveSelect" class="select-input"></select>
+                    </div>
+                </div>
+                <button id="startButton" class="btn-action font-bold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition self-center mt-4 sm:mt-0">
+                    Iniciar Simulação
+                </button>
+            </div>
+            <div class="flex items-center">
+                <input type="checkbox" id="normalizeCheckbox" class="h-4 w-4 rounded border-gray-300 text-[#C87F8B] focus:ring-[#C87F8B]" checked>
+                <label for="normalizeCheckbox" class="ml-2 text-lg font-medium">Normalizar para a 1ª Oitava</label>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div id="results" class="grid grid-cols-1 md:grid-cols-2 gap-8 hidden">
+            <!-- Octaves Column -->
+            <div>
+                <h2 class="text-2xl font-bold text-center mb-4 title-color">7 Oitavas Perfeitas</h2>
+                <div id="octavesContainer" class="scroll-container space-y-3 p-4 bg-gray-50 rounded-lg shadow-inner"></div>
+            </div>
+            <!-- Fifths Column -->
+            <div>
+                <h2 class="text-2xl font-bold text-center mb-2 title-color">12 Quintas Perfeitas</h2>
+                <p class="text-center text-sm text-gray-600 mb-4">inclui comparação com o sistema temperado</p>
+                <div id="fifthsContainer" class="scroll-container space-y-3 p-4 bg-gray-50 rounded-lg shadow-inner"></div>
+            </div>
+        </div>
+
+        <!-- Comparison Section -->
+        <div id="comparison" class="mt-8 p-6 rounded-xl shadow-lg hidden highlight-card">
+            <h2 class="text-2xl font-bold text-center mb-4 title-color">Resultado da Comparação</h2>
+            <div class="text-center space-y-3 text-lg">
+                <p>A <strong>7ª Oitava</strong> (não normalizada) resulta em <strong id="octaveResult">...</strong></p>
+                <p>A <strong>12ª Quinta</strong> (não normalizada) resulta em <strong id="fifthResult">...</strong></p>
+                
+                <div class="pt-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+                    <div>
+                        <p class="font-bold text-lg">Diferença em Hz</p>
+                        <p id="commaResultHz" class="text-xl font-mono">...</p>
+                    </div>
+                    <div>
+                        <p class="font-bold text-lg">Diferença em Cents</p>
+                        <p id="commaResultCents" class="text-xl font-mono">...</p>
+                    </div>
+                    <div>
+                        <p class="font-bold text-lg">Equivalente em Comas</p>
+                        <p id="commaResultCommas" class="text-xl font-mono">...</p>
+                    </div>
+                </div>
+
+                <p class="mt-4 text-base max-w-2xl mx-auto">A 12ª quinta é ligeiramente mais aguda que a 7ª oitava. Essa dissonância é a "Coma Pitagórica". Para "fechar" o círculo de quintas, um dos intervalos era desafinado, criando a <strong>"Quinta do Lobo"</strong>.</p>
+                
+                 <div class="flex justify-center gap-4 mt-4">
+                    <button id="playComparison" class="btn-action font-bold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition">Tocar Comparação</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center mt-12 pt-6 border-t border-gray-300 text-gray-600 text-sm">
+            <p class="mb-2"><strong>Observação:</strong> Esta simulação utiliza o sistema de Notação Científica Internacional de Altura (ISO 16), onde o Dó central é o Dó4. No Brasil, é comum a utilização de um sistema onde o Dó central é chamado de Dó3.</p>
+            <p><strong>Autoria:</strong> Prof. Glauber Santiago - UFSCar</p>
+        </footer>
+
+    </div>
+
+    <script>
+        // DOM Elements
+        const startButton = document.getElementById('startButton');
+        const baseNoteSelect = document.getElementById('baseNoteSelect');
+        const baseOctaveSelect = document.getElementById('baseOctaveSelect');
+        const normalizeCheckbox = document.getElementById('normalizeCheckbox');
+        const resultsSection = document.getElementById('results');
+        const comparisonSection = document.getElementById('comparison');
+        const octavesContainer = document.getElementById('octavesContainer');
+        const fifthsContainer = document.getElementById('fifthsContainer');
+        const octaveResultEl = document.getElementById('octaveResult');
+        const fifthResultEl = document.getElementById('fifthResult');
+        const commaResultHzEl = document.getElementById('commaResultHz');
+        const commaResultCentsEl = document.getElementById('commaResultCents');
+        const commaResultCommasEl = document.getElementById('commaResultCommas');
+        const playComparisonButton = document.getElementById('playComparison');
+        const accordionToggle = document.getElementById('accordion-toggle');
+        const accordionContent = document.getElementById('accordion-content');
+        const accordionIcon = document.getElementById('accordion-icon');
+
+        let polySynth;
+        let rawFinalOctaveFreq, rawFinalFifthFreq;
+        
+        let activeNotes = {};
+
+        const A4 = 440;
+        const noteNamesPT = ["Dó", "Dó#", "Ré", "Ré#", "Mi", "Fá", "Fá#", "Sol", "Sol#", "Lá", "Lá#", "Si"];
+
+        function getFrequencyFromNote(noteName, octave) {
+            const noteIndex = noteNamesPT.indexOf(noteName);
+            const midiNum = (octave + 1) * 12 + noteIndex;
+            return A4 * Math.pow(2, (midiNum - 69) / 12);
+        }
+
+        function getNoteFromFrequency(frequency) {
+            const midiNum = Math.round(12 * Math.log2(frequency / A4) + 69);
+            const temperedFreq = A4 * Math.pow(2, (midiNum - 69) / 12);
+            const noteIndex = midiNum % 12;
+            const octave = Math.floor(midiNum / 12) - 1;
+            const noteName = noteNamesPT[noteIndex] + octave;
+            const centsOff = 1200 * Math.log2(frequency / temperedFreq);
+            return { name: noteName, cents: centsOff };
+        }
+
+        function getSynth() {
+            if (!polySynth) {
+                polySynth = new Tone.PolySynth(Tone.Synth, {
+                    maxPolyphony: 32,
+                    volume: -6
+                }).toDestination();
+            }
+            if (Tone.context.state !== 'running') {
+                Tone.context.resume();
+            }
+            return polySynth;
+        }
+
+        function toggleNote(freq, button) {
+            const synth = getSynth();
+            const freqStr = freq.toString();
+            if (activeNotes[freqStr]) {
+                synth.triggerRelease(freq);
+                button.textContent = 'Tocar';
+                button.classList.remove('btn-stop');
+                button.classList.add('btn-play');
+                activeNotes[freqStr] = false;
+            } else {
+                synth.triggerAttack(freq);
+                button.textContent = 'Parar';
+                button.classList.remove('btn-play');
+                button.classList.add('btn-stop');
+                activeNotes[freqStr] = true;
+            }
+        }
+
+        function createCard(container, title, freq, isFinal = false, isPerfectInterval = false) {
+            const card = document.createElement('div');
+            card.className = `p-3 rounded-lg shadow-sm flex items-center justify-between ${isFinal ? 'highlight-card' : 'card'}`;
+            
+            const noteInfo = getNoteFromFrequency(freq);
+            let noteDisplayString = '';
+
+            if (isPerfectInterval) {
+                noteDisplayString = `(Nota: <span class="font-semibold">${noteInfo.name}</span>)`;
+            } else {
+                const centsThreshold = 0.1;
+                let deviationString = '';
+                if (noteInfo.cents > centsThreshold) {
+                    deviationString = `. <span class="text-red-500 font-bold">↑</span> ${noteInfo.cents.toFixed(1)} cents`;
+                } else if (noteInfo.cents < -centsThreshold) {
+                    deviationString = `. <span class="text-red-500 font-bold">↓</span> ${Math.abs(noteInfo.cents).toFixed(1)} cents`;
+                }
+                noteDisplayString = `(Próximo de <span class="font-semibold">${noteInfo.name.toLowerCase()}</span>${deviationString})`;
+            }
+
+            const infoDiv = document.createElement('div');
+            infoDiv.className = "flex-grow flex flex-col sm:flex-row sm:items-center sm:gap-x-4";
+            infoDiv.innerHTML = `
+                <div class="w-full sm:w-auto">
+                    <span class="font-semibold">${title}:</span> 
+                    <span class="font-mono">${freq.toFixed(2)} Hz</span>
+                </div>
+                <div class="text-gray-700 text-sm sm:text-base">
+                    ${noteDisplayString}
+                </div>
+            `;
+            
+            const playBtn = document.createElement('button');
+            playBtn.textContent = 'Tocar';
+            playBtn.className = 'btn-play text-sm py-1 px-3 rounded-md flex-shrink-0 ml-2';
+            playBtn.onclick = () => toggleNote(freq, playBtn);
+            
+            card.appendChild(infoDiv);
+            card.appendChild(playBtn);
+            container.appendChild(card);
+        }
+
+        function normalizeFrequency(freq, base) {
+            let normalizedFreq = freq;
+            while (normalizedFreq >= base * 2) {
+                normalizedFreq /= 2;
+            }
+            while (normalizedFreq < base) {
+                normalizedFreq *= 2;
+            }
+            return normalizedFreq;
+        }
+
+        function runSimulation() {
+            const synth = getSynth();
+            const selectedNote = baseNoteSelect.value;
+            const selectedOctave = parseInt(baseOctaveSelect.value, 10);
+            const baseFreq = getFrequencyFromNote(selectedNote, selectedOctave);
+            const normalize = normalizeCheckbox.checked;
+
+            synth.releaseAll();
+            activeNotes = {};
+
+            octavesContainer.innerHTML = '';
+            fifthsContainer.innerHTML = '';
+
+            for (let i = 0; i <= 7; i++) {
+                let freq = baseFreq * Math.pow(2, i);
+                if (i === 7) rawFinalOctaveFreq = freq;
+                const displayFreq = normalize ? normalizeFrequency(freq, baseFreq) : freq;
+                createCard(octavesContainer, `Oitava ${i}`, displayFreq, i === 7, true);
+            }
+
+            for (let i = 0; i <= 12; i++) {
+                let freq = baseFreq * Math.pow(1.5, i);
+                if (i === 12) rawFinalFifthFreq = freq;
+                const displayFreq = normalize ? normalizeFrequency(freq, baseFreq) : freq;
+                const isPerfect = (i === 0);
+                createCard(fifthsContainer, `Quinta ${i}`, displayFreq, i === 12, isPerfect);
+            }
+
+            const commaHz = rawFinalFifthFreq - rawFinalOctaveFreq;
+            const commaCents = 1200 * Math.log2(rawFinalFifthFreq / rawFinalOctaveFreq);
+            const pythagoreanCommaInCents = 23.46;
+            const commaInCommas = commaCents / pythagoreanCommaInCents;
+
+            octaveResultEl.textContent = `${rawFinalOctaveFreq.toFixed(2)} Hz`;
+            fifthResultEl.textContent = `${rawFinalFifthFreq.toFixed(2)} Hz`;
+            commaResultHzEl.textContent = `${commaHz.toFixed(2)} Hz`;
+            commaResultCentsEl.textContent = `${commaCents.toFixed(2)} Cents`;
+            commaResultCommasEl.textContent = `~${commaInCommas.toFixed(2)}`;
+
+            resultsSection.classList.remove('hidden');
+            comparisonSection.classList.remove('hidden');
+        }
+
+        function playComparison() {
+            const synth = getSynth();
+            synth.releaseAll();
+            document.querySelectorAll('.btn-stop').forEach(btn => {
+                btn.textContent = 'Tocar';
+                btn.classList.remove('btn-stop');
+                btn.classList.add('btn-play');
+            });
+            activeNotes = {};
+            
+            const now = Tone.now();
+            synth.triggerAttackRelease(rawFinalOctaveFreq, "8n", now);
+            synth.triggerAttackRelease(rawFinalFifthFreq, "8n", now + 0.5);
+        }
+
+        function populateNoteSelectors() {
+            noteNamesPT.forEach(noteName => {
+                const option = document.createElement('option');
+                option.value = noteName;
+                option.textContent = noteName;
+                baseNoteSelect.appendChild(option);
+            });
+
+            for (let i = 0; i < 9; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                baseOctaveSelect.appendChild(option);
+            }
+            baseNoteSelect.value = 'Dó';
+            baseOctaveSelect.value = '4';
+        }
+
+        // Event Listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            populateNoteSelectors();
+            runSimulation();
+        });
+        startButton.addEventListener('click', runSimulation);
+        normalizeCheckbox.addEventListener('change', runSimulation);
+        playComparisonButton.addEventListener('click', playComparison);
+        accordionToggle.addEventListener('click', () => {
+            accordionContent.classList.toggle('open');
+            accordionIcon.classList.toggle('rotate-180');
+        });
+    </script>
+
+</body>
+</html>
