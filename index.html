@@ -1,408 +1,1673 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>O Círculo Imperfeito: Investigação da Coma Pitagórica</title>
-    
-    <!-- Tailwind CSS for styling -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Tone.js for audio synthesis -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Simulação da Coma Pitagórica · O Círculo Imperfeito (UFSCar)</title>
+  <meta name="description" content="Experiência interativa e laboratório de acústica musical sobre a Coma Pitagórica, o Ciclo das Quintas, a Quinta do Lobo e o Temperamento Igual. Desenvolvido pelo Prof. Glauber Santiago (UFSCar).">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230c0a09'/><circle cx='16' cy='16' r='10' fill='none' stroke='%23eab308' stroke-width='2' stroke-dasharray='48 6'/><circle cx='16' cy='6' r='2.8' fill='%23f43f5e'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700;1,9..144,600&family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+  <link rel="stylesheet" href="scrollcraft.css">
+  <style>
+    :root {
+      --sc-canvas:      #0c0a09;
+      --sc-surface:     #171311;
+      --sc-ink:         #faf6f0;
+      --sc-ink-soft:    #b8aca0;
+      --sc-accent:      #eab308;
+      --sc-accent-ink:  #0c0a09;
+      --sc-font-display: "Fraunces", Georgia, serif;
+      --sc-font-sans:    "Plus Jakarta Sans", system-ui, sans-serif;
+      --sc-font-text:    "Inter", system-ui, sans-serif;
+      --sc-font-mono:    "JetBrains Mono", ui-monospace, monospace;
+      --gold-fifth:     #eab308;
+      --jade-octave:    #34d399;
+      --wolf-rose:      #fb7185;
+    }
 
-    <style>
-        /* Custom styles using the provided color palette */
-        body {
-            background-color: #E7F0C7; /* Light greenish cream */
-            color: #000000; /* Black */
-            font-family: 'Inter', sans-serif;
-        }
-        .btn-action {
-            background-color: #C87F8B; /* Muted pink/red */
-            color: #FFFFFF; /* White */
-            transition: background-color 0.3s;
-        }
-        .btn-action:hover {
-            background-color: #b36a76;
-        }
-        .btn-play {
-            background-color: #E9A97F; /* Muted orange */
-            color: #FFFFFF; /* White */
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .btn-play:hover {
-            background-color: #d4956a;
-        }
-        .btn-stop {
-            background-color: #C87F8B; /* Muted pink/red, same as action for consistency */
-            color: #FFFFFF;
-            transition: background-color 0.3s, color 0.3s;
-        }
-        .card {
-            background-color: #FFFFFF; /* White */
-            border-left: 5px solid #E9A97F; /* Muted orange */
-        }
-        .highlight-card {
-            background-color: #BCDFB9; /* Light green */
-            border-left: 5px solid #C87F8B; /* Muted pink/red */
-        }
-        .title-color {
-            color: #C87F8B; /* Muted pink/red */
-        }
-        .scroll-container {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        .select-input {
-             border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-[#E9A97F] focus:border-transparent transition p-2;
-        }
-        .explanation-box {
-            background-color: rgba(255, 255, 255, 0.7);
-        }
-        /* Accordion styles */
-        #accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
-            padding-top: 0;
-            padding-bottom: 0;
-        }
-        #accordion-content.open {
-            max-height: 1200px; /* A large enough value to show all content */
-            padding-top: 1.5rem; /* 24px */
-            padding-bottom: 1.5rem; /* 24px */
-        }
-    </style>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    body {
+      background-color: var(--sc-canvas);
+      color: var(--sc-ink);
+    }
+
+    /* Editorial Masthead & Floating Corner Tuning Pill */
+    .masthead {
+      position: fixed;
+      inset: 0 0 auto 0;
+      z-index: 55;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sc-4);
+      padding: 0.7rem var(--sc-gutter);
+      background: color-mix(in oklab, var(--sc-canvas) 84%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--sc-hairline);
+    }
+    .masthead__brand {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      text-decoration: none;
+      font-family: var(--sc-font-sans);
+      font-weight: 700;
+      font-size: var(--sc-t-sm);
+      color: var(--sc-ink);
+    }
+    .masthead__ emblem {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--gold-fifth);
+      box-shadow: 0 0 12px var(--gold-fifth);
+    }
+    .masthead__meta {
+      font-family: var(--sc-font-mono);
+      font-size: var(--sc-t-xs);
+      color: var(--sc-ink-soft);
+      display: none;
+    }
+    @media (min-width: 900px) {
+      .masthead__meta { display: inline-block; }
+    }
+
+    .cta-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.52rem 1.05rem;
+      border-radius: var(--sc-r-full);
+      background: var(--sc-accent);
+      color: var(--sc-accent-ink);
+      font-family: var(--sc-font-sans);
+      font-size: var(--sc-t-xs);
+      font-weight: 700;
+      text-decoration: none;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      cursor: pointer;
+      box-shadow: var(--sc-e1);
+      transition: transform var(--sc-d-fast) var(--sc-ease-out), background-color var(--sc-d-fast) var(--sc-ease-out);
+    }
+    @media (hover: hover) and (pointer: fine) {
+      .cta-primary:hover {
+        background: #facc15;
+        transform: translateY(-1px);
+      }
+    }
+    .cta-primary:active {
+      transform: scale(0.97);
+    }
+
+    /* Right-Edge Vertical Chapter & Cent Deviation Dial */
+    .chapter-dial {
+      position: fixed;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 50;
+      display: none;
+      flex-direction: column;
+      gap: 0.45rem;
+      background: rgba(23, 19, 17, 0.86);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--sc-hairline-strong);
+      border-radius: var(--sc-r-md);
+      padding: 0.55rem 0.45rem;
+      box-shadow: var(--sc-e2);
+    }
+    @media (min-width: 1100px) {
+      .chapter-dial { display: flex; }
+      .sc-wrap {
+        padding-right: 11.5rem;
+      }
+      .spiral-cues-deck {
+        padding-right: 12rem;
+      }
+    }
+    .chapter-dial__btn {
+      background: transparent;
+      border: 1px solid transparent;
+      color: var(--sc-ink-soft);
+      font-family: var(--sc-font-mono);
+      font-size: 0.66rem;
+      padding: 0.3rem 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      text-align: right;
+      transition: color var(--sc-d-fast) var(--sc-ease-out), background-color var(--sc-d-fast) var(--sc-ease-out);
+    }
+    .chapter-dial__btn.is-active, .chapter-dial__btn:hover {
+      color: var(--sc-ink);
+      background: rgba(234, 179, 8, 0.14);
+      border-color: rgba(234, 179, 8, 0.35);
+    }
+
+    /* =========================================================================
+       ACT 1: DIMENSIONAL ASTROLABE & SPIRAL OF FIFTHS HERO (5 Depth Planes)
+       ========================================================================= */
+    .hero-stage {
+      background: radial-gradient(110% 85% at 50% 45%, #1c1613 0%, #0c0a09 75%);
+    }
+    .hero-plane {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      display: grid;
+      place-items: center;
+    }
+    .hero-plane--far {
+      z-index: 1;
+      opacity: 0.42;
+    }
+    .hero-plane--mid {
+      z-index: 2;
+    }
+    .hero-wheel-wrap {
+      width: min(86vw, 560px);
+      height: min(86vw, 560px);
+      position: relative;
+      display: grid;
+      place-items: center;
+    }
+    #hero-spiral-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .hero-plane--near {
+      z-index: 4;
+    }
+    .hero-compass-svg {
+      width: min(90vw, 620px);
+      height: auto;
+      filter: drop-shadow(0 20px 36px rgba(0, 0, 0, 0.8));
+    }
+    .hero-plane--atmo {
+      z-index: 5;
+      background: radial-gradient(50% 42% at 50% 50%, rgba(234, 179, 8, 0.08), transparent 72%);
+    }
+    .hero-floor-fade {
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 22vh;
+      z-index: 6;
+      background: linear-gradient(to top, var(--sc-canvas) 12%, transparent);
+      pointer-events: none;
+    }
+
+    .hero-copy-plate {
+      z-index: 10;
+      background: rgba(12, 10, 9, 0.88);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--sc-hairline-strong);
+      border-radius: var(--sc-r-md);
+      padding: var(--sc-5) var(--sc-6);
+      box-shadow: var(--sc-e2), var(--sc-edge);
+      max-width: 39rem;
+    }
+    .hero-telemetry-chip {
+      position: absolute;
+      right: var(--sc-gutter);
+      top: 16%;
+      z-index: 10;
+      background: rgba(18, 15, 13, 0.92);
+      border: 1px solid var(--sc-hairline-strong);
+      border-left: 3px solid var(--gold-fifth);
+      padding: var(--sc-4) var(--sc-5);
+      border-radius: var(--sc-r-md);
+      max-width: 22rem;
+      box-shadow: var(--sc-e2);
+    }
+    .hero-exit-card {
+      position: absolute;
+      right: var(--sc-gutter);
+      bottom: 12%;
+      z-index: 10;
+      background: rgba(18, 15, 13, 0.94);
+      border: 1px solid rgba(251, 113, 133, 0.45);
+      border-left: 3px solid var(--wolf-rose);
+      padding: var(--sc-4) var(--sc-5);
+      border-radius: var(--sc-r-md);
+      max-width: 25rem;
+      box-shadow: var(--sc-e2);
+    }
+
+    @media (max-width: 820px) {
+      .hero-wheel-wrap {
+        width: 78vw;
+        height: 78vw;
+        transform: translateY(-6vh);
+      }
+      .hero-compass-svg {
+        display: none;
+      }
+      .hero-copy-plate {
+        left: var(--sc-gutter);
+        right: var(--sc-gutter);
+        bottom: 8%;
+        padding: var(--sc-4);
+      }
+      .hero-telemetry-chip {
+        top: 4.2rem;
+        left: var(--sc-gutter);
+        right: var(--sc-gutter);
+        max-width: none;
+      }
+      .hero-exit-card {
+        left: var(--sc-gutter);
+        right: var(--sc-gutter);
+        bottom: 8%;
+        max-width: none;
+      }
+    }
+
+    /* =========================================================================
+       ACT 2: LAYPERSON & MUSICIAN VISUAL GUIDE + MONOCHORD (Flow)
+       ========================================================================= */
+    .act-guide {
+      background: linear-gradient(180deg, #0c0a09 0%, #14110f 50%, #0c0a09 100%);
+      border-top: 1px solid var(--sc-hairline);
+      border-bottom: 1px solid var(--sc-hairline);
+    }
+    .faq-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--sc-5);
+      margin-top: var(--sc-6);
+    }
+    @media (min-width: 880px) {
+      .faq-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    .faq-card {
+      background: #171311;
+      border: 1px solid var(--sc-hairline-strong);
+      border-radius: var(--sc-r-md);
+      padding: var(--sc-5);
+      box-shadow: var(--sc-e1), var(--sc-edge);
+      display: flex;
+      flex-direction: column;
+      gap: var(--sc-3);
+    }
+    .faq-badge {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      padding: 0.22rem 0.6rem;
+      border-radius: var(--sc-r-sm);
+      font-family: var(--sc-font-mono);
+      font-size: var(--sc-t-xs);
+      font-weight: 700;
+      background: rgba(234, 179, 8, 0.14);
+      color: #fde047;
+      border: 1px solid rgba(234, 179, 8, 0.35);
+    }
+    .faq-badge--jade {
+      background: rgba(52, 211, 153, 0.14);
+      color: #6ee7b7;
+      border-color: rgba(52, 211, 153, 0.35);
+    }
+    .faq-badge--rose {
+      background: rgba(251, 113, 133, 0.14);
+      color: #fda4af;
+      border-color: rgba(251, 113, 133, 0.35);
+    }
+    .faq-card h3 {
+      font-family: var(--sc-font-display);
+      font-size: var(--sc-t-lg);
+      font-weight: 700;
+      color: var(--sc-ink);
+      margin: 0;
+    }
+    .mini-diagram-svg {
+      width: 100%;
+      height: auto;
+      background: #0b0908;
+      border: 1px solid var(--sc-hairline);
+      border-radius: var(--sc-r-sm);
+      padding: 0.45rem;
+      display: block;
+    }
+    .note-callout {
+      padding: 0.45rem 0.65rem;
+      border-radius: var(--sc-r-sm);
+      background: rgba(234, 179, 8, 0.1);
+      border-left: 3px solid var(--gold-fifth);
+      font-size: 0.8rem;
+      line-height: 1.45;
+      color: var(--sc-ink);
+    }
+    .note-callout--rose {
+      background: rgba(251, 113, 133, 0.1);
+      border-left-color: var(--wolf-rose);
+    }
+
+    /* Interactive Monochord Widget in Act 2 */
+    .monochord-box {
+      margin-top: var(--sc-8);
+      background: #15110f;
+      border: 1px solid var(--sc-hairline-strong);
+      border-radius: var(--sc-r-md);
+      padding: var(--sc-6);
+      box-shadow: var(--sc-e2), var(--sc-edge);
+    }
+    .monochord-btns {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: var(--sc-4);
+    }
+    .monochord-btn {
+      background: #1f1916;
+      color: var(--sc-ink);
+      border: 1px solid var(--sc-hairline-strong);
+      border-radius: var(--sc-r-sm);
+      padding: 0.55rem 0.9rem;
+      font-family: var(--sc-font-mono);
+      font-size: var(--sc-t-xs);
+      font-weight: 600;
+      cursor: pointer;
+      transition: border-color var(--sc-d-fast) var(--sc-ease-out), background-color var(--sc-d-fast) var(--sc-ease-out);
+    }
+    .monochord-btn:hover, .monochord-btn.is-active {
+      background: #2b221d;
+      border-color: var(--gold-fifth);
+      color: #fde047;
+    }
+
+    /* =========================================================================
+       ACT 3: THE PEAK - SCROLL-DRIVEN 12 FIFTHS VS 7 OCTAVES SPIRAL RACE (Pin)
+       ========================================================================= */
+    .spiral-stage {
+      background: #0a0807;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .spiral-canvas-wrap {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+    }
+    #spiral-race-canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .spiral-hud-top {
+      position: relative;
+      z-index: 15;
+      margin-top: clamp(3.8rem, 7vh, 5rem);
+      padding-inline: var(--sc-gutter);
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: var(--sc-4);
+      pointer-events: none;
+    }
+    .spiral-readout-box {
+      background: rgba(15, 12, 10, 0.92);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--sc-hairline-strong);
+      border-radius: var(--sc-r-md);
+      padding: var(--sc-4) var(--sc-5);
+      box-shadow: var(--sc-e2);
+    }
+    .spiral-cues-deck {
+      position: relative;
+      z-index: 15;
+      margin-bottom: clamp(2rem, 5vh, 3.5rem);
+      padding-inline: var(--sc-gutter);
+      display: grid;
+      grid-template-columns: 1fr;
+      pointer-events: none;
+    }
+    .spiral-cue-card {
+      grid-area: 1 / 1;
+      max-width: 32rem;
+      background: rgba(15, 12, 10, 0.92);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--sc-hairline-strong);
+      border-left: 3px solid var(--gold-fifth);
+      border-radius: var(--sc-r-md);
+      padding: var(--sc-4) var(--sc-5);
+      box-shadow: var(--sc-e2);
+    }
+    .spiral-cue-card--trail {
+      justify-self: end;
+    }
+    .spiral-cue-card h2 {
+      font-family: var(--sc-font-display);
+      font-size: var(--sc-t-lg);
+      font-weight: 700;
+      margin: 0 0 0.3rem 0;
+      color: var(--sc-ink);
+    }
+    .spiral-cue-card p {
+      margin: 0;
+      font-size: var(--sc-t-sm);
+      color: var(--sc-ink-soft);
+      line-height: 1.5;
+    }
+
+    /* =========================================================================
+       ACT 4: WOLF FIFTH & EQUAL TEMPERAMENT AUDITION (Flow)
+       ========================================================================= */
+    .wolf-section {
+      background: #120e0c;
+      border-top: 1px solid var(--sc-hairline);
+      border-bottom: 1px solid var(--sc-hairline);
+    }
+    .wolf-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--sc-5);
+      margin-top: var(--sc-6);
+    }
+    @media (min-width: 920px) {
+      .wolf-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+    .audition-card {
+      background: #1a1512;
+      border: 1px solid var(--sc-hairline-strong);
+      border-radius: var(--sc-r-md);
+      padding: var(--sc-5);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: var(--sc-4);
+      box-shadow: var(--sc-e2), var(--sc-edge);
+    }
+    .audition-btn {
+      width: 100%;
+      padding: 0.65rem 0.95rem;
+      border-radius: var(--sc-r-sm);
+      border: 1px solid var(--sc-hairline-strong);
+      background: #261e1a;
+      color: var(--sc-ink);
+      font-family: var(--sc-font-mono);
+      font-size: var(--sc-t-xs);
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color var(--sc-d-fast) var(--sc-ease-out), border-color var(--sc-d-fast) var(--sc-ease-out);
+    }
+    .audition-btn:hover {
+      background: #332721;
+      border-color: var(--gold-fifth);
+      color: #fde047;
+    }
+    .audition-btn--wolf:hover {
+      border-color: var(--wolf-rose);
+      color: #fda4af;
+    }
+
+    /* =========================================================================
+       ACT 5: COMPLETE POLYPHONIC SIMULATOR & COMPARATIVE BENCH (Flow)
+       ========================================================================= */
+    .sim-section {
+      background: #0c0a09;
+      padding-block: var(--sc-10);
+    }
+    .sim-controls-bar {
+      background: #171311;
+      border: 1px solid var(--sc-hairline-strong);
+      border-radius: var(--sc-r-md);
+      padding: var(--sc-5);
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--sc-4);
+      box-shadow: var(--sc-e2);
+    }
+    .sim-select {
+      background: #0c0a09;
+      color: var(--sc-ink);
+      border: 1px solid var(--sc-hairline-strong);
+      border-radius: var(--sc-r-sm);
+      padding: 0.45rem 0.75rem;
+      font-family: var(--sc-font-mono);
+      font-size: var(--sc-t-sm);
+      cursor: pointer;
+    }
+    .sim-columns {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--sc-6);
+      margin-top: var(--sc-6);
+    }
+    @media (min-width: 920px) {
+      .sim-columns {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .sim-column-panel {
+      background: #15110f;
+      border: 1px solid var(--sc-hairline-strong);
+      border-radius: var(--sc-r-md);
+      padding: var(--sc-5);
+      box-shadow: var(--sc-e2);
+    }
+    .sim-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+      max-height: 460px;
+      overflow-y: auto;
+      padding-right: 0.25rem;
+      margin-top: var(--sc-4);
+    }
+    .note-row-card {
+      background: #1d1815;
+      border: 1px solid var(--sc-hairline);
+      border-left: 4px solid var(--gold-fifth);
+      border-radius: var(--sc-r-sm);
+      padding: 0.6rem 0.85rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+    }
+    .note-row-card--octave {
+      border-left-color: var(--jade-octave);
+    }
+    .note-row-card--final {
+      background: rgba(251, 113, 133, 0.12);
+      border-color: rgba(251, 113, 133, 0.4);
+      border-left: 4px solid var(--wolf-rose);
+    }
+    .btn-play-note {
+      background: #2b221d;
+      color: #fde047;
+      border: 1px solid rgba(234, 179, 8, 0.4);
+      border-radius: var(--sc-r-sm);
+      padding: 0.35rem 0.75rem;
+      font-family: var(--sc-font-mono);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: background-color var(--sc-d-fast) var(--sc-ease-out);
+    }
+    .btn-play-note:hover {
+      background: #3b2e26;
+    }
+    .btn-play-note.is-playing {
+      background: var(--wolf-rose);
+      color: #0c0a09;
+      border-color: var(--wolf-rose);
+    }
+
+    /* Comparison Dashboard Card */
+    .comparison-dashboard {
+      margin-top: var(--sc-6);
+      background: linear-gradient(135deg, #1b1413 0%, #141915 100%);
+      border: 1px solid rgba(251, 113, 133, 0.4);
+      border-left: 5px solid var(--wolf-rose);
+      border-radius: var(--sc-r-md);
+      padding: var(--sc-6);
+      box-shadow: var(--sc-e2);
+    }
+    .comparison-metrics {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--sc-4);
+      margin-block: var(--sc-5);
+    }
+    @media (min-width: 760px) {
+      .comparison-metrics {
+        grid-template-columns: repeat(4, 1fr);
+      }
+    }
+    .metric-tile {
+      background: rgba(12, 10, 9, 0.75);
+      border: 1px solid var(--sc-hairline-strong);
+      border-radius: var(--sc-r-sm);
+      padding: var(--sc-4);
+      text-align: center;
+    }
+
+    /* Institutional Footer */
+    .site-footer {
+      margin-top: var(--sc-8);
+      padding-top: var(--sc-5);
+      border-top: 1px solid var(--sc-hairline-strong);
+      font-family: var(--sc-font-mono);
+      font-size: 0.74rem;
+      line-height: 1.6;
+      color: var(--sc-ink-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+    .site-footer a {
+      color: #fde047;
+      text-decoration: none;
+    }
+    .site-footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
-<body class="antialiased">
+<body>
 
-    <div class="container mx-auto p-4 md:p-8 max-w-7xl">
+<span data-sc-progress></span>
+<div class="sc-grain" aria-hidden="true"></div>
 
-        <!-- Accordion for Explanation -->
-        <div class="max-w-4xl mx-auto mb-8">
-            <button id="accordion-toggle" class="w-full flex justify-between items-center p-4 bg-white rounded-xl shadow-lg text-left text-2xl font-bold title-color focus:outline-none">
-                <span>O Círculo Imperfeito: Uma Investigação da Coma Pitagórica</span>
-                <span id="accordion-icon" class="transform transition-transform duration-300">▾</span>
-            </button>
-            <div id="accordion-content" class="explanation-box p-6 rounded-b-xl shadow-lg text-left text-gray-800 leading-relaxed mt-[-8px]">
-                <h2 class="text-2xl font-bold title-color mb-3">Introdução ao Experimento</h2>
-                <p class="mb-4">Esta simulação explora um dos problemas mais fundamentais e fascinantes da teoria musical: a impossibilidade de construir uma escala perfeitamente afinada usando apenas os intervalos mais puros e consonantes da natureza. O experimento demonstra o surgimento da <strong>Coma Pitagórica</strong>, uma pequena, mas audível, dissonância que revela por que os sistemas de afinação modernos, como o temperamento igual, foram desenvolvidos.</p>
-                
-                <h2 class="text-2xl font-bold title-color mb-3">Os Blocos de Construção: Intervalos Puros</h2>
-                <p class="mb-4">A música ocidental é construída sobre a relação harmoniosa entre as frequências. Dois dos intervalos mais importantes e "puros" são:</p>
-                <ul class="list-disc list-inside mb-4 space-y-2 pl-4">
-                    <li><strong>A Oitava Perfeita:</strong> Considerado o intervalo mais puro, uma oitava representa a duplicação da frequência (uma razão de 2/1). Notas separadas por uma oitava soam tão semelhantes que recebem o mesmo nome (ex: Dó4 e Dó5).</li>
-                    <li><strong>A Quinta Perfeita:</strong> O segundo intervalo mais consonante, com uma relação de frequência de 3/2. É a base para a harmonia e a construção de acordes em muitas culturas.</li>
-                </ul>
+<!-- Top Masthead -->
+<header class="masthead">
+  <a href="#top" class="masthead__brand">
+    <span class="masthead__emblem" aria-hidden="true"></span>
+    <span>Simulação da Coma Pitagórica</span>
+  </a>
+  <span class="masthead__meta">12 Quintas (3/2)¹² = 129,75 · 7 Oitavas (2/1)⁷ = 128 · Diferença: +23,46 Cents</span>
+  <div>
+    <a href="#simulador" class="cta-primary" id="nav-cta-btn">Ouvir a Coma</a>
+  </div>
+</header>
 
-                <h2 class="text-2xl font-bold title-color mb-3">A Tentativa de Construir um Sistema Perfeito</h2>
-                <p class="mb-4">Os antigos gregos, notadamente os seguidores de Pitágoras, tentaram criar uma escala musical completa usando apenas a pureza da quinta perfeita. A ideia era simples: partindo de uma nota, sobe-se uma quinta; da nova nota, sobe-se outra quinta, e assim por diante. Após doze quintas, a expectativa era retornar à nota original, várias oitavas acima.</p>
-                <p class="mb-4">É aqui que o problema aparece. Matematicamente, a jornada se parece com isto:</p>
-                <ul class="list-disc list-inside mb-4 space-y-2 pl-4">
-                    <li><strong>Subir 12 Quintas:</strong> Equivale a multiplicar a frequência inicial por (3/2) doze vezes, ou seja, (1.5)<sup>12</sup> &approx; 139.73 vezes a frequência original.</li>
-                    <li><strong>Subir 7 Oitavas:</strong> A nota correspondente no ciclo das oitavas perfeitas seria a frequência inicial multiplicada por (2) sete vezes, ou seja, 2<sup>7</sup> = 128 vezes a frequência original.</li>
-                </ul>
+<!-- Right-Edge Vertical Chapter Dial -->
+<nav class="chapter-dial" aria-label="Navegação por capítulos">
+  <button type="button" class="chapter-dial__btn is-active" data-jump="#act-hero">1. O Círculo Imperfeito</button>
+  <button type="button" class="chapter-dial__btn" data-jump="#act-guide">2. Guia para Leigos</button>
+  <button type="button" class="chapter-dial__btn" data-jump="#act-spiral">3. Espiral de 12 Quintas</button>
+  <button type="button" class="chapter-dial__btn" data-jump="#act-wolf">4. Quinta do Lobo</button>
+  <button type="button" class="chapter-dial__btn" data-jump="#simulador">5. Simulador Completo</button>
+</nav>
 
-                <h2 class="text-2xl font-bold title-color mb-3">A Coma Pitagórica e a "Quinta do Lobo"</h2>
-                <p class="mb-4">Como você pode ver, 139.73 não é igual a 128. A nota alcançada após doze quintas é visivelmente mais aguda do que a nota alcançada após sete oitavas. Essa pequena diferença é a <strong>Coma Pitagórica</strong>.</p>
-                <p class="mb-4">Em sistemas de afinação antigos que tentavam usar quintas puras (como a afinação pitagórica), essa diferença precisava ser "escondida" em algum lugar. Os construtores de instrumentos normalmente desafinavam um dos doze intervalos de quinta para forçar o "fechamento" do círculo. Essa quinta dissonante e "uivante" ficou conhecida como a <strong>Quinta do Lobo</strong>, pois soava desagradável e era evitada pelos músicos.</p>
-                <p>Esta simulação permite que você ouça e meça essa discrepância, entendendo na prática por que o sistema de temperamento igual — que "tempera" ou desafina ligeiramente todas as quintas para que o círculo se feche perfeitamente — se tornou o padrão dominante na música ocidental.</p>
-            </div>
+<main id="top">
+
+  <!-- =======================================================================
+       ACT 1 · RECOGNITION: Dimensional 5-Plane Astrolabe & Spiral Hero
+       ======================================================================= -->
+  <section id="act-hero" data-sc-act="pin" data-sc-span="2.4" data-sc-dwell="0.30" data-sc-drift="#0c0a09">
+    <div data-sc-stage class="hero-stage" id="hero-verify-stage" data-sc-verify-state="hero:step0">
+
+      <!-- Plane 1: Far Astronomical & Luthiery Ratio Grid -->
+      <div class="hero-plane hero-plane--far" data-sc-parallax="-1.4" aria-hidden="true">
+        <svg viewBox="0 0 1600 900" width="100%" height="100%" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="800" cy="430" r="380" stroke="#29211d" stroke-width="1" stroke-dasharray="4 8"/>
+          <circle cx="800" cy="430" r="290" stroke="#29211d" stroke-width="1"/>
+          <line x1="800" y1="30" x2="800" y2="830" stroke="#29211d" stroke-width="1" stroke-dasharray="3 6"/>
+          <line x1="200" y1="430" x2="1400" y2="430" stroke="#29211d" stroke-width="1" stroke-dasharray="3 6"/>
+        </svg>
+      </div>
+
+      <!-- Plane 2: Midground Interactive Spiral of Fifths vs Circle of Octaves Canvas -->
+      <div class="hero-plane hero-plane--mid" data-sc-parallax="-0.65">
+        <div class="hero-wheel-wrap">
+          <canvas id="hero-spiral-canvas"></canvas>
         </div>
+      </div>
 
-        <!-- Controls -->
-        <div class="flex flex-col items-center justify-center gap-6 mb-8 p-6 bg-white rounded-xl shadow-lg">
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <div class="flex flex-col items-center">
-                    <label class="font-semibold text-lg">Nota Base (Lá4 = 440Hz):</label>
-                    <div class="flex gap-2 mt-1">
-                        <select id="baseNoteSelect" class="select-input"></select>
-                        <select id="baseOctaveSelect" class="select-input"></select>
-                    </div>
-                </div>
-            </div>
-            <div class="flex items-center">
-                <input type="checkbox" id="normalizeCheckbox" class="h-4 w-4 rounded border-gray-300 text-[#C87F8B] focus:ring-[#C87F8B]" checked>
-                <label for="normalizeCheckbox" class="ml-2 text-lg font-medium">Normalizar para a 1ª Oitava</label>
-            </div>
+      <!-- Plane 4: Near Foreground Brass Divider Cutout -->
+      <div class="hero-plane hero-plane--near" data-sc-parallax="0.65" aria-hidden="true">
+        <svg class="hero-compass-svg" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="310" cy="310" r="268" stroke="#44372f" stroke-width="1.5"/>
+          <path d="M 310 26 L 310 68" stroke="#34d399" stroke-width="3"/>
+          <path d="M 332 28 L 325 70" stroke="#fb7185" stroke-width="3"/>
+          <text x="310" y="18" fill="#6ee7b7" font-family="JetBrains Mono, monospace" font-size="11" text-anchor="middle">7ª Oitava (128x) · Abertura +23,46 Cents</text>
+        </svg>
+      </div>
+
+      <!-- Plane 5: Foreground Atmosphere & Floor Fade -->
+      <div class="hero-plane hero-plane--atmo" data-sc-parallax="1.15" aria-hidden="true"></div>
+      <div class="hero-floor-fade" aria-hidden="true"></div>
+      <div class="sc-scrim sc-scrim--lead" aria-hidden="true"></div>
+
+      <!-- Cue 1A: Opening Lead Headline (Greet form) -->
+      <div class="sc-copy sc-copy--lead hero-copy-plate" data-sc-cue="0 0.52 0 0.15">
+        <div class="sc-label" style="color: var(--sc-accent); margin-bottom: 0.45rem;">Acústica Musical e Afinação · UFSCar</div>
+        <h1 class="sc-display sc-display--xl" data-sc-kinetic="lines">Simulação da Coma Pitagórica</h1>
+        <p>Por que é matematicamente impossível afinar um piano com intervalos 100% puros? Descubra visualmente e no ouvido o "erro da natureza" que intrigou Pitágoras, criou a temida <strong>Quinta do Lobo</strong> e deu origem à afinação moderna.</p>
+        <div class="note-callout" style="margin-top: 0.65rem;">
+          <strong>🎵 Explicação simples para músicos e leigos:</strong> Role a página! Primeiro vamos entender como funciona uma corda esticada (sem matemática difícil) antes de comparar as 7 Oitavas e as 12 Quintas.
         </div>
+      </div>
 
-        <!-- Results Section -->
-        <div id="results" class="grid grid-cols-1 md:grid-cols-2 gap-8 hidden">
-            <!-- Octaves Column -->
-            <div>
-                <h2 class="text-2xl font-bold text-center mb-4 title-color">7 Oitavas Perfeitas</h2>
-                <div id="octavesContainer" class="scroll-container space-y-3 p-4 bg-gray-50 rounded-lg shadow-inner"></div>
-            </div>
-            <!-- Fifths Column -->
-            <div>
-                <h2 class="text-2xl font-bold text-center mb-2 title-color">12 Quintas Perfeitas</h2>
-                <p class="text-center text-sm text-gray-600 mb-4">inclui comparação com o sistema temperado</p>
-                <div id="fifthsContainer" class="scroll-container space-y-3 p-4 bg-gray-50 rounded-lg shadow-inner"></div>
-            </div>
+      <!-- Cue 1B: Mid-Act Telemetry Readout -->
+      <div class="sc-copy hero-telemetry-chip" data-sc-cue="0.18 0.99 0.08 0.01">
+        <div class="sc-label" style="color: #fde047;">O Ciclo das Quintas em Movimento</div>
+        <div style="font-family: var(--sc-font-mono); font-size: var(--sc-t-sm); color: var(--sc-ink); margin-top: 0.35rem;">
+          Passo Atual: <strong id="hero-live-step" style="color: var(--sc-accent);">Dó (Ponto de Partida)</strong>
         </div>
-
-        <!-- Comparison Section -->
-        <div id="comparison" class="mt-8 p-6 rounded-xl shadow-lg hidden highlight-card">
-            <h2 class="text-2xl font-bold text-center mb-4 title-color">Resultado da Comparação</h2>
-            <div class="text-center space-y-3 text-lg">
-                <p>A <strong>7ª Oitava</strong> (não normalizada) resulta em <strong id="octaveResult">...</strong></p>
-                <p>A <strong>12ª Quinta</strong> (não normalizada) resulta em <strong id="fifthResult">...</strong></p>
-                
-                <div class="pt-4 grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
-                    <div>
-                        <p class="font-bold text-lg">Diferença em Hz</p>
-                        <p id="commaResultHz" class="text-xl font-mono">...</p>
-                    </div>
-                    <div>
-                        <p class="font-bold text-lg">Diferença em Cents</p>
-                        <p id="commaResultCents" class="text-xl font-mono">...</p>
-                    </div>
-                    <div>
-                        <p class="font-bold text-lg">Equivalente em Comas</p>
-                        <p id="commaResultCommas" class="text-xl font-mono">...</p>
-                    </div>
-                </div>
-
-                <p class="mt-4 text-base max-w-2xl mx-auto">A 12ª quinta é ligeiramente mais aguda que a 7ª oitava. Essa dissonância é a "Coma Pitagórica". Para "fechar" o círculo de quintas, um dos intervalos era desafinado, criando a <strong>"Quinta do Lobo"</strong>.</p>
-                
-                 <div class="flex flex-col items-center gap-2 mt-4">
-                    <button id="playComparison" class="btn-action font-bold py-2 px-6 rounded-lg shadow-md hover:shadow-lg transform hover:-translate-y-0.5 transition">Tocar Comparação</button>
-                    <p class="text-xs text-gray-600">(A comparação pode não ser audível para notas base muito agudas. Experimente entre as oitavas 0 e 2.)</p>
-                </div>
-            </div>
+        <div id="hero-live-ratio" style="font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); color: var(--sc-ink-soft); margin-top: 0.2rem;">
+          12 Quintas Puras ultrapassam 7 Oitavas em +23,46 cents
         </div>
+      </div>
 
-        <!-- Footer -->
-        <footer class="text-center mt-12 pt-6 border-t border-gray-300 text-gray-600 text-sm">
-            <p class="mb-2"><strong>Observação:</strong> Esta simulação utiliza o sistema de Notação Científica Internacional de Altura (ISO 16), onde o Dó central é o Dó4. No Brasil, é comum a utilização de um sistema onde o Dó central é chamado de Dó3.</p>
-            <p><strong>Autoria:</strong> Prof. Glauber Santiago - UFSCar</p>
-        </footer>
+      <!-- Cue 1C: Resolved Hero Exit Beat -->
+      <div class="sc-copy hero-exit-card" data-sc-cue="0.50 0.99 0.10 0.01">
+        <div style="font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); color: var(--wolf-rose); font-weight: 700;">
+          O CÍRCULO NÃO FECHA: A COMA PITAGÓRICA
+        </div>
+        <p style="margin: 0.35rem 0 0 0; font-size: var(--sc-t-sm); color: var(--sc-ink);">
+          Ao subir <strong>12 Quintas Puras</strong> (Dó → Sol → Ré... → Dó), a nota final não empata com o <strong>Dó de 7 Oitavas</strong>: ela chega <strong>23,46 cents mais aguda</strong> (quase um quarto de semitom acima)!
+        </p>
+      </div>
 
     </div>
+  </section>
 
-    <script>
-        // DOM Elements
-        const baseNoteSelect = document.getElementById('baseNoteSelect');
-        const baseOctaveSelect = document.getElementById('baseOctaveSelect');
-        const normalizeCheckbox = document.getElementById('normalizeCheckbox');
-        const resultsSection = document.getElementById('results');
-        const comparisonSection = document.getElementById('comparison');
-        const octavesContainer = document.getElementById('octavesContainer');
-        const fifthsContainer = document.getElementById('fifthsContainer');
-        const octaveResultEl = document.getElementById('octaveResult');
-        const fifthResultEl = document.getElementById('fifthResult');
-        const commaResultHzEl = document.getElementById('commaResultHz');
-        const commaResultCentsEl = document.getElementById('commaResultCents');
-        const commaResultCommasEl = document.getElementById('commaResultCommas');
-        const playComparisonButton = document.getElementById('playComparison');
-        const accordionToggle = document.getElementById('accordion-toggle');
-        const accordionContent = document.getElementById('accordion-content');
-        const accordionIcon = document.getElementById('accordion-icon');
+  <!-- =======================================================================
+       ACT 2 · LAYPERSON & MUSICIAN VISUAL GUIDE + INTERACTIVE MONOCHORD
+       ======================================================================= -->
+  <section id="act-guide" class="sc-section act-guide" data-sc-act="flow" data-sc-drift="#120f0d">
+    <div class="sc-wrap" data-sc-in data-sc-stagger="65">
+      <div style="max-width: 72ch;">
+        <span style="font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); color: var(--sc-accent); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;">
+          Passo 1 · Guia Visual para Músicos e Iniciantes (Sem Fórmulas Difíceis)
+        </span>
+        <h2 class="sc-display sc-display--lg" style="margin-top: 0.35rem;">
+          O que é a Coma Pitagórica explicada no violão e no piano?
+        </h2>
+        <p class="sc-body" style="margin-top: 0.5rem;">
+          Muitas vezes ouvimos falar em "razão 3/2", "cents" ou "Coma Pitagórica" e parece coisa de físico. Na verdade, tudo nasce de uma única corda esticada (como a corda de um violão ou o <strong>Monocórdio de Pitágoras</strong>):
+        </p>
+      </div>
 
-        let polySynth;
-        let rawFinalOctaveFreq, rawFinalFifthFreq;
+      <div class="faq-grid">
+
+        <!-- Card 1: What is an Octave (2/1) and a Fifth (3/2) on a guitar string? -->
+        <article class="faq-card">
+          <span class="faq-badge faq-badge--jade">1. De onde vêm a Oitava (2x) e a Quinta (1,5x)?</span>
+          <h3>A experiência da corda de violão (Monocórdio)</h3>
+          <svg class="mini-diagram-svg" viewBox="0 0 420 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- Full string (1/1) -->
+            <line x1="24" y1="22" x2="396" y2="22" stroke="#b8aca0" stroke-width="2.5"/>
+            <circle cx="24" cy="22" r="4" fill="#faf6f0"/><circle cx="396" cy="22" r="4" fill="#faf6f0"/>
+            <text x="210" y="15" fill="#faf6f0" font-family="JetBrains Mono, monospace" font-size="9.5" text-anchor="middle">Corda Inteira Solta = Nota Dó (1x)</text>
+            <!-- Half string (1/2 -> Octave 2x) -->
+            <line x1="24" y1="52" x2="210" y2="52" stroke="#34d399" stroke-width="3"/>
+            <line x1="210" y1="52" x2="396" y2="52" stroke="#44372f" stroke-width="1.5" stroke-dasharray="3 3"/>
+            <circle cx="210" cy="52" r="5" fill="#34d399"/>
+            <text x="24" y="44" fill="#6ee7b7" font-family="JetBrains Mono, monospace" font-size="9.5" text-anchor="start">Metade da corda (1/2) = Oitava Dó (Frequência 2x)</text>
+            <!-- Two-thirds string (2/3 -> Fifth 1.5x) -->
+            <line x1="24" y1="82" x2="272" y2="82" stroke="#eab308" stroke-width="3"/>
+            <line x1="272" y1="82" x2="396" y2="82" stroke="#44372f" stroke-width="1.5" stroke-dasharray="3 3"/>
+            <circle cx="272" cy="82" r="5" fill="#eab308"/>
+            <text x="24" y="74" fill="#fde047" font-family="JetBrains Mono, monospace" font-size="9.5" text-anchor="start">2/3 da corda (casa 7 do violão) = Quinta Sol (1,5x)</text>
+          </svg>
+          <p class="sc-body" style="font-size: var(--sc-t-sm);">
+            Imagine uma corda solta afinada em <strong>Dó</strong>:
+          </p>
+          <p class="sc-body" style="font-size: var(--sc-t-sm);">
+            • <strong>A Oitava Perfeita (dobro = 2x):</strong> Se você prende a corda exatamente no meio (casa 12 do violão), ela vibra <strong>2 vezes mais rápido</strong>. O som é tão parecido que recebe o mesmo nome: <strong>Dó</strong> uma oitava acima!<br>
+            • <strong>A Quinta Perfeita (uma vez e meia = 1,5x):</strong> Se você prende a corda deixando <strong>2/3 do tamanho</strong> (casa 7 do violão), ela vibra <strong>1,5 vez mais rápido (fração 3/2)</strong> e produz a nota <strong>Sol</strong> (uma Quinta Justa acima, o intervalo mais puro e consonante usado para afinar violinos e violoncelos).
+          </p>
+        </article>
+
+        <!-- Card 2: The Dream of Pythagoras -->
+        <article class="faq-card">
+          <span class="faq-badge">2. Qual era a ideia de Pitágoras para criar todas as 12 notas?</span>
+          <h3>O Ciclo das Quintas no teclado</h3>
+          <svg class="mini-diagram-svg" viewBox="0 0 420 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- 12 Fifths chain vs 7 Octaves chain -->
+            <text x="14" y="24" fill="#fde047" font-family="JetBrains Mono, monospace" font-size="9.0">Caminho A (12 Quintas Puras de 1,5x):</text>
+            <text x="14" y="40" fill="#faf6f0" font-family="JetBrains Mono, monospace" font-size="7.9">Dó → Sol → Ré → Lá → Mi → Si → Fá# → Dó# → Sol# → Ré# → Lá# → Fá → Dó (+Agudo!)</text>
+            <line x1="14" y1="52" x2="404" y2="52" stroke="#29211d" stroke-width="1"/>
+            <text x="14" y="68" fill="#6ee7b7" font-family="JetBrains Mono, monospace" font-size="9.0">Caminho B (7 Oitavas Puras de 2x):</text>
+            <text x="14" y="84" fill="#faf6f0" font-family="JetBrains Mono, monospace" font-size="8.8">Dó0 → Dó1 → Dó2 → Dó3 → Dó4 → Dó5 → Dó6 → Dó7 (Exato!)</text>
+          </svg>
+          <p class="sc-body" style="font-size: var(--sc-t-sm);">
+            Como a Quinta Pura (1,5x) soa perfeita e cristalina, Pitágoras pensou: <em>"Basta ir subindo de quinta em quinta para descobrir todas as 12 notas musicais até voltar ao Dó!"</em>
+          </p>
+          <p class="sc-body" style="font-size: var(--sc-t-sm);">
+            No teclado de um piano, se você começa no <strong>Dó</strong> mais grave e dá <strong>12 saltos de Quinta</strong>, você passa por todas as 12 notas cromáticas e chega na tecla do <strong>Dó sete oitavas acima</strong>. Parecia um plano perfeito, mas a natureza guardava uma surpresa!
+          </p>
+        </article>
+
+        <!-- Card 3: Why doesn't the math close? What are Cents? -->
+        <article class="faq-card">
+          <span class="faq-badge faq-badge--rose">3. Por que a conta não fecha? O que são "Cents"?</span>
+          <h3>129,75 não é igual a 128!</h3>
+          <svg class="mini-diagram-svg" viewBox="0 0 420 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <!-- Semitone ruler in Cents (0 to 100 cents) -->
+            <line x1="30" y1="56" x2="390" y2="56" stroke="#64748b" stroke-width="2"/>
+            <line x1="30" y1="42" x2="30" y2="70" stroke="#34d399" stroke-width="3"/>
+            <line x1="390" y1="42" x2="390" y2="70" stroke="#94a3b8" stroke-width="2"/>
+            <!-- 23.46 cents mark -->
+            <line x1="114" y1="36" x2="114" y2="76" stroke="#fb7185" stroke-width="3"/>
+            <rect x="30" y="48" width="84" height="16" fill="rgba(251, 113, 133, 0.28)"/>
+            <text x="30" y="30" fill="#6ee7b7" font-family="JetBrains Mono, monospace" font-size="9.5">Dó (0 cents)</text>
+            <text x="120" y="28" fill="#fda4af" font-family="JetBrains Mono, monospace" font-size="10" font-weight="bold">Coma Pitagórica: +23,46 cents (~1/4 de semitom!)</text>
+            <text x="330" y="88" fill="#94a3b8" font-family="JetBrains Mono, monospace" font-size="9.5">Dó# (100 cents = 1 Semitom)</text>
+          </svg>
+          <p class="sc-body" style="font-size: var(--sc-t-sm);">
+            Veja a conta simples da física:<br>
+            • Subir <strong>7 Oitavas</strong> é multiplicar a frequência por 2 sete vezes: 2<sup>7</sup> = <strong>128 vezes</strong>.<br>
+            • Subir <strong>12 Quintas Puras</strong> é multiplicar por 1,5 doze vezes: (1,5)<sup>12</sup> ≈ <strong>129,75 vezes</strong>!
+          </p>
+          <p class="sc-body" style="font-size: var(--sc-t-sm);">
+            <strong>O que são "Cents"?</strong> Para medir pequenas desafinações, os músicos dividem <strong>1 semitom</strong> (a distância entre duas teclas vizinhas, como Dó e Dó#) em <strong>100 partes iguais chamadas <em>cents</em></strong>. A diferença entre 129,75 e 128 dá <strong>+23,46 cents</strong> (quase 1/4 de semitom!). Essa sobra é a <strong>Coma Pitagórica</strong>.
+          </p>
+        </article>
+
+        <!-- Card 4: What is the Wolf Fifth and how did the modern piano solve it? -->
+        <article class="faq-card">
+          <span class="faq-badge">4. O que é a "Quinta do Lobo" e o Temperamento Igual?</span>
+          <h3>Esconder o erro num canto vs. Dividir entre todos</h3>
+          <svg class="mini-diagram-svg" viewBox="0 0 420 100" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+            <rect x="18" y="18" width="184" height="64" rx="4" fill="#181210" stroke="#fb7185" stroke-width="1.5"/>
+            <text x="110" y="38" fill="#fda4af" font-family="JetBrains Mono, monospace" font-size="9.5" text-anchor="middle" font-weight="bold">Afinação Antiga (Pitagórica)</text>
+            <text x="110" y="55" fill="#faf6f0" font-family="JetBrains Mono, monospace" font-size="8.8" text-anchor="middle">11 Quintas Puras (+1,95c)</text>
+            <text x="110" y="70" fill="#fb7185" font-family="JetBrains Mono, monospace" font-size="8.8" text-anchor="middle">+ 1 "Quinta do Lobo" (-21,5c!)</text>
+
+            <rect x="218" y="18" width="184" height="64" rx="4" fill="#121815" stroke="#34d399" stroke-width="1.5"/>
+            <text x="310" y="38" fill="#6ee7b7" font-family="JetBrains Mono, monospace" font-size="9.5" text-anchor="middle" font-weight="bold">Piano Moderno (Temperado)</text>
+            <text x="310" y="55" fill="#faf6f0" font-family="JetBrains Mono, monospace" font-size="8.8" text-anchor="middle">Todas as 12 Quintas encurtadas</text>
+            <text x="310" y="70" fill="#34d399" font-family="JetBrains Mono, monospace" font-size="8.8" text-anchor="middle">em apenas -1,95 cent cada!</text>
+          </svg>
+          <p class="sc-body" style="font-size: var(--sc-t-sm);">
+            Como um cravo ou órgão não podia ter infinitas teclas, os afinadores antigos afinavam <strong>11 quintas puras</strong> e jogavam toda a sobra de 23,46 cents na última quinta. Essa última quinta ficava tão desafinada e trêmula que parecia o <strong>uivo de um lobo</strong>: a temida <strong>Quinta do Lobo</strong>!
+          </p>
+          <p class="sc-body" style="font-size: var(--sc-t-sm);">
+            <strong>A Solução Moderna (Temperamento Igual):</strong> Nosso piano e violão modernos dividem esse erro de 23,46 cents igualmente pelas 12 quintas: cada quinta é "encolhida" em minúsculos <strong>1,95 cent</strong> (quase imperceptível!), fechando o círculo sem nenhuma Quinta do Lobo!
+          </p>
+        </article>
+
+      </div>
+
+      <!-- Interactive Monochord Quick-Audition Box -->
+      <div class="monochord-box">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+          <div>
+            <span style="font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); color: var(--sc-accent); font-weight: 700;">EXPERIÊNCIA SONORA RÁPIDA · MONOCÓRDIO DE PITÁGORAS</span>
+            <h3 class="sc-display" style="font-size: var(--sc-t-lg); margin: 0.15rem 0 0 0;">Ouça na prática os intervalos na corda (Base Dó4 = 261,63 Hz)</h3>
+          </div>
+          <span id="monochord-status" style="font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); color: #fde047;">Clique em qualquer botão para ouvir</span>
+        </div>
+        <div class="monochord-btns">
+          <button type="button" class="monochord-btn" data-mono-play="unison">1. Corda Solta Dó4 (1/1 · 261,63 Hz)</button>
+          <button type="button" class="monochord-btn" data-mono-play="octave">2. Metade da Corda: Oitava Dó5 (2/1 · 523,25 Hz)</button>
+          <button type="button" class="monochord-btn" data-mono-play="fifth">3. 2/3 da Corda: Quinta Pura Sol4 (3/2 · 392,44 Hz)</button>
+          <button type="button" class="monochord-btn" data-mono-play="comma">4. Choque da Coma: Dó Puro vs Dó da 12ª Quinta (+23,46 cents)</button>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       ACT 3 · TURN & PEAK: Scroll-Driven 12 Fifths vs 7 Octaves Spiral Race
+       ======================================================================= -->
+  <section id="act-spiral" data-sc-act="pin" data-sc-span="3.6" data-sc-dwell="0.34" data-sc-drift="#090807">
+    <div data-sc-stage class="spiral-stage" id="spiral-verify-stage" data-sc-verify-state="spiral:step0">
+
+      <div class="spiral-canvas-wrap">
+        <canvas id="spiral-race-canvas"></canvas>
+      </div>
+
+      <!-- Top HUD -->
+      <div class="spiral-hud-top">
+        <div class="spiral-readout-box">
+          <div style="font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); color: var(--sc-ink-soft); text-transform: uppercase;">
+            Corrida das Proporções · Role para Empilhar as 12 Quintas Puras
+          </div>
+          <div style="display: flex; align-items: baseline; gap: var(--sc-4); margin-top: 0.3rem; flex-wrap: wrap;">
+            <div style="font-family: var(--sc-font-display); font-size: clamp(1.8rem, 3.5vw, 2.8rem); font-weight: 700; color: var(--sc-accent);">
+              Quinta #<span id="spiral-step-num" data-sc-count="0 12" data-sc-count-at="0.04 0.92">0</span>
+            </div>
+            <div style="font-family: var(--sc-font-mono); font-size: var(--sc-t-sm); color: var(--sc-ink);">
+              Nota: <strong id="spiral-note-badge" style="color: #fde047;">Dó</strong> · Erro acumulado vs Piano: <strong id="spiral-cents-badge" style="color: var(--wolf-rose);">+0,00 cents</strong>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4 Scroll Cues across the 12-Fifths Spiral -->
+      <div class="spiral-cues-deck">
+        <div class="spiral-cue-card" data-sc-cue="0 0.24 0 0.16">
+          <h2>Partida: Dó Inicial (0 Cents de Erro)</h2>
+          <p>No início da jornada, o círculo verde (7 Oitavas) e a espiral dourada (12 Quintas) saem exatamente do mesmo Dó. Cada quinta pura é 1,955 cent mais larga que a quinta de um piano moderno.</p>
+        </div>
+
+        <div class="spiral-cue-card spiral-cue-card--trail" data-sc-cue="0.22 0.49 0.12 0.12">
+          <h2>4ª Quinta (Dó → Sol → Ré → Lá → Mi · +7,82 Cents)</h2>
+          <p>Ao chegar na nota Mi pela 4ª quinta pura, ela já está quase 8 cents mais alta que o Mi temperado. Na época renascentista, essa terça maior "dura" (Terça Pitagórica) incomodava tanto que levou à criação do Temperamento Mesotônico!</p>
+        </div>
+
+        <div class="spiral-cue-card" data-sc-cue="0.47 0.73 0.12 0.12">
+          <h2>8ª Quinta (Fá# → Dó# → Sol# · +15,64 Cents)</h2>
+          <p>Passando da metade do relógio, a espiral dourada se afasta visivelmente do círculo perfeito. O acúmulo de +1,955 cent por quinta já soma mais de 15 cents de desvio.</p>
+        </div>
+
+        <div class="spiral-cue-card spiral-cue-card--trail" data-sc-cue="0.71 1.0 0.12 0.01">
+          <h2>12ª Quinta: O Desencontro Final (+23,46 Cents!)</h2>
+          <p>Na 12ª quinta (Si# / Dó), a espiral dourada atinge 129,75x a frequência inicial, ultrapassando a marca das 7 oitavas (128x) por exatos 23,46 cents: eis a Coma Pitagórica!</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       ACT 4 · THE WOLF FIFTH vs EQUAL TEMPERAMENT AUDITION (Flow)
+       ======================================================================= -->
+  <section id="act-wolf" class="sc-section wolf-section" data-sc-act="flow" data-sc-drift="#120e0c">
+    <div class="sc-wrap" data-sc-in data-sc-stagger="70">
+      <div style="max-width: 72ch;">
+        <span style="font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); color: var(--wolf-rose); font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;">
+          Passo 2 · Compare no Ouvido: As Três Quintas da História da Música
+        </span>
+        <h2 class="sc-display sc-display--lg" style="margin-top: 0.35rem;">
+          Por que a "Quinta do Lobo" uivava tanto?
+        </h2>
+        <p class="sc-body" style="margin-top: 0.5rem;">
+          Clique nos três cartões abaixo para ouvir a mesma quinta (Dó4 + Sol4) afinada de três formas diferentes. Preste atenção no <strong>batimento acústico</strong> (aquela oscilação rápida "uá-uá-uá" no som):
+        </p>
+      </div>
+
+      <div class="wolf-grid">
+
+        <!-- 1. Pure Pythagorean Fifth -->
+        <article class="audition-card">
+          <div>
+            <span class="faq-badge faq-badge--jade">1. Quinta Pura (Pitágoras · 3/2)</span>
+            <h3 style="font-family: var(--sc-font-display); font-size: var(--sc-t-xl); margin: 0.5rem 0;">701,96 Cents</h3>
+            <p class="sc-body" style="font-size: var(--sc-t-sm);">
+              Multiplicação exata por <strong>1,5</strong>. Os harmônicos das duas notas se encaixam com perfeição matemática: o som é totalmente liso, parado e sem nenhum batimento.
+            </p>
+          </div>
+          <button type="button" class="audition-btn" data-wolf-play="pure">🔊 Ouvir Quinta Pura (Liso / Sem Batimento)</button>
+        </article>
+
+        <!-- 2. Equal Tempered Fifth (Modern Piano) -->
+        <article class="audition-card">
+          <div>
+            <span class="faq-badge">2. Quinta do Piano Moderno (Temperada)</span>
+            <h3 style="font-family: var(--sc-font-display); font-size: var(--sc-t-xl); margin: 0.5rem 0;">700,00 Cents (-1,96c)</h3>
+            <p class="sc-body" style="font-size: var(--sc-t-sm);">
+              Multiplicação por 2<sup>7/12</sup> ≈ 1,4983. É encurtada em apenas <strong>1,96 cent</strong> para que as 12 quintas fechem o círculo. Gera uma ondulação super lenta e suave (~0,9 batimento por segundo).
+            </p>
+          </div>
+          <button type="button" class="audition-btn" data-wolf-play="tempered">🔊 Ouvir Quinta Temperada (Piano Atual)</button>
+        </article>
+
+        <!-- 3. The Wolf Fifth -->
+        <article class="audition-card" style="border-color: rgba(251, 113, 133, 0.45);">
+          <div>
+            <span class="faq-badge faq-badge--rose">3. A Temida "Quinta do Lobo"</span>
+            <h3 style="font-family: var(--sc-font-display); font-size: var(--sc-t-xl); margin: 0.5rem 0; color: #fda4af;">678,49 Cents (-23,46c!)</h3>
+            <p class="sc-body" style="font-size: var(--sc-t-sm);">
+              Quando as outras 11 quintas são puras, esta última quinta engole toda a Coma Pitagórica! Ela fica <strong>23,46 cents mais curta</strong>, gerando um batimento feroz e trêmulo que lembra o uivo de um lobo.
+            </p>
+          </div>
+          <button type="button" class="audition-btn audition-btn--wolf" data-wolf-play="wolf">🐺 Ouvir a "Quinta do Lobo" (Dissonante!)</button>
+        </article>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- =======================================================================
+       ACT 5 · COMPLETE INTERACTIVE POLYPHONIC SIMULATOR & BENCH (Flow)
+       Preserves 100% of original features + adds audible normalized comparison
+       ======================================================================= -->
+  <section id="simulador" class="sc-section sim-section" data-sc-act="flow" data-sc-drift="#0c0a09">
+    <div class="sc-wrap">
+      
+      <div style="margin-bottom: var(--sc-5);">
+        <span style="font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); color: var(--sc-accent); font-weight: 700; text-transform: uppercase;">
+          Bancada de Experimentação Polifônica Interativa
+        </span>
+        <h2 class="sc-display sc-display--lg" style="margin-top: 0.25rem;">
+          Laboratório de Oitavas vs. Quintas Perfeitas
+        </h2>
+        <p class="sc-body" style="margin-top: 0.35rem;">
+          Escolha qualquer nota inicial, ative ou desative a <strong>Normalização para a 1ª Oitava</strong> (que traz todas as notas agudas de volta para a mesma região grave para você comparar de ouvido) e toque quantas notas quiser ao mesmo tempo!
+        </p>
+      </div>
+
+      <!-- Controls Bar -->
+      <div class="sim-controls-bar">
+        <div style="display: flex; align-items: center; gap: var(--sc-4); flex-wrap: wrap;">
+          <div>
+            <label for="baseNoteSelect" style="display: block; font-family: var(--sc-font-mono); font-size: 0.72rem; color: var(--sc-ink-soft); margin-bottom: 0.25rem;">
+              NOTA BASE (Lá4 = 440 Hz)
+            </label>
+            <div style="display: flex; gap: 0.5rem;">
+              <select id="baseNoteSelect" class="sim-select" aria-label="Selecionar nota base"></select>
+              <select id="baseOctaveSelect" class="sim-select" aria-label="Selecionar oitava base"></select>
+            </div>
+          </div>
+
+          <label style="display: inline-flex; align-items: center; gap: 0.55rem; cursor: pointer; background: #0c0a09; padding: 0.6rem 0.9rem; border-radius: var(--sc-r-sm); border: 1px solid var(--sc-hairline-strong);">
+            <input type="checkbox" id="normalizeCheckbox" checked style="width: 16px; height: 16px; accent-color: var(--gold-fifth);">
+            <span style="font-size: var(--sc-t-sm); font-weight: 600;">Normalizar para a 1ª Oitava <span style="color: var(--sc-ink-soft); font-weight: 400; font-size: 0.78rem;">(traz todas as notas para a mesma oitava para comparar)</span></span>
+          </label>
+        </div>
+
+        <button type="button" id="stopAllBtn" class="monochord-btn" style="border-color: rgba(251, 113, 133, 0.4); color: #fda4af;">
+          ⏹ Parar Todas as Notas Ativas
+        </button>
+      </div>
+
+      <!-- Two Columns: 7 Octaves vs 12 Fifths -->
+      <div id="results" class="sim-columns">
         
-        let activeNotes = {};
+        <!-- Left Column: 7 Perfect Octaves -->
+        <div class="sim-column-panel">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;">
+            <h3 class="sc-display" style="font-size: var(--sc-t-xl); color: #6ee7b7; margin: 0;">7 Oitavas Perfeitas (2/1)</h3>
+            <span style="font-family: var(--sc-font-mono); font-size: 0.72rem; color: var(--sc-ink-soft);">Multiplicação por 2 a cada passo</span>
+          </div>
+          <p class="sc-body" style="font-size: 0.78rem; margin-top: 0.25rem;">
+            Com a caixa "Normalizar" marcada, todas as 7 oitavas voltam para a frequência da nota original, provando que o ciclo de oitavas é 100% fechado.
+          </p>
+          <div id="octavesContainer" class="sim-list"></div>
+        </div>
 
-        const A4 = 440;
-        const noteNamesPT = ["Dó", "Dó#", "Ré", "Ré#", "Mi", "Fá", "Fá#", "Sol", "Sol#", "Lá", "Lá#", "Si"];
+        <!-- Right Column: 12 Perfect Fifths -->
+        <div class="sim-column-panel">
+          <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap;">
+            <h3 class="sc-display" style="font-size: var(--sc-t-xl); color: #fde047; margin: 0;">12 Quintas Perfeitas (3/2)</h3>
+            <span style="font-family: var(--sc-font-mono); font-size: 0.72rem; color: var(--sc-ink-soft);">Inclui diferença em Cents para o piano temperado</span>
+          </div>
+          <p class="sc-body" style="font-size: 0.78rem; margin-top: 0.25rem;">
+            A cada quinta pura (×1,5), a afinação sobe <strong>+1,955 cent</strong> em relação ao sistema temperado até acumular <strong>+23,46 cents</strong> na 12ª Quinta!
+          </p>
+          <div id="fifthsContainer" class="sim-list"></div>
+        </div>
 
-        function getFrequencyFromNote(noteName, octave) {
-            const noteIndex = noteNamesPT.indexOf(noteName);
-            const midiNum = (octave + 1) * 12 + noteIndex;
-            return A4 * Math.pow(2, (midiNum - 69) / 12);
+      </div>
+
+      <!-- Comparison Dashboard -->
+      <div id="comparison" class="comparison-dashboard">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem;">
+          <div>
+            <span style="font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); color: #fda4af; font-weight: 700; text-transform: uppercase;">
+              Resultado da Comparação Final · O Desencontro Matemático e Sonoro
+            </span>
+            <h3 class="sc-display" style="font-size: var(--sc-t-xl); margin: 0.2rem 0 0 0;">
+              7ª Oitava vs. 12ª Quinta Pura
+            </h3>
+          </div>
+        </div>
+
+        <div class="sc-body" style="margin-top: 0.75rem; font-size: var(--sc-t-base); color: var(--sc-ink);">
+          • Na altura real (sem normalizar), a <strong>7ª Oitava</strong> chega em <strong id="octaveResult" style="color: #6ee7b7; font-family: var(--sc-font-mono);">...</strong> e a <strong>12ª Quinta</strong> chega em <strong id="fifthResult" style="color: #fde047; font-family: var(--sc-font-mono);">...</strong><br>
+          • Trazidas para a <strong>1ª Oitava (audível)</strong>, a Oitava Pura soa em <strong id="normOctaveResult" style="color: #6ee7b7; font-family: var(--sc-font-mono);">...</strong> enquanto a 12ª Quinta soa em <strong id="normFifthResult" style="color: #fda4af; font-family: var(--sc-font-mono);">...</strong>
+        </div>
+
+        <div class="comparison-metrics">
+          <div class="metric-tile">
+            <div style="font-family: var(--sc-font-mono); font-size: 0.72rem; color: var(--sc-ink-soft);">DIFERENÇA NA 1ª OITAVA</div>
+            <div id="commaNormHz" style="font-family: var(--sc-font-mono); font-size: var(--sc-t-lg); font-weight: 700; color: #fde047; margin-top: 0.25rem;">...</div>
+          </div>
+          <div class="metric-tile">
+            <div style="font-family: var(--sc-font-mono); font-size: 0.72rem; color: var(--sc-ink-soft);">DIFERENÇA NA 7ª OITAVA</div>
+            <div id="commaResultHz" style="font-family: var(--sc-font-mono); font-size: var(--sc-t-lg); font-weight: 700; color: var(--sc-ink); margin-top: 0.25rem;">...</div>
+          </div>
+          <div class="metric-tile">
+            <div style="font-family: var(--sc-font-mono); font-size: 0.72rem; color: var(--sc-ink-soft);">DIFERENÇA EM CENTS</div>
+            <div id="commaResultCents" style="font-family: var(--sc-font-mono); font-size: var(--sc-t-lg); font-weight: 700; color: #fda4af; margin-top: 0.25rem;">+23,46 Cents</div>
+          </div>
+          <div class="metric-tile">
+            <div style="font-family: var(--sc-font-mono); font-size: 0.72rem; color: var(--sc-ink-soft);">EQUIVALENTE EM COMAS</div>
+            <div id="commaResultCommas" style="font-family: var(--sc-font-mono); font-size: var(--sc-t-lg); font-weight: 700; color: #6ee7b7; margin-top: 0.25rem;">~1,00 Coma</div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: center; margin-top: var(--sc-4);">
+          <button type="button" id="playNormalizedComparison" class="cta-primary" data-sc-magnet="0.22">
+            🔊 Ouvir Comparação na 1ª Oitava (Recomendado / Sempre Audível)
+          </button>
+          <button type="button" id="playComparison" class="monochord-btn">
+            🔊 Tocar Comparação na 7ª Oitava Bruta (Original)
+          </button>
+        </div>
+        <p style="font-family: var(--sc-font-mono); font-size: 0.72rem; color: var(--sc-ink-soft); margin-top: 0.5rem;">
+          Dica: Na 7ª oitava bruta, notas base acima da oitava 2 ultrapassam 16.000 Hz (limite da audição humana). Por isso o botão "Ouvir Comparação na 1ª Oitava" toca as duas notas lado a lado e depois juntas na região central para você ouvir claramente os batimentos da Coma Pitagórica!
+        </p>
+      </div>
+
+      <!-- Institutional Footer -->
+      <footer class="site-footer">
+        <div>
+          <strong>Observação Pedagógica:</strong> Esta simulação utiliza a Notação Científica Internacional de Altura (ISO 16), onde o Dó central do piano é chamado de <strong>Dó4</strong> (261,63 Hz).
+        </div>
+        <div>
+          Desenvolvido pelo professor Glauber Santiago — DAC/UFSCar ·
+          <a href="https://aprenda-musica-comigo.web.app/" target="_blank" rel="noopener noreferrer">aprenda-musica-comigo.web.app</a> •
+          <a href="https://servidores.ufscar.br/glauber/" target="_blank" rel="noopener noreferrer">servidores.ufscar.br/glauber/</a> •
+          <a href="https://glauberia.web.app/" target="_blank" rel="noopener noreferrer">https://glauberia.web.app/</a>
+        </div>
+        <div>
+          Apoio: Grupo de Estudos e Pesquisas sobre Inovação em Educação, Tecnologias e Linguagens (Grupo Horizonte-UFSCar) —
+          <a href="https://grupohorizonte.ufscar.br/" target="_blank" rel="noopener noreferrer">grupohorizonte.ufscar.br</a>
+        </div>
+      </footer>
+
+    </div>
+  </section>
+
+</main>
+
+<script src="scrollcraft.js"></script>
+<script>
+  ScrollCraft.mount(document.body);
+
+  (function () {
+    'use strict';
+
+    var A4 = 440;
+    var noteNamesPT = ['Dó', 'Dó#', 'Ré', 'Ré#', 'Mi', 'Fá', 'Fá#', 'Sol', 'Sol#', 'Lá', 'Lá#', 'Si'];
+    var circleFifthLabels = ['Dó', 'Sol', 'Ré', 'Lá', 'Mi', 'Si', 'Fá#', 'Dó#', 'Sol#', 'Ré#', 'Lá#', 'Fá', 'Si# (Dó+)'];
+    var reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // DOM Elements
+    var baseNoteSelect = document.getElementById('baseNoteSelect');
+    var baseOctaveSelect = document.getElementById('baseOctaveSelect');
+    var normalizeCheckbox = document.getElementById('normalizeCheckbox');
+    var octavesContainer = document.getElementById('octavesContainer');
+    var fifthsContainer = document.getElementById('fifthsContainer');
+    var octaveResultEl = document.getElementById('octaveResult');
+    var fifthResultEl = document.getElementById('fifthResult');
+    var normOctaveResultEl = document.getElementById('normOctaveResult');
+    var normFifthResultEl = document.getElementById('normFifthResult');
+    var commaNormHzEl = document.getElementById('commaNormHz');
+    var commaResultHzEl = document.getElementById('commaResultHz');
+    var commaResultCentsEl = document.getElementById('commaResultCents');
+    var commaResultCommasEl = document.getElementById('commaResultCommas');
+    var playComparisonButton = document.getElementById('playComparison');
+    var playNormalizedButton = document.getElementById('playNormalizedComparison');
+    var stopAllBtn = document.getElementById('stopAllBtn');
+    var monochordStatus = document.getElementById('monochord-status');
+
+    var heroSection = document.getElementById('act-hero');
+    var heroVerifyStage = document.getElementById('hero-verify-stage');
+    var heroCanvas = document.getElementById('hero-spiral-canvas');
+    var heroLiveStep = document.getElementById('hero-live-step');
+    var heroLiveRatio = document.getElementById('hero-live-ratio');
+
+    var spiralSection = document.getElementById('act-spiral');
+    var spiralVerifyStage = document.getElementById('spiral-verify-stage');
+    var spiralCanvas = document.getElementById('spiral-race-canvas');
+    var spiralStepNum = document.getElementById('spiral-step-num');
+    var spiralNoteBadge = document.getElementById('spiral-note-badge');
+    var spiralCentsBadge = document.getElementById('spiral-cents-badge');
+
+    var dialButtons = document.querySelectorAll('.chapter-dial__btn');
+
+    var polySynth = null;
+    var rawFinalOctaveFreq = 0;
+    var rawFinalFifthFreq = 0;
+    var normFinalOctaveFreq = 0;
+    var normFinalFifthFreq = 0;
+    var activeNotes = {};
+    var animPhase = 0;
+
+    // Warm Acoustic String / Harpsichord-Monochord Synthesizer in Tone.js
+    function getSynth() {
+      if (!polySynth && window.Tone) {
+        var warmFilter = new Tone.Filter({
+          type: 'lowpass',
+          frequency: 2800,
+          rolloff: -12
+        }).toDestination();
+        polySynth = new Tone.PolySynth(Tone.Synth, {
+          maxPolyphony: 32,
+          volume: -8,
+          oscillator: {
+            type: 'custom',
+            partials: [1, 0.42, 0.22, 0.11, 0.06, 0.03]
+          },
+          envelope: {
+            attack: 0.015,
+            decay: 0.35,
+            sustain: 0.65,
+            release: 0.6
+          }
+        }).connect(warmFilter);
+      }
+      if (window.Tone && Tone.context.state !== 'running') {
+        Tone.context.resume();
+      }
+      return polySynth;
+    }
+
+    function stopAllActiveNotes() {
+      var synth = getSynth();
+      if (synth) synth.releaseAll();
+      document.querySelectorAll('.btn-play-note.is-playing').forEach(function (btn) {
+        btn.textContent = 'Tocar';
+        btn.classList.remove('is-playing');
+      });
+      activeNotes = {};
+    }
+
+    function getFrequencyFromNote(noteName, octave) {
+      var noteIndex = noteNamesPT.indexOf(noteName);
+      var midiNum = (octave + 1) * 12 + noteIndex;
+      return A4 * Math.pow(2, (midiNum - 69) / 12);
+    }
+
+    function getNoteFromFrequency(frequency) {
+      var midiNum = Math.round(12 * Math.log2(frequency / A4) + 69);
+      var temperedFreq = A4 * Math.pow(2, (midiNum - 69) / 12);
+      var noteIndex = ((midiNum % 12) + 12) % 12;
+      var octave = Math.floor(midiNum / 12) - 1;
+      var noteName = noteNamesPT[noteIndex] + octave;
+      var centsOff = 1200 * Math.log2(frequency / temperedFreq);
+      return { name: noteName, cents: centsOff };
+    }
+
+    function normalizeFrequency(freq, base) {
+      var normalizedFreq = freq;
+      while (normalizedFreq >= base * 2) {
+        normalizedFreq /= 2;
+      }
+      while (normalizedFreq < base) {
+        normalizedFreq *= 2;
+      }
+      return normalizedFreq;
+    }
+
+    function toggleNote(freq, button) {
+      var synth = getSynth();
+      if (!synth) return;
+      var freqKey = freq.toFixed(4);
+      if (activeNotes[freqKey]) {
+        synth.triggerRelease(freq);
+        button.textContent = 'Tocar';
+        button.classList.remove('is-playing');
+        activeNotes[freqKey] = false;
+      } else {
+        synth.triggerAttack(freq);
+        button.textContent = 'Parar';
+        button.classList.add('is-playing');
+        activeNotes[freqKey] = true;
+      }
+    }
+
+    function createCard(container, title, freq, isFinal, isPerfectInterval) {
+      var card = document.createElement('div');
+      card.className = 'note-row-card ' + (isFinal ? 'note-row-card--final' : (isPerfectInterval ? 'note-row-card--octave' : ''));
+
+      var noteInfo = getNoteFromFrequency(freq);
+      var noteDisplayString = '';
+
+      if (isPerfectInterval) {
+        noteDisplayString = 'Nota exata: <strong style="color: #6ee7b7;">' + noteInfo.name + '</strong> (0,0 cents)';
+      } else {
+        var centsThreshold = 0.08;
+        var deviationString = '';
+        if (noteInfo.cents > centsThreshold) {
+          deviationString = ' · <strong style="color: #fda4af;">↑ +' + noteInfo.cents.toFixed(1).replace('.', ',') + ' cents</strong>';
+        } else if (noteInfo.cents < -centsThreshold) {
+          deviationString = ' · <strong style="color: #fda4af;">↓ -' + Math.abs(noteInfo.cents).toFixed(1).replace('.', ',') + ' cents</strong>';
+        } else {
+          deviationString = ' · <span style="color: #6ee7b7;">0,0 cents</span>';
         }
+        noteDisplayString = 'Próx. de <strong>' + noteInfo.name + '</strong>' + deviationString;
+      }
 
-        function getNoteFromFrequency(frequency) {
-            const midiNum = Math.round(12 * Math.log2(frequency / A4) + 69);
-            const temperedFreq = A4 * Math.pow(2, (midiNum - 69) / 12);
-            const noteIndex = midiNum % 12;
-            const octave = Math.floor(midiNum / 12) - 1;
-            const noteName = noteNamesPT[noteIndex] + octave;
-            const centsOff = 1200 * Math.log2(frequency / temperedFreq);
-            return { name: noteName, cents: centsOff };
+      var infoDiv = document.createElement('div');
+      infoDiv.style.fontSize = '0.82rem';
+      infoDiv.innerHTML =
+        '<div><strong>' + title + ':</strong> <span style="font-family: var(--sc-font-mono); color: #fde047;">' +
+        freq.toFixed(2).replace('.', ',') + ' Hz</span></div>' +
+        '<div style="color: var(--sc-ink-soft); font-size: 0.75rem; margin-top: 0.1rem;">' + noteDisplayString + '</div>';
+
+      var playBtn = document.createElement('button');
+      playBtn.type = 'button';
+      playBtn.textContent = 'Tocar';
+      playBtn.className = 'btn-play-note';
+      playBtn.addEventListener('click', function () {
+        toggleNote(freq, playBtn);
+      });
+
+      card.appendChild(infoDiv);
+      card.appendChild(playBtn);
+      container.appendChild(card);
+    }
+
+    function runSimulation() {
+      stopAllActiveNotes();
+      var selectedNote = baseNoteSelect.value || 'Dó';
+      var selectedOctave = parseInt(baseOctaveSelect.value || '4', 10);
+      var baseFreq = getFrequencyFromNote(selectedNote, selectedOctave);
+      var normalize = normalizeCheckbox.checked;
+
+      octavesContainer.innerHTML = '';
+      fifthsContainer.innerHTML = '';
+
+      for (var i = 0; i <= 7; i++) {
+        var freq = baseFreq * Math.pow(2, i);
+        if (i === 7) rawFinalOctaveFreq = freq;
+        var displayFreq = normalize ? normalizeFrequency(freq, baseFreq) : freq;
+        if (i === 7) normFinalOctaveFreq = normalizeFrequency(freq, baseFreq);
+        createCard(octavesContainer, 'Oitava ' + i, displayFreq, i === 7, true);
+      }
+
+      for (var j = 0; j <= 12; j++) {
+        var fFifth = baseFreq * Math.pow(1.5, j);
+        if (j === 12) rawFinalFifthFreq = fFifth;
+        var dispFifth = normalize ? normalizeFrequency(fFifth, baseFreq) : fFifth;
+        if (j === 12) normFinalFifthFreq = normalizeFrequency(fFifth, baseFreq);
+        createCard(fifthsContainer, 'Quinta ' + j, dispFifth, j === 12, j === 0);
+      }
+
+      var commaHz = rawFinalFifthFreq - rawFinalOctaveFreq;
+      var commaNormDiff = normFinalFifthFreq - normFinalOctaveFreq;
+      var commaCents = 1200 * Math.log2(rawFinalFifthFreq / rawFinalOctaveFreq);
+      var pythagoreanCommaInCents = 23.4600103846;
+      var commaInCommas = commaCents / pythagoreanCommaInCents;
+
+      octaveResultEl.textContent = rawFinalOctaveFreq.toFixed(2).replace('.', ',') + ' Hz';
+      fifthResultEl.textContent = rawFinalFifthFreq.toFixed(2).replace('.', ',') + ' Hz';
+      normOctaveResultEl.textContent = normFinalOctaveFreq.toFixed(2).replace('.', ',') + ' Hz';
+      normFifthResultEl.textContent = normFinalFifthFreq.toFixed(2).replace('.', ',') + ' Hz';
+      commaNormHzEl.textContent = '+' + commaNormDiff.toFixed(2).replace('.', ',') + ' Hz (' + commaNormDiff.toFixed(1).replace('.', ',') + ' bat/s)';
+      commaResultHzEl.textContent = '+' + commaHz.toFixed(2).replace('.', ',') + ' Hz';
+      commaResultCentsEl.textContent = '+' + commaCents.toFixed(2).replace('.', ',') + ' Cents';
+      commaResultCommasEl.textContent = '~' + commaInCommas.toFixed(2).replace('.', ',') + ' Coma';
+    }
+
+    // Play Audible Normalized Comparison (1st Octave Sequential + Together for Beating)
+    function playNormalizedComparison() {
+      stopAllActiveNotes();
+      var synth = getSynth();
+      if (!synth) return;
+      var now = Tone.now();
+      synth.triggerAttackRelease(normFinalOctaveFreq, '0.7', now);
+      synth.triggerAttackRelease(normFinalFifthFreq, '0.7', now + 0.8);
+      synth.triggerAttackRelease([normFinalOctaveFreq, normFinalFifthFreq], '1.8', now + 1.65);
+    }
+
+    // Play Raw 7th Octave Comparison (Original behavior)
+    function playRawComparison() {
+      stopAllActiveNotes();
+      var synth = getSynth();
+      if (!synth) return;
+      var now = Tone.now();
+      var f1 = Math.min(18000, rawFinalOctaveFreq);
+      var f2 = Math.min(18000, rawFinalFifthFreq);
+      synth.triggerAttackRelease(f1, '8n', now);
+      synth.triggerAttackRelease(f2, '8n', now + 0.5);
+    }
+
+    // Monochord Quick-Audition Buttons in Act 2
+    document.querySelectorAll('[data-mono-play]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        stopAllActiveNotes();
+        var synth = getSynth();
+        if (!synth) return;
+        var mode = btn.getAttribute('data-mono-play');
+        var now = Tone.now();
+        var c4 = 261.63;
+        if (mode === 'unison') {
+          synth.triggerAttackRelease(c4, '1.2', now);
+          if (monochordStatus) monochordStatus.textContent = 'Tocando: Corda Solta Dó4 (261,63 Hz)';
+        } else if (mode === 'octave') {
+          synth.triggerAttackRelease(c4, '0.6', now);
+          synth.triggerAttackRelease(c4 * 2, '0.9', now + 0.65);
+          if (monochordStatus) monochordStatus.textContent = 'Tocando: Dó4 (261,6 Hz) → Oitava Pura Dó5 (523,3 Hz)';
+        } else if (mode === 'fifth') {
+          synth.triggerAttackRelease([c4, c4 * 1.5], '1.5', now);
+          if (monochordStatus) monochordStatus.textContent = 'Tocando: Quinta Pura Dó4 + Sol4 (Razão 3/2 = 392,44 Hz)';
+        } else if (mode === 'comma') {
+          var cComma = c4 * (Math.pow(1.5, 12) / Math.pow(2, 7)); // 265.20 Hz
+          synth.triggerAttackRelease(c4, '0.6', now);
+          synth.triggerAttackRelease(cComma, '0.6', now + 0.65);
+          synth.triggerAttackRelease([c4, cComma], '1.8', now + 1.35);
+          if (monochordStatus) monochordStatus.textContent = 'Choque da Coma: 261,63 Hz vs 265,20 Hz (+23,46 cents · 3,6 batimentos/s!)';
         }
+      });
+    });
 
-        function getSynth() {
-            if (!polySynth) {
-                polySynth = new Tone.PolySynth(Tone.Synth, {
-                    maxPolyphony: 32,
-                    volume: -6
-                }).toDestination();
-            }
-            if (Tone.context.state !== 'running') {
-                Tone.context.resume();
-            }
-            return polySynth;
+    // Wolf Fifth vs Tempered vs Pure Fifth Audition Buttons in Act 4
+    document.querySelectorAll('[data-wolf-play]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        stopAllActiveNotes();
+        var synth = getSynth();
+        if (!synth) return;
+        var kind = btn.getAttribute('data-wolf-play');
+        var now = Tone.now();
+        var root = 261.63; // C4
+        var fifth = root * 1.5;
+        if (kind === 'tempered') {
+          fifth = root * Math.pow(2, 7 / 12); // 391.995 Hz (700 cents)
+        } else if (kind === 'wolf') {
+          // Wolf fifth is 1 pure fifth minus the Pythagorean comma: (3/2) / (3^12 / 2^19) = 2^18 / 3^11 = 1.47981 (678.49 cents)
+          fifth = root * (Math.pow(2, 18) / Math.pow(3, 11)); // 387.16 Hz
         }
+        synth.triggerAttackRelease(root, '0.45', now);
+        synth.triggerAttackRelease(fifth, '0.45', now + 0.5);
+        synth.triggerAttackRelease([root, fifth], '2.2', now + 1.05);
+      });
+    });
 
-        function toggleNote(freq, button) {
-            const synth = getSynth();
-            const freqStr = freq.toString();
-            if (activeNotes[freqStr]) {
-                synth.triggerRelease(freq);
-                button.textContent = 'Tocar';
-                button.classList.remove('btn-stop');
-                button.classList.add('btn-play');
-                activeNotes[freqStr] = false;
-            } else {
-                synth.triggerAttack(freq);
-                button.textContent = 'Parar';
-                button.classList.remove('btn-play');
-                button.classList.add('btn-stop');
-                activeNotes[freqStr] = true;
-            }
+    // Chapter Dial Navigation
+    dialButtons.forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var sel = btn.getAttribute('data-jump');
+        var target = sel ? document.querySelector(sel) : null;
+        if (target) target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth' });
+      });
+    });
+
+    // Canvas High-DPI Resize Helper
+    function fitCanvas(cv) {
+      if (!cv) return null;
+      var rect = cv.getBoundingClientRect();
+      var dpr = Math.min(window.devicePixelRatio || 1, 2);
+      var w = Math.max(10, Math.round(rect.width * dpr));
+      var h = Math.max(10, Math.round(rect.height * dpr));
+      if (cv.width !== w || cv.height !== h) {
+        cv.width = w;
+        cv.height = h;
+      }
+      var ctx = cv.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      return { ctx: ctx, w: rect.width, h: rect.height };
+    }
+
+    // Draw Spiral of 12 Fifths vs Circle of 7 Octaves
+    function drawPythagoreanSpiral(cv, activeStepFloat, showBeatingWave) {
+      var m = fitCanvas(cv);
+      if (!m || m.w < 40 || m.h < 40) return;
+      var ctx = m.ctx;
+      var w = m.w;
+      var h = m.h;
+      ctx.clearRect(0, 0, w, h);
+
+      var cx = w / 2;
+      var cy = h / 2;
+      var baseR = Math.min(w, h) * 0.28;
+      var maxSpiralExpand = Math.min(w, h) * 0.095;
+
+      // 1. Reference Circle of 7 Pure Octaves (Emerald Jade #34d399)
+      ctx.strokeStyle = 'rgba(52, 211, 153, 0.48)';
+      ctx.lineWidth = 2;
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath();
+      ctx.arc(cx, cy, baseR, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      // 12 Equal-Tempered Clock Ticks around the circle
+      for (var t = 0; t < 12; t++) {
+        var ang = -Math.PI / 2 + (t * Math.PI * 2) / 12;
+        var ix = cx + Math.cos(ang) * (baseR - 6);
+        var iy = cy + Math.sin(ang) * (baseR - 6);
+        var ox = cx + Math.cos(ang) * (baseR + 6);
+        var oy = cy + Math.sin(ang) * (baseR + 6);
+        ctx.strokeStyle = 'rgba(184, 172, 160, 0.35)';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(ix, iy);
+        ctx.lineTo(ox, oy);
+        ctx.stroke();
+      }
+
+      // 2. Spiral of 12 Pure Fifths (Gold #eab308 -> Wolf Rose #fb7185 at step 12)
+      // Each pure fifth is 701.955 cents (angle = 30 deg + extra 0.5865 deg per step so 12 steps = 367.04 deg!)
+      var maxStep = Math.min(12, Math.max(0.2, activeStepFloat));
+      var segments = 120;
+      ctx.strokeStyle = '#eab308';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (var s = 0; s <= segments; s++) {
+        var frac = (s / segments) * maxStep;
+        var stepAngle = -Math.PI / 2 + frac * ((Math.PI * 2) / 12) * 1.01955;
+        var r = baseR + (frac / 12) * maxSpiralExpand;
+        var sx = cx + Math.cos(stepAngle) * r;
+        var sy = cy + Math.sin(stepAngle) * r;
+        if (s === 0) ctx.moveTo(sx, sy);
+        else ctx.lineTo(sx, sy);
+      }
+      ctx.stroke();
+
+      // Plot nodes for each reached Fifth (0..12)
+      var wholeSteps = Math.floor(maxStep);
+      for (var k = 0; k <= wholeSteps; k++) {
+        var kAngle = -Math.PI / 2 + k * ((Math.PI * 2) / 12) * 1.01955;
+        var kr = baseR + (k / 12) * maxSpiralExpand;
+        var nx = cx + Math.cos(kAngle) * kr;
+        var ny = cy + Math.sin(kAngle) * kr;
+
+        ctx.fillStyle = (k === 12) ? '#fb7185' : (k === 0 ? '#34d399' : '#eab308');
+        ctx.beginPath();
+        ctx.arc(nx, ny, k === 12 || k === 0 ? 6 : 4.2, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Note Label
+        var labelR = kr + (k === 12 ? 22 : 17);
+        var lx = cx + Math.cos(kAngle) * labelR;
+        var ly = cy + Math.sin(kAngle) * labelR;
+        ctx.fillStyle = (k === 12) ? '#fda4af' : '#faf6f0';
+        ctx.font = (k === 12 ? '700 ' : '600 ') + '11px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(circleFifthLabels[k], lx, ly);
+      }
+
+      // Highlight the Pythagorean Comma Gap when near step 12
+      if (maxStep > 10.5) {
+        var startX = cx;
+        var startY = cy - baseR;
+        var endAngle12 = -Math.PI / 2 + 12 * ((Math.PI * 2) / 12) * 1.01955;
+        var endR12 = baseR + maxSpiralExpand;
+        var endX12 = cx + Math.cos(endAngle12) * endR12;
+        var endY12 = cy + Math.sin(endAngle12) * endR12;
+
+        ctx.strokeStyle = '#fb7185';
+        ctx.lineWidth = 2.5;
+        ctx.beginPath();
+        ctx.moveTo(startX, startY);
+        ctx.lineTo(endX12, endY12);
+        ctx.stroke();
+      }
+
+      // Center Lissajous / Acoustic Beating Wave inside the Astrolabe
+      if (showBeatingWave) {
+        var innerR = baseR * 0.48;
+        ctx.strokeStyle = 'rgba(234, 179, 8, 0.55)';
+        ctx.lineWidth = 1.6;
+        ctx.beginPath();
+        for (var b = 0; b <= 90; b++) {
+          var u = (b / 90) * 2 - 1;
+          var xWave = cx + u * innerR;
+          var beatEnv = Math.cos(u * Math.PI * 2 + animPhase * 0.5);
+          var carrier = Math.sin(u * Math.PI * 10 - animPhase * 2);
+          var yWave = cy + carrier * beatEnv * (innerR * 0.38);
+          if (b === 0) ctx.moveTo(xWave, yWave);
+          else ctx.lineTo(xWave, yWave);
         }
+        ctx.stroke();
+      }
+    }
 
-        function createCard(container, title, freq, isFinal = false, isPerfectInterval = false) {
-            const card = document.createElement('div');
-            card.className = `p-3 rounded-lg shadow-sm flex items-center justify-between ${isFinal ? 'highlight-card' : 'card'}`;
-            
-            const noteInfo = getNoteFromFrequency(freq);
-            let noteDisplayString = '';
+    function populateNoteSelectors() {
+      noteNamesPT.forEach(function (noteName) {
+        var option = document.createElement('option');
+        option.value = noteName;
+        option.textContent = noteName;
+        baseNoteSelect.appendChild(option);
+      });
 
-            if (isPerfectInterval) {
-                noteDisplayString = `(Nota: <span class="font-semibold">${noteInfo.name}</span>)`;
-            } else {
-                const centsThreshold = 0.1;
-                let deviationString = '';
-                if (noteInfo.cents > centsThreshold) {
-                    deviationString = `. <span class="text-red-500 font-bold">↑</span> ${noteInfo.cents.toFixed(1)} cents`;
-                } else if (noteInfo.cents < -centsThreshold) {
-                    deviationString = `. <span class="text-red-500 font-bold">↓</span> ${Math.abs(noteInfo.cents).toFixed(1)} cents`;
-                }
-                noteDisplayString = `(Próximo de <span class="font-semibold">${noteInfo.name.toLowerCase()}</span>${deviationString})`;
-            }
+      for (var i = 0; i < 9; i++) {
+        var option = document.createElement('option');
+        option.value = i;
+        option.textContent = 'Oitava ' + i;
+        baseOctaveSelect.appendChild(option);
+      }
+      baseNoteSelect.value = 'Dó';
+      baseOctaveSelect.value = '4';
+    }
 
-            const infoDiv = document.createElement('div');
-            infoDiv.className = "flex-grow flex flex-col sm:flex-row sm:items-center sm:gap-x-4";
-            infoDiv.innerHTML = `
-                <div class="w-full sm:w-auto">
-                    <span class="font-semibold">${title}:</span> 
-                    <span class="font-mono">${freq.toFixed(2)} Hz</span>
-                </div>
-                <div class="text-gray-700 text-sm sm:text-base">
-                    ${noteDisplayString}
-                </div>
-            `;
-            
-            const playBtn = document.createElement('button');
-            playBtn.textContent = 'Tocar';
-            playBtn.className = 'btn-play text-sm py-1 px-3 rounded-md flex-shrink-0 ml-2';
-            playBtn.onclick = () => toggleNote(freq, playBtn);
-            
-            card.appendChild(infoDiv);
-            card.appendChild(playBtn);
-            container.appendChild(card);
-        }
+    // Master Animation & Scroll-Synchronized Loop
+    function tick() {
+      if (!reduceMotion) {
+        animPhase += 0.04;
+      } else {
+        animPhase = 0.8;
+      }
 
-        function normalizeFrequency(freq, base) {
-            let normalizedFreq = freq;
-            while (normalizedFreq >= base * 2) {
-                normalizedFreq /= 2;
-            }
-            while (normalizedFreq < base) {
-                normalizedFreq *= 2;
-            }
-            return normalizedFreq;
-        }
+      var heroP = parseFloat(heroSection.style.getPropertyValue('--sc-p')) || 0;
+      var spiralP = parseFloat(spiralSection.style.getPropertyValue('--sc-p')) || 0;
 
-        function runSimulation() {
-            const synth = getSynth();
-            const selectedNote = baseNoteSelect.value;
-            const selectedOctave = parseInt(baseOctaveSelect.value, 10);
-            const baseFreq = getFrequencyFromNote(selectedNote, selectedOctave);
-            const normalize = normalizeCheckbox.checked;
+      // 1. Hero Spiral Animation (winds from 3 fifths to 12 fifths on scroll)
+      var heroStepFloat = 3 + heroP * 9;
+      var heroStepInt = Math.min(12, Math.round(heroStepFloat));
+      if (heroLiveStep) {
+        heroLiveStep.textContent = 'Quinta #' + heroStepInt + ' (' + circleFifthLabels[heroStepInt] + ')';
+      }
+      if (heroLiveRatio) {
+        var hCents = (heroStepInt * 1.955).toFixed(2).replace('.', ',');
+        heroLiveRatio.textContent = 'Desvio acumulado: +' + hCents + ' cents sobre o círculo';
+      }
+      if (heroVerifyStage) {
+        heroVerifyStage.setAttribute('data-sc-verify-state', 'hero:step' + heroStepInt);
+      }
+      drawPythagoreanSpiral(heroCanvas, heroStepFloat, true);
 
-            synth.releaseAll();
-            activeNotes = {};
+      // 2. Act 3 Peak Spiral Race (0 to 12 fifths)
+      var raceStepFloat = spiralP * 12;
+      var raceStepInt = Math.min(12, Math.max(0, Math.round(raceStepFloat)));
+      var raceCents = (raceStepInt * 1.955000865).toFixed(2).replace('.', ',');
+      if (spiralNoteBadge) spiralNoteBadge.textContent = circleFifthLabels[raceStepInt];
+      if (spiralCentsBadge) spiralCentsBadge.textContent = '+' + raceCents + ' cents';
+      if (spiralVerifyStage) {
+        spiralVerifyStage.setAttribute('data-sc-verify-state', 'spiral:step' + raceStepInt);
+      }
+      drawPythagoreanSpiral(spiralCanvas, Math.max(0.5, raceStepFloat), true);
 
-            octavesContainer.innerHTML = '';
-            fifthsContainer.innerHTML = '';
+      // Update active chapter in right-edge dial
+      var maxScroll = Math.max(1, document.body.scrollHeight - window.innerHeight);
+      var sFrac = window.scrollY / maxScroll;
+      var activeChapter = 0;
+      if (sFrac > 0.78) activeChapter = 4;
+      else if (sFrac > 0.62) activeChapter = 3;
+      else if (sFrac > 0.36) activeChapter = 2;
+      else if (sFrac > 0.14) activeChapter = 1;
+      dialButtons.forEach(function (b, idx) {
+        b.classList.toggle('is-active', idx === activeChapter);
+      });
 
-            for (let i = 0; i <= 7; i++) {
-                let freq = baseFreq * Math.pow(2, i);
-                if (i === 7) rawFinalOctaveFreq = freq;
-                const displayFreq = normalize ? normalizeFrequency(freq, baseFreq) : freq;
-                createCard(octavesContainer, `Oitava ${i}`, displayFreq, i === 7, true);
-            }
+      requestAnimationFrame(tick);
+    }
 
-            for (let i = 0; i <= 12; i++) {
-                let freq = baseFreq * Math.pow(1.5, i);
-                if (i === 12) rawFinalFifthFreq = freq;
-                const displayFreq = normalize ? normalizeFrequency(freq, baseFreq) : freq;
-                const isPerfect = (i === 0);
-                createCard(fifthsContainer, `Quinta ${i}`, displayFreq, i === 12, isPerfect);
-            }
+    populateNoteSelectors();
+    runSimulation();
+    baseNoteSelect.addEventListener('change', runSimulation);
+    baseOctaveSelect.addEventListener('change', runSimulation);
+    normalizeCheckbox.addEventListener('change', runSimulation);
+    playComparisonButton.addEventListener('click', playRawComparison);
+    playNormalizedButton.addEventListener('click', playNormalizedComparison);
+    if (stopAllBtn) stopAllBtn.addEventListener('click', stopAllActiveNotes);
 
-            const commaHz = rawFinalFifthFreq - rawFinalOctaveFreq;
-            const commaCents = 1200 * Math.log2(rawFinalFifthFreq / rawFinalOctaveFreq);
-            const pythagoreanCommaInCents = 23.46;
-            const commaInCommas = commaCents / pythagoreanCommaInCents;
-
-            octaveResultEl.textContent = `${rawFinalOctaveFreq.toFixed(2)} Hz`;
-            fifthResultEl.textContent = `${rawFinalFifthFreq.toFixed(2)} Hz`;
-            commaResultHzEl.textContent = `${commaHz.toFixed(2)} Hz`;
-            commaResultCentsEl.textContent = `${commaCents.toFixed(2)} Cents`;
-            commaResultCommasEl.textContent = `~${commaInCommas.toFixed(2)}`;
-
-            resultsSection.classList.remove('hidden');
-            comparisonSection.classList.remove('hidden');
-        }
-
-        function playComparison() {
-            const synth = getSynth();
-            synth.releaseAll();
-            document.querySelectorAll('.btn-stop').forEach(btn => {
-                btn.textContent = 'Tocar';
-                btn.classList.remove('btn-stop');
-                btn.classList.add('btn-play');
-            });
-            activeNotes = {};
-            
-            const now = Tone.now();
-            // Play the raw, potentially inaudible versions
-            synth.triggerAttackRelease(rawFinalOctaveFreq, "8n", now);
-            synth.triggerAttackRelease(rawFinalFifthFreq, "8n", now + 0.5);
-        }
-
-        function populateNoteSelectors() {
-            noteNamesPT.forEach(noteName => {
-                const option = document.createElement('option');
-                option.value = noteName;
-                option.textContent = noteName;
-                baseNoteSelect.appendChild(option);
-            });
-
-            for (let i = 0; i < 9; i++) {
-                const option = document.createElement('option');
-                option.value = i;
-                option.textContent = i;
-                baseOctaveSelect.appendChild(option);
-            }
-            baseNoteSelect.value = 'Dó';
-            baseOctaveSelect.value = '4';
-        }
-
-        // Event Listeners
-        document.addEventListener('DOMContentLoaded', () => {
-            populateNoteSelectors();
-            runSimulation();
-        });
-        baseNoteSelect.addEventListener('change', runSimulation);
-        baseOctaveSelect.addEventListener('change', runSimulation);
-        normalizeCheckbox.addEventListener('change', runSimulation);
-        playComparisonButton.addEventListener('click', playComparison);
-        accordionToggle.addEventListener('click', () => {
-            accordionContent.classList.toggle('open');
-            accordionIcon.classList.toggle('rotate-180');
-        });
-    </script>
-
+    requestAnimationFrame(tick);
+  })();
+</script>
 </body>
 </html>
