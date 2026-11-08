@@ -38,6 +38,7 @@
       font-family: var(--font-text);
       line-height: 1.5;
       min-height: 100vh;
+      overflow-x: hidden;
     }
 
     .topbar {
@@ -493,6 +494,9 @@
       font-size: 0.76rem;
       font-weight: 600;
       cursor: pointer;
+      max-width: 100%;
+      white-space: normal;
+      text-align: center;
       transition: all 140ms ease;
     }
 
@@ -500,6 +504,61 @@
       background: #2e241e;
       border-color: var(--gold);
       color: #fde047;
+    }
+
+    .preset-controls-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 0.65rem;
+      flex-wrap: wrap;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    .preset-field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      min-width: 0;
+      max-width: 100%;
+      flex: 1 1 220px;
+    }
+
+    .preset-select {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      background: #100d0b;
+      color: var(--ink);
+      border: 1px solid rgba(234, 179, 8, 0.55);
+      border-radius: 6px;
+      padding: 0.45rem 0.65rem;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      cursor: pointer;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .preset-apply-btn {
+      background: rgba(52, 211, 153, 0.2);
+      border-color: var(--jade);
+      color: #a7f3d0;
+      font-weight: 700;
+      flex: 1 1 auto;
+      max-width: 100%;
+      text-align: center;
+      justify-content: center;
+    }
+
+    @media (min-width: 900px) {
+      .preset-apply-btn {
+        flex: 0 0 auto;
+      }
     }
 
     .sounding-chips {
@@ -614,9 +673,9 @@
     <!-- =======================================================================
          AUTOMATIC TUNING SYSTEM PRESET SELECTOR (10 SYSTEMS + ROOT NOTE)
          ======================================================================= -->
-    <section style="background: linear-gradient(135deg, #1b1511 0%, #111815 100%); border: 1px solid rgba(234, 179, 8, 0.45); border-radius: var(--radius-md); padding: 0.9rem 1.15rem; margin-bottom: 1.2rem; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);" aria-label="Seletor de Sistema de Afinação Automática">
-      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.85rem;">
-        <div style="display: flex; flex-direction: column; gap: 0.15rem;">
+    <section style="background: linear-gradient(135deg, #1b1511 0%, #111815 100%); border: 1px solid rgba(234, 179, 8, 0.45); border-radius: 12px; padding: 0.9rem 1.15rem; margin-bottom: 1.2rem; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35); max-width: 100%; overflow: hidden;" aria-label="Seletor de Sistema de Afinação Automática">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.85rem; min-width: 0; max-width: 100%;">
+        <div style="display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; max-width: 100%;">
           <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #6ee7b7; font-weight: 700; text-transform: uppercase;">
             🎛️ Afinação Automática do Teclado (Opcional · Para Comparar Sistemas e Ouvir na Demonstração)
           </span>
@@ -625,10 +684,10 @@
           </span>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
-          <label style="display: flex; flex-direction: column; gap: 0.2rem; font-family: var(--font-mono); font-size: 0.7rem; color: #fde047;">
+        <div class="preset-controls-row">
+          <label class="preset-field" style="color: #fde047;">
             <span>SISTEMA DE AFINAÇÃO (10 OPÇÕES):</span>
-            <select id="presetSystemSelect" style="background: #100d0b; color: var(--ink); border: 1px solid rgba(234, 179, 8, 0.55); border-radius: 6px; padding: 0.45rem 0.65rem; font-family: var(--font-mono); font-size: 0.76rem; cursor: pointer;">
+            <select id="presetSystemSelect" class="preset-select">
               <option value="random_challenge">🎲 Desafio Manual (Apenas Dó4 afinado · Demais desafinadas)</option>
               <option value="equal">1. Temperamento Igual (Moderno · 12-TET · Sem Lobo)</option>
               <option value="pythagorean_historic">2. Pitagórico Histórico (Quintas 3:2 · Lobo em Sol#–Mib)</option>
@@ -643,9 +702,9 @@
             </select>
           </label>
 
-          <label id="presetRootNoteWrapper" style="display: flex; flex-direction: column; gap: 0.2rem; font-family: var(--font-mono); font-size: 0.7rem; color: #7dd3fc;">
+          <label id="presetRootNoteWrapper" class="preset-field" style="color: #7dd3fc;">
             <span>NOTA PADRÃO (TÔNICA BASE):</span>
-            <select id="presetRootNoteSelect" disabled style="background: #100d0b; color: var(--ink); border: 1px solid rgba(56, 189, 248, 0.55); border-radius: 6px; padding: 0.45rem 0.65rem; font-family: var(--font-mono); font-size: 0.76rem; cursor: pointer;">
+            <select id="presetRootNoteSelect" class="preset-select" disabled style="border-color: rgba(56, 189, 248, 0.55);">
               <option value="0">Dó (C)</option>
               <option value="1">Dó# / Ré♭ (C# / Db)</option>
               <option value="2">Ré (D)</option>
@@ -661,7 +720,7 @@
             </select>
           </label>
 
-          <button type="button" id="applyPresetTuningBtn" class="btn" style="margin-top: 1.05rem; background: rgba(52, 211, 153, 0.2); border-color: var(--jade); color: #a7f3d0; font-weight: 700;">
+          <button type="button" id="applyPresetTuningBtn" class="btn preset-apply-btn">
             ✨ Aplicar Afinação no Teclado
           </button>
         </div>

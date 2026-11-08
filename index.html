@@ -88,6 +88,8 @@
     .cta-primary {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
+      text-align: center;
       gap: 0.5rem;
       padding: 0.52rem 1.05rem;
       border-radius: var(--sc-r-full);
@@ -100,6 +102,11 @@
       border: 1px solid rgba(255, 255, 255, 0.22);
       cursor: pointer;
       box-shadow: var(--sc-e1);
+      max-width: 100%;
+      box-sizing: border-box;
+      white-space: normal;
+      overflow-wrap: anywhere;
+      line-height: 1.35;
       transition: transform var(--sc-d-fast) var(--sc-ease-out), background-color var(--sc-d-fast) var(--sc-ease-out);
     }
 
@@ -816,9 +823,6 @@
       <span>Simulação da Coma Pitagórica</span>
     </a>
     <span class="masthead__meta">12 Quintas (3/2)¹² = 129,75 · 7 Oitavas (2/1)⁷ = 128 · Diferença: +23,46 Cents</span>
-    <div>
-      <a href="#simulador" class="cta-primary" id="nav-cta-btn">Ouvir a Coma</a>
-    </div>
   </header>
 
   <!-- Right-Edge Vertical Chapter Dial -->
@@ -1201,11 +1205,11 @@
                 pura sem batimentos!
               </p>
             </div>
-            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-              <a href="afinar-cravo.html" class="cta-primary">
+            <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; width: 100%; max-width: 100%;">
+              <a href="afinar-cravo.html" class="cta-primary" style="flex: 1 1 auto; max-width: 100%;">
                 🎹 Abrir Sub-App: Afinador de Cravo (3 Oitavas) →
               </a>
-              <a href="#atividade-cravo" class="monochord-btn" style="text-decoration: none;">
+              <a href="#atividade-cravo" class="monochord-btn" style="text-decoration: none; text-align: center; flex: 1 1 auto; max-width: 100%;">
                 ↓ Ver no Final do App
               </a>
             </div>
@@ -1536,9 +1540,9 @@
 
         <!-- Practical Exploration Activity Card at the End of the App (Link to Sub-App) -->
         <div id="atividade-cravo"
-          style="margin-top: var(--sc-7); padding: var(--sc-6); background: linear-gradient(135deg, #1b1611 0%, #111815 100%); border: 1px solid rgba(234, 179, 8, 0.55); border-left: 5px solid var(--gold-fifth); border-radius: var(--sc-r-md); box-shadow: var(--sc-e2); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem;">
-          <div style="max-width: 64ch;">
-            <span class="faq-badge">Atividade de Exploração Prática · Sub-Aplicativo Interativo (3 Oitavas · Onda
+          style="margin-top: var(--sc-7); padding: clamp(1rem, 3vw, var(--sc-6)); background: linear-gradient(135deg, #1b1611 0%, #111815 100%); border: 1px solid rgba(234, 179, 8, 0.55); border-left: 5px solid var(--gold-fifth); border-radius: var(--sc-r-md); box-shadow: var(--sc-e2); display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.25rem; max-width: 100%; box-sizing: border-box;">
+          <div style="max-width: 64ch; min-width: 0; flex: 1 1 260px;">
+            <span class="faq-badge" style="white-space: normal; line-height: 1.35;">Atividade de Exploração Prática · Sub-Aplicativo Interativo (3 Oitavas · Onda
               Senoidal)</span>
             <h3 class="sc-display" style="font-size: var(--sc-t-xl); margin: 0.45rem 0 0.3rem 0;">
               Oficina Prática: Afine você mesmo um "Cravo" de 3 Oitavas
@@ -1554,7 +1558,7 @@
             </p>
           </div>
           <a href="afinar-cravo.html" class="cta-primary"
-            style="padding: 0.85rem 1.4rem; font-size: var(--sc-t-sm); flex-shrink: 0;">
+            style="padding: 0.85rem 1.2rem; font-size: var(--sc-t-sm); flex: 1 1 auto; max-width: 100%; text-align: center; justify-content: center;">
             🎹 Abrir Sub-Aplicativo: Afinador de Cravo (3 Oitavas) →
           </a>
         </div>
