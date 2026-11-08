@@ -1718,21 +1718,21 @@
       function buildDemonstrationEvents() {
         var events = [];
 
-        // Part 1: 13 Major Triads (300ms each)
+        // Part 1: 13 Major Triads (500ms each)
         var triads = [
-          { label: 'Tríade de Dó Maior (C)', notes: ['Dó4', 'Mi4', 'Sol4'], ms: 300 },
-          { label: 'Tríade de Fá Maior (F)', notes: ['Fá3', 'Lá3', 'Dó4'], ms: 300 },
-          { label: 'Tríade de Si♭ Maior (Bb)', notes: ['Lá#3', 'Ré4', 'Fá4'], ms: 300 },
-          { label: 'Tríade de Mi♭ Maior (Eb)', notes: ['Ré#4', 'Sol4', 'Lá#4'], ms: 300 },
-          { label: 'Tríade de Lá♭ Maior (Ab)', notes: ['Sol#3', 'Dó4', 'Ré#4'], ms: 300 },
-          { label: 'Tríade de Dó# Maior (C#)', notes: ['Dó#4', 'Fá4', 'Sol#4'], ms: 300 },
-          { label: 'Tríade de Fá# Maior (F#)', notes: ['Fá#3', 'Lá#3', 'Dó#4'], ms: 300 },
-          { label: 'Tríade de Si Maior (B)', notes: ['Si3', 'Ré#4', 'Fá#4'], ms: 300 },
-          { label: 'Tríade de Mi Maior (E)', notes: ['Mi4', 'Sol#4', 'Si4'], ms: 300 },
-          { label: 'Tríade de Lá Maior (A)', notes: ['Lá3', 'Dó#4', 'Mi4'], ms: 300 },
-          { label: 'Tríade de Ré Maior (D)', notes: ['Ré4', 'Fá#4', 'Lá4'], ms: 300 },
-          { label: 'Tríade de Sol Maior (G)', notes: ['Sol3', 'Si3', 'Ré4'], ms: 300 },
-          { label: 'Tríade de Dó Maior (C)', notes: ['Dó4', 'Mi4', 'Sol4'], ms: 420 }
+          { label: 'Tríade de Dó Maior (C)', notes: ['Dó4', 'Mi4', 'Sol4'], ms: 500 },
+          { label: 'Tríade de Fá Maior (F)', notes: ['Fá3', 'Lá3', 'Dó4'], ms: 500 },
+          { label: 'Tríade de Si♭ Maior (Bb)', notes: ['Lá#3', 'Ré4', 'Fá4'], ms: 500 },
+          { label: 'Tríade de Mi♭ Maior (Eb)', notes: ['Ré#4', 'Sol4', 'Lá#4'], ms: 500 },
+          { label: 'Tríade de Lá♭ Maior (Ab)', notes: ['Sol#3', 'Dó4', 'Ré#4'], ms: 500 },
+          { label: 'Tríade de Dó# Maior (C#)', notes: ['Dó#4', 'Fá4', 'Sol#4'], ms: 500 },
+          { label: 'Tríade de Fá# Maior (F#)', notes: ['Fá#3', 'Lá#3', 'Dó#4'], ms: 500 },
+          { label: 'Tríade de Si Maior (B)', notes: ['Si3', 'Ré#4', 'Fá#4'], ms: 500 },
+          { label: 'Tríade de Mi Maior (E)', notes: ['Mi4', 'Sol#4', 'Si4'], ms: 500 },
+          { label: 'Tríade de Lá Maior (A)', notes: ['Lá3', 'Dó#4', 'Mi4'], ms: 500 },
+          { label: 'Tríade de Ré Maior (D)', notes: ['Ré4', 'Fá#4', 'Lá4'], ms: 500 },
+          { label: 'Tríade de Sol Maior (G)', notes: ['Sol3', 'Si3', 'Ré4'], ms: 500 },
+          { label: 'Tríade de Dó Maior (C)', notes: ['Dó4', 'Mi4', 'Sol4'], ms: 600 }
         ];
 
         triads.forEach(function (t, idx) {
@@ -1741,16 +1741,16 @@
             notes: t.notes,
             melodyNote: null,
             durationMs: t.ms,
-            gapMs: 25
+            gapMs: 35
           });
         });
 
         // Short pause before Happy Birthday in Bb Major (Si♭ Maior)
         events.push({
-          banner: '🎂 Preparando: "Happy Birthday to You" em Si♭ Maior (melodia aguda iniciando em Fá4)...',
+          banner: '🎂 1/4 · Preparando: "Happy Birthday to You" em Si♭ Maior (melodia iniciando em Fá4)...',
           notes: [],
           melodyNote: null,
-          durationMs: 380,
+          durationMs: 420,
           gapMs: 0
         });
 
@@ -1793,13 +1793,13 @@
           { lyric: 'birth-', chord: 'Si♭ Maior (Bb)', accomp: ['Fá3', 'Lá#3', 'Ré4'], melody: 'Ré5', ms: b },
           { lyric: 'day', chord: 'Si♭ Maior (Bb)', accomp: ['Fá3', 'Lá#3', 'Ré4'], melody: 'Lá#4', ms: b },
           { lyric: 'to', chord: 'Fá Maior (F)', accomp: ['Fá3', 'Lá3', 'Dó4'], melody: 'Dó5', ms: b },
-          { lyric: 'you! (Fim Si♭ Maior)', chord: 'Si♭ Maior (Bb)', accomp: ['Fá3', 'Lá#3', 'Ré4'], melody: 'Lá#4', ms: Math.round(b * 2.3) }
+          { lyric: 'you! (Fim Si♭ Maior)', chord: 'Si♭ Maior (Bb)', accomp: ['Fá3', 'Lá#3', 'Ré4'], melody: 'Lá#4', ms: Math.round(b * 2.2) }
         ];
 
         hbBbMajor.forEach(function (step) {
           var combined = step.accomp.concat([step.melody]);
           events.push({
-            banner: '🎂 Happy Birthday em Si♭ Maior (iniciando em Fá4) · Melodia: ' + step.melody + ' · Acorde: ' + step.chord,
+            banner: '🎂 1/4 · Happy Birthday em Si♭ Maior (iniciando em Fá4) · Melodia: ' + step.melody + ' · Acorde: ' + step.chord,
             notes: combined,
             melodyNote: step.melody,
             durationMs: step.ms,
@@ -1809,7 +1809,7 @@
 
         // Short pause before Happy Birthday in C Major (Dó Maior)
         events.push({
-          banner: '🎂 Agora em Dó Maior (melodia aguda iniciando em Sol4)...',
+          banner: '🎂 2/4 · Agora em Dó Maior (melodia iniciando em Sol4)...',
           notes: [],
           melodyNote: null,
           durationMs: 450,
@@ -1854,13 +1854,135 @@
           { lyric: 'birth-', chord: 'Dó Maior (C)', accomp: ['Dó3', 'Mi3', 'Sol3'], melody: 'Mi5', ms: b },
           { lyric: 'day', chord: 'Dó Maior (C)', accomp: ['Dó3', 'Mi3', 'Sol3'], melody: 'Dó5', ms: b },
           { lyric: 'to', chord: 'Sol Maior (G)', accomp: ['Sol3', 'Si3', 'Ré4'], melody: 'Ré5', ms: b },
-          { lyric: 'you! (Fim Dó Maior)', chord: 'Dó Maior (C)', accomp: ['Dó3', 'Mi3', 'Sol3'], melody: 'Dó5', ms: Math.round(b * 2.5) }
+          { lyric: 'you! (Fim Dó Maior)', chord: 'Dó Maior (C)', accomp: ['Dó3', 'Mi3', 'Sol3'], melody: 'Dó5', ms: Math.round(b * 2.2) }
         ];
 
         hbCMajor.forEach(function (step) {
           var combined = step.accomp.concat([step.melody]);
           events.push({
-            banner: '🎂 Happy Birthday em Dó Maior (iniciando em Sol4) · Melodia: ' + step.melody + ' · Acorde: ' + step.chord,
+            banner: '🎂 2/4 · Happy Birthday em Dó Maior (iniciando em Sol4) · Melodia: ' + step.melody + ' · Acorde: ' + step.chord,
+            notes: combined,
+            melodyNote: step.melody,
+            durationMs: step.ms,
+            gapMs: 32
+          });
+        });
+
+        // Short pause before Happy Birthday in Eb Major (Mi♭ Maior)
+        events.push({
+          banner: '🎂 3/4 · Agora em Mi♭ Maior (melodia iniciando em Si♭4 / Lá#4)...',
+          notes: [],
+          melodyNote: null,
+          durationMs: 450,
+          gapMs: 0
+        });
+
+        // Part 4: Happy Birthday to You in Eb Major (Mi♭ Maior)
+        // Melody in Octave 4/5 (starting on Lá#4 / Sib4 up to Lá#5 / Sib5), Accompaniment in Octave 3:
+        // Eb Major (I) = ['Ré#3', 'Sol3', 'Lá#3']
+        // Bb Major (V) = ['Fá3', 'Lá#3', 'Ré4']
+        // Ab Major (IV)= ['Sol#3', 'Dó4', 'Ré#4']
+        var hbEbMajor = [
+          // "Hap-py" (pickup on Lá#4 = Sib4)
+          { lyric: 'Hap-', chord: 'Anacruse (Si♭4)', accomp: [], melody: 'Lá#4', ms: Math.round(b * 0.72) },
+          { lyric: 'py', chord: 'Anacruse (Si♭4)', accomp: [], melody: 'Lá#4', ms: Math.round(b * 0.28) },
+          // "birth-day to you" (Eb Major -> Bb Major)
+          { lyric: 'birth-', chord: 'Mi♭ Maior (Eb)', accomp: ['Ré#3', 'Sol3', 'Lá#3'], melody: 'Dó5', ms: b },
+          { lyric: 'day', chord: 'Mi♭ Maior (Eb)', accomp: ['Ré#3', 'Sol3', 'Lá#3'], melody: 'Lá#4', ms: b },
+          { lyric: 'to', chord: 'Mi♭ Maior (Eb)', accomp: ['Ré#3', 'Sol3', 'Lá#3'], melody: 'Ré#5', ms: b },
+          { lyric: 'you...', chord: 'Si♭ Maior (Bb)', accomp: ['Fá3', 'Lá#3', 'Ré4'], melody: 'Ré5', ms: b * 2 },
+          // "Hap-py" (pickup on Lá#4)
+          { lyric: 'Hap-', chord: 'Si♭ Maior (Bb)', accomp: [], melody: 'Lá#4', ms: Math.round(b * 0.72) },
+          { lyric: 'py', chord: 'Si♭ Maior (Bb)', accomp: [], melody: 'Lá#4', ms: Math.round(b * 0.28) },
+          // "birth-day to you" (Bb Major -> Eb Major)
+          { lyric: 'birth-', chord: 'Si♭ Maior (Bb)', accomp: ['Fá3', 'Lá#3', 'Ré4'], melody: 'Dó5', ms: b },
+          { lyric: 'day', chord: 'Si♭ Maior (Bb)', accomp: ['Fá3', 'Lá#3', 'Ré4'], melody: 'Lá#4', ms: b },
+          { lyric: 'to', chord: 'Si♭ Maior (Bb)', accomp: ['Fá3', 'Lá#3', 'Ré4'], melody: 'Fá5', ms: b },
+          { lyric: 'you...', chord: 'Mi♭ Maior (Eb)', accomp: ['Ré#3', 'Sol3', 'Lá#3'], melody: 'Ré#5', ms: b * 2 },
+          // "Hap-py" (pickup on Lá#4)
+          { lyric: 'Hap-', chord: 'Mi♭ Maior (Eb)', accomp: [], melody: 'Lá#4', ms: Math.round(b * 0.72) },
+          { lyric: 'py', chord: 'Mi♭ Maior (Eb)', accomp: [], melody: 'Lá#4', ms: Math.round(b * 0.28) },
+          // "birth-day dear..." (Eb Major -> Ab Major)
+          { lyric: 'birth-', chord: 'Mi♭ Maior (Eb)', accomp: ['Ré#3', 'Sol3', 'Lá#3'], melody: 'Lá#5', ms: b },
+          { lyric: 'day', chord: 'Mi♭ Maior (Eb)', accomp: ['Ré#3', 'Sol3', 'Lá#3'], melody: 'Sol5', ms: b },
+          { lyric: 'dear', chord: 'Mi♭ Maior (Eb)', accomp: ['Ré#3', 'Sol3', 'Lá#3'], melody: 'Ré#5', ms: b },
+          { lyric: 'friend...', chord: 'Lá♭ Maior (Ab)', accomp: ['Sol#3', 'Dó4', 'Ré#4'], melody: 'Ré5', ms: b },
+          { lyric: '...', chord: 'Lá♭ Maior (Ab)', accomp: ['Sol#3', 'Dó4', 'Ré#4'], melody: 'Dó5', ms: b },
+          // "Hap-py" (pickup on Láb5 = Sol#5)
+          { lyric: 'Hap-', chord: 'Lá♭ (Ab)', accomp: [], melody: 'Sol#5', ms: Math.round(b * 0.72) },
+          { lyric: 'py', chord: 'Lá♭ (Ab)', accomp: [], melody: 'Sol#5', ms: Math.round(b * 0.28) },
+          // "birth-day to you!" (Eb Major -> Bb Major -> Eb Major)
+          { lyric: 'birth-', chord: 'Mi♭ Maior (Eb)', accomp: ['Ré#3', 'Sol3', 'Lá#3'], melody: 'Sol5', ms: b },
+          { lyric: 'day', chord: 'Mi♭ Maior (Eb)', accomp: ['Ré#3', 'Sol3', 'Lá#3'], melody: 'Ré#5', ms: b },
+          { lyric: 'to', chord: 'Si♭ Maior (Bb)', accomp: ['Fá3', 'Lá#3', 'Ré4'], melody: 'Fá5', ms: b },
+          { lyric: 'you! (Fim Mi♭ Maior)', chord: 'Mi♭ Maior (Eb)', accomp: ['Ré#3', 'Sol3', 'Lá#3'], melody: 'Ré#5', ms: Math.round(b * 2.2) }
+        ];
+
+        hbEbMajor.forEach(function (step) {
+          var combined = step.accomp.concat([step.melody]);
+          events.push({
+            banner: '🎂 3/4 · Happy Birthday em Mi♭ Maior (iniciando em Si♭4) · Melodia: ' + step.melody + ' · Acorde: ' + step.chord,
+            notes: combined,
+            melodyNote: step.melody,
+            durationMs: step.ms,
+            gapMs: 32
+          });
+        });
+
+        // Short pause before Happy Birthday in B Major (Si Maior)
+        events.push({
+          banner: '🎂 4/4 · Agora em Si Maior (melodia iniciando em Fá#4)...',
+          notes: [],
+          melodyNote: null,
+          durationMs: 450,
+          gapMs: 0
+        });
+
+        // Part 5: Happy Birthday to You in B Major (Si Maior)
+        // Melody in Octave 4/5 (starting on Fá#4 up to Fá#5), Accompaniment in Octave 3:
+        // B Major (I)  = ['Fá#3', 'Si3', 'Ré#4']
+        // F# Major (V) = ['Fá#3', 'Lá#3', 'Dó#4']
+        // E Major (IV) = ['Mi3', 'Sol#3', 'Si3']
+        var hbBMajor = [
+          // "Hap-py" (pickup on Fá#4)
+          { lyric: 'Hap-', chord: 'Anacruse (Fá#4)', accomp: [], melody: 'Fá#4', ms: Math.round(b * 0.72) },
+          { lyric: 'py', chord: 'Anacruse (Fá#4)', accomp: [], melody: 'Fá#4', ms: Math.round(b * 0.28) },
+          // "birth-day to you" (B Major -> F# Major)
+          { lyric: 'birth-', chord: 'Si Maior (B)', accomp: ['Fá#3', 'Si3', 'Ré#4'], melody: 'Sol#4', ms: b },
+          { lyric: 'day', chord: 'Si Maior (B)', accomp: ['Fá#3', 'Si3', 'Ré#4'], melody: 'Fá#4', ms: b },
+          { lyric: 'to', chord: 'Si Maior (B)', accomp: ['Fá#3', 'Si3', 'Ré#4'], melody: 'Si4', ms: b },
+          { lyric: 'you...', chord: 'Fá# Maior (F#)', accomp: ['Fá#3', 'Lá#3', 'Dó#4'], melody: 'Lá#4', ms: b * 2 },
+          // "Hap-py" (pickup on Fá#4)
+          { lyric: 'Hap-', chord: 'Fá# Maior (F#)', accomp: [], melody: 'Fá#4', ms: Math.round(b * 0.72) },
+          { lyric: 'py', chord: 'Fá# Maior (F#)', accomp: [], melody: 'Fá#4', ms: Math.round(b * 0.28) },
+          // "birth-day to you" (F# Major -> B Major)
+          { lyric: 'birth-', chord: 'Fá# Maior (F#)', accomp: ['Fá#3', 'Lá#3', 'Dó#4'], melody: 'Sol#4', ms: b },
+          { lyric: 'day', chord: 'Fá# Maior (F#)', accomp: ['Fá#3', 'Lá#3', 'Dó#4'], melody: 'Fá#4', ms: b },
+          { lyric: 'to', chord: 'Fá# Maior (F#)', accomp: ['Fá#3', 'Lá#3', 'Dó#4'], melody: 'Dó#5', ms: b },
+          { lyric: 'you...', chord: 'Si Maior (B)', accomp: ['Fá#3', 'Si3', 'Ré#4'], melody: 'Si4', ms: b * 2 },
+          // "Hap-py" (pickup on Fá#4)
+          { lyric: 'Hap-', chord: 'Si Maior (B)', accomp: [], melody: 'Fá#4', ms: Math.round(b * 0.72) },
+          { lyric: 'py', chord: 'Si Maior (B)', accomp: [], melody: 'Fá#4', ms: Math.round(b * 0.28) },
+          // "birth-day dear..." (B Major -> E Major)
+          { lyric: 'birth-', chord: 'Si Maior (B)', accomp: ['Fá#3', 'Si3', 'Ré#4'], melody: 'Fá#5', ms: b },
+          { lyric: 'day', chord: 'Si Maior (B)', accomp: ['Fá#3', 'Si3', 'Ré#4'], melody: 'Ré#5', ms: b },
+          { lyric: 'dear', chord: 'Si Maior (B)', accomp: ['Fá#3', 'Si3', 'Ré#4'], melody: 'Si4', ms: b },
+          { lyric: 'friend...', chord: 'Mi Maior (E)', accomp: ['Mi3', 'Sol#3', 'Si3'], melody: 'Lá#4', ms: b },
+          { lyric: '...', chord: 'Mi Maior (E)', accomp: ['Mi3', 'Sol#3', 'Si3'], melody: 'Sol#4', ms: b },
+          // "Hap-py" (pickup on Mi5)
+          { lyric: 'Hap-', chord: 'Mi (E)', accomp: [], melody: 'Mi5', ms: Math.round(b * 0.72) },
+          { lyric: 'py', chord: 'Mi (E)', accomp: [], melody: 'Mi5', ms: Math.round(b * 0.28) },
+          // "birth-day to you!" (B Major -> F# Major -> B Major)
+          { lyric: 'birth-', chord: 'Si Maior (B)', accomp: ['Fá#3', 'Si3', 'Ré#4'], melody: 'Ré#5', ms: b },
+          { lyric: 'day', chord: 'Si Maior (B)', accomp: ['Fá#3', 'Si3', 'Ré#4'], melody: 'Si4', ms: b },
+          { lyric: 'to', chord: 'Fá# Maior (F#)', accomp: ['Fá#3', 'Lá#3', 'Dó#4'], melody: 'Dó#5', ms: b },
+          { lyric: 'you! (Fim Si Maior)', chord: 'Si Maior (B)', accomp: ['Fá#3', 'Si3', 'Ré#4'], melody: 'Si4', ms: Math.round(b * 2.5) }
+        ];
+
+        hbBMajor.forEach(function (step) {
+          var combined = step.accomp.concat([step.melody]);
+          events.push({
+            banner: '🎂 4/4 · Happy Birthday em Si Maior (iniciando em Fá#4) · Melodia: ' + step.melody + ' · Acorde: ' + step.chord,
             notes: combined,
             melodyNote: step.melody,
             durationMs: step.ms,
