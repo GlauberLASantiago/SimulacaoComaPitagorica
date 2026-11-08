@@ -699,6 +699,7 @@
               <option value="kirnberger_iii">8. Bom Temperamento: Kirnberger III (1779 · Aluno de Bach)</option>
               <option value="vallotti">9. Bom Temperamento: Vallotti (1754 · 6 Quintas de 1/6 de Coma)</option>
               <option value="young_ii">10. Bom Temperamento: Thomas Young II (1800 · Clássico)</option>
+              <option value="custom_loaded" disabled style="display: none;">✨ Afinação Personalizada Ativa</option>
             </select>
           </label>
 
@@ -729,6 +730,69 @@
       <div id="presetSystemDescription" style="margin-top: 0.6rem; padding-top: 0.5rem; border-top: 1px solid rgba(250, 246, 240, 0.1); font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-soft);">
         💡 <strong>Modo atual: Desafio Manual (Padrão).</strong> Apenas o <strong>Dó4 (261,63 Hz)</strong> vem afinado e as outras 35 teclas estão desafinadas aleatoriamente. Se quiser ouvir o cravo inteiro afinado automaticamente em qualquer um dos 10 sistemas históricos, selecione acima!
       </div>
+    </section>
+
+    <!-- =======================================================================
+         CUSTOM TUNINGS (SALVAR E ABRIR AFINAÇÃO PERSONALIZADA)
+         ======================================================================= -->
+    <section style="background: linear-gradient(135deg, #15181a 0%, #0d1216 100%); border: 1px solid rgba(56, 189, 248, 0.45); border-radius: 12px; padding: 0.9rem 1.15rem; margin-bottom: 1.2rem; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35); max-width: 100%; box-sizing: border-box;" aria-label="Salvar e Abrir Afinações Personalizadas">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+        <div style="display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; max-width: 100%;">
+          <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #7dd3fc; font-weight: 700; text-transform: uppercase;">
+            💾 Afinações Personalizadas (Salvar &amp; Abrir)
+          </span>
+          <span style="font-size: 0.82rem; color: var(--ink-soft);">
+            Guarde o estado atual das 36 cordas no seu navegador ou exporte como arquivo <code>.json</code> para carregar em qualquer dispositivo:
+          </span>
+        </div>
+      </div>
+
+      <!-- Action Panels: 1) Salvar Atual | 2) Abrir Salva / Arquivo -->
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.85rem; margin-top: 0.85rem;">
+        <!-- Left: Salvar -->
+        <div style="background: rgba(16, 13, 11, 0.65); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; padding: 0.75rem 0.9rem; display: flex; flex-direction: column; gap: 0.55rem;">
+          <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #fde047; font-weight: 700;">
+            1. SALVAR AFINAÇÃO ATUAL:
+          </span>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <input type="text" id="customTuningNameInput" placeholder="Nome (ex: Meu Temperamento Dó)" maxlength="40" style="flex: 1 1 160px; min-width: 0; background: #0c0908; color: var(--ink); border: 1px solid rgba(250, 246, 240, 0.25); border-radius: 6px; padding: 0.45rem 0.65rem; font-family: var(--font-mono); font-size: 0.76rem;">
+          </div>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button type="button" id="saveToStorageBtn" class="btn" style="flex: 1 1 auto; background: rgba(56, 189, 248, 0.18); border-color: var(--sky); color: #bae6fd; font-weight: 700;">
+              💾 Salvar no Navegador
+            </button>
+            <button type="button" id="exportJsonBtn" class="btn" style="flex: 1 1 auto; background: rgba(234, 179, 8, 0.16); border-color: var(--gold); color: #fef08a; font-weight: 700;">
+              ⬇️ Baixar (.json)
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Abrir -->
+        <div style="background: rgba(16, 13, 11, 0.65); border: 1px solid rgba(52, 211, 153, 0.25); border-radius: 8px; padding: 0.75rem 0.9rem; display: flex; flex-direction: column; gap: 0.55rem;">
+          <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #6ee7b7; font-weight: 700;">
+            2. ABRIR AFINAÇÃO:
+          </span>
+          <div style="display: flex; gap: 0.45rem; flex-wrap: wrap; align-items: center;">
+            <select id="savedTuningsSelect" class="preset-select" style="flex: 1 1 160px; min-width: 0; border-color: rgba(52, 211, 153, 0.45);">
+              <option value="">-- Nenhuma afinação salva no navegador --</option>
+            </select>
+            <button type="button" id="loadFromStorageBtn" class="btn" style="flex: 0 0 auto; background: rgba(52, 211, 153, 0.2); border-color: var(--jade); color: #a7f3d0; font-weight: 700;" disabled>
+              📂 Carregar
+            </button>
+            <button type="button" id="deleteFromStorageBtn" class="btn" style="flex: 0 0 auto; border-color: rgba(251, 113, 133, 0.45); color: #fda4af;" title="Excluir afinação selecionada do navegador" disabled>
+              🗑️
+            </button>
+          </div>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <input type="file" id="customTuningFileInput" accept=".json,application/json" style="display: none;">
+            <button type="button" id="importJsonBtn" class="btn" style="width: 100%; border-color: rgba(52, 211, 153, 0.45); color: #6ee7b7; font-weight: 700;">
+              📁 Abrir Arquivo (.json) do Computador / Celular
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="customTuningFeedback" style="display: none; margin-top: 0.65rem; padding: 0.55rem 0.85rem; border-radius: 6px; font-family: var(--font-mono); font-size: 0.74rem;"></div>
     </section>
 
     <!-- =======================================================================
@@ -2383,10 +2447,330 @@
         });
       }
 
+      // =======================================================================
+      // CUSTOM TUNINGS: SAVE & LOAD (LOCALSTORAGE & JSON FILE EXPORT/IMPORT)
+      // =======================================================================
+      var STORAGE_KEY = 'cravo_custom_tunings_v1';
+      var customTuningNameInput = document.getElementById('customTuningNameInput');
+      var saveToStorageBtn = document.getElementById('saveToStorageBtn');
+      var exportJsonBtn = document.getElementById('exportJsonBtn');
+      var savedTuningsSelect = document.getElementById('savedTuningsSelect');
+      var loadFromStorageBtn = document.getElementById('loadFromStorageBtn');
+      var deleteFromStorageBtn = document.getElementById('deleteFromStorageBtn');
+      var customTuningFileInput = document.getElementById('customTuningFileInput');
+      var importJsonBtn = document.getElementById('importJsonBtn');
+      var customTuningFeedback = document.getElementById('customTuningFeedback');
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;');
+      }
+
+      function showCustomTuningFeedback(msg, type) {
+        if (!customTuningFeedback) return;
+        customTuningFeedback.style.display = 'block';
+        if (type === 'error') {
+          customTuningFeedback.style.background = 'rgba(251, 113, 133, 0.16)';
+          customTuningFeedback.style.border = '1px solid var(--wolf)';
+          customTuningFeedback.style.color = '#fda4af';
+        } else {
+          customTuningFeedback.style.background = 'rgba(52, 211, 153, 0.16)';
+          customTuningFeedback.style.border = '1px solid var(--jade)';
+          customTuningFeedback.style.color = '#a7f3d0';
+        }
+        customTuningFeedback.innerHTML = msg;
+      }
+
+      function collectCurrentTuningData(customName) {
+        var now = new Date();
+        var dateFormatted = now.toLocaleDateString('pt-BR') + ' às ' + now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        var finalName = (customName && customName.trim()) ? customName.trim() : ('Afinação Manual (' + dateFormatted + ')');
+
+        var data = {
+          appName: 'SimuladorAfinacaoCravoUFSCar',
+          version: '1.0',
+          id: 'tune_' + Date.now(),
+          name: finalName,
+          savedAt: now.toISOString(),
+          dateFormatted: dateFormatted,
+          noteCount: keyOrderIds.length,
+          keys: {},
+          userMarked: {}
+        };
+
+        keyOrderIds.forEach(function (id) {
+          var k = keysById[id];
+          if (k) {
+            data.keys[id] = Math.round(k.freq * 100) / 100;
+            data.userMarked[id] = !!k.userMarkedTuned;
+          }
+        });
+
+        return data;
+      }
+
+      function applyCustomTuningData(data, sourceLabel) {
+        if (!data || !data.keys || typeof data.keys !== 'object') {
+          throw new Error('Formato inválido: o objeto não possui o mapa de frequências das teclas ("keys").');
+        }
+
+        stopDemonstration();
+        silenceAllKeys();
+
+        var appliedCount = 0;
+        keyOrderIds.forEach(function (id) {
+          if (data.keys[id] !== undefined) {
+            var freqVal = parseFloat(data.keys[id]);
+            if (!isNaN(freqVal) && freqVal > 20 && freqVal < 10000) {
+              keysById[id].freq = freqVal;
+              if (data.userMarked && data.userMarked[id] !== undefined) {
+                keysById[id].userMarkedTuned = !!data.userMarked[id];
+              } else {
+                keysById[id].userMarkedTuned = true;
+              }
+              appliedCount++;
+            }
+          }
+        });
+
+        if (appliedCount === 0) {
+          throw new Error('Nenhuma nota do teclado (Dó3 a Si5) foi encontrada no arquivo.');
+        }
+
+        if (presetSystemSelect) {
+          presetSystemSelect.value = 'custom_loaded';
+        }
+        if (presetRootNoteSelect) {
+          presetRootNoteSelect.disabled = true;
+          presetRootNoteSelect.style.opacity = '0.5';
+        }
+
+        if (presetSystemDescription) {
+          var tuningTitle = escapeHtml(data.name || 'Personalizada');
+          var dateInfo = data.dateFormatted ? (' · ' + escapeHtml(data.dateFormatted)) : '';
+          presetSystemDescription.innerHTML =
+            '✨ <strong>Afinação Personalizada Ativa: ' + tuningTitle + '</strong>' + dateInfo + '<br>' +
+            'Todas as <strong>' + appliedCount + ' teclas</strong> foram ajustadas com as frequências salvas (' + escapeHtml(sourceLabel || 'Origem personalizada') + '). ' +
+            '<em>(Toque livremente no modo testar ou clique em "🎵 Tocar Demonstração"!)</em>';
+        }
+
+        updateSliderForSelectedKey();
+        renderAll();
+      }
+
+      function getStoredTunings() {
+        try {
+          var raw = localStorage.getItem(STORAGE_KEY);
+          return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+          return [];
+        }
+      }
+
+      function saveStoredTunings(list) {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+          return true;
+        } catch (e) {
+          return false;
+        }
+      }
+
+      function refreshSavedTuningsDropdown(selectedIdToKeep) {
+        if (!savedTuningsSelect) return;
+        var list = getStoredTunings();
+        savedTuningsSelect.innerHTML = '';
+
+        if (!list || list.length === 0) {
+          var opt = document.createElement('option');
+          opt.value = '';
+          opt.textContent = '-- Nenhuma afinação salva no navegador --';
+          savedTuningsSelect.appendChild(opt);
+          if (loadFromStorageBtn) loadFromStorageBtn.disabled = true;
+          if (deleteFromStorageBtn) deleteFromStorageBtn.disabled = true;
+          return;
+        }
+
+        var defaultOpt = document.createElement('option');
+        defaultOpt.value = '';
+        defaultOpt.textContent = '-- Escolha uma afinação salva (' + list.length + ') --';
+        savedTuningsSelect.appendChild(defaultOpt);
+
+        list.forEach(function (item) {
+          var opt = document.createElement('option');
+          opt.value = item.id;
+          opt.textContent = item.name + (item.dateFormatted ? (' (' + item.dateFormatted + ')') : '');
+          savedTuningsSelect.appendChild(opt);
+        });
+
+        if (selectedIdToKeep) {
+          savedTuningsSelect.value = selectedIdToKeep;
+        }
+
+        var hasSelection = !!savedTuningsSelect.value;
+        if (loadFromStorageBtn) loadFromStorageBtn.disabled = !hasSelection;
+        if (deleteFromStorageBtn) deleteFromStorageBtn.disabled = !hasSelection;
+      }
+
+      if (savedTuningsSelect) {
+        savedTuningsSelect.addEventListener('change', function () {
+          var hasSelection = !!savedTuningsSelect.value;
+          if (loadFromStorageBtn) loadFromStorageBtn.disabled = !hasSelection;
+          if (deleteFromStorageBtn) deleteFromStorageBtn.disabled = !hasSelection;
+        });
+      }
+
+      if (saveToStorageBtn) {
+        saveToStorageBtn.addEventListener('click', function () {
+          var nameInputVal = customTuningNameInput ? customTuningNameInput.value : '';
+          var tuningData = collectCurrentTuningData(nameInputVal);
+          var list = getStoredTunings();
+
+          // If a tuning with the exact same name already exists, replace it, otherwise append
+          var existingIndex = -1;
+          for (var i = 0; i < list.length; i++) {
+            if (list[i].name.toLowerCase() === tuningData.name.toLowerCase()) {
+              existingIndex = i;
+              break;
+            }
+          }
+
+          if (existingIndex !== -1) {
+            tuningData.id = list[existingIndex].id;
+            list[existingIndex] = tuningData;
+          } else {
+            list.unshift(tuningData);
+          }
+
+          var ok = saveStoredTunings(list);
+          if (ok) {
+            refreshSavedTuningsDropdown(tuningData.id);
+            if (customTuningNameInput) customTuningNameInput.value = '';
+            showCustomTuningFeedback('💾 Afinação <strong>"' + escapeHtml(tuningData.name) + '"</strong> salva com sucesso no navegador!', 'success');
+          } else {
+            showCustomTuningFeedback('❌ Não foi possível salvar no navegador (armazenamento local desativado ou cheio). Use a opção "Baixar (.json)"!', 'error');
+          }
+        });
+      }
+
+      if (loadFromStorageBtn) {
+        loadFromStorageBtn.addEventListener('click', function () {
+          if (!savedTuningsSelect || !savedTuningsSelect.value) return;
+          var selId = savedTuningsSelect.value;
+          var list = getStoredTunings();
+          var found = null;
+          for (var i = 0; i < list.length; i++) {
+            if (list[i].id === selId) {
+              found = list[i];
+              break;
+            }
+          }
+
+          if (!found) {
+            showCustomTuningFeedback('❌ Afinação selecionada não encontrada no navegador.', 'error');
+            return;
+          }
+
+          try {
+            applyCustomTuningData(found, 'Salva no Navegador');
+            showCustomTuningFeedback('📂 Afinação <strong>"' + escapeHtml(found.name) + '"</strong> carregada com sucesso!', 'success');
+          } catch (err) {
+            showCustomTuningFeedback('❌ Erro ao aplicar afinação: ' + escapeHtml(err.message), 'error');
+          }
+        });
+      }
+
+      if (deleteFromStorageBtn) {
+        deleteFromStorageBtn.addEventListener('click', function () {
+          if (!savedTuningsSelect || !savedTuningsSelect.value) return;
+          var selId = savedTuningsSelect.value;
+          var list = getStoredTunings();
+          var itemToDelete = null;
+          for (var i = 0; i < list.length; i++) {
+            if (list[i].id === selId) {
+              itemToDelete = list[i];
+              break;
+            }
+          }
+
+          if (!itemToDelete) return;
+
+          var confirmDelete = window.confirm('Deseja excluir a afinação "' + itemToDelete.name + '" do navegador?');
+          if (!confirmDelete) return;
+
+          var updatedList = list.filter(function (it) { return it.id !== selId; });
+          saveStoredTunings(updatedList);
+          refreshSavedTuningsDropdown('');
+          showCustomTuningFeedback('🗑️ Afinação <strong>"' + escapeHtml(itemToDelete.name) + '"</strong> excluída do navegador.', 'success');
+        });
+      }
+
+      if (exportJsonBtn) {
+        exportJsonBtn.addEventListener('click', function () {
+          var nameInputVal = customTuningNameInput ? customTuningNameInput.value : '';
+          var tuningData = collectCurrentTuningData(nameInputVal);
+          var jsonStr = JSON.stringify(tuningData, null, 2);
+          var blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
+          var url = URL.createObjectURL(blob);
+
+          var safeFileName = tuningData.name
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+            .replace(/[^a-zA-Z0-9_-]/g, '_')
+            .replace(/_+/g, '_')
+            .toLowerCase();
+
+          var downloadAnchor = document.createElement('a');
+          downloadAnchor.href = url;
+          downloadAnchor.download = 'cravo_' + safeFileName + '.json';
+          document.body.appendChild(downloadAnchor);
+          downloadAnchor.click();
+          document.body.removeChild(downloadAnchor);
+
+          setTimeout(function () {
+            URL.revokeObjectURL(url);
+          }, 2000);
+
+          showCustomTuningFeedback('⬇️ Arquivo <strong>' + escapeHtml(downloadAnchor.download) + '</strong> baixado com sucesso!', 'success');
+        });
+      }
+
+      if (importJsonBtn && customTuningFileInput) {
+        importJsonBtn.addEventListener('click', function () {
+          customTuningFileInput.value = '';
+          customTuningFileInput.click();
+        });
+
+        customTuningFileInput.addEventListener('change', function (evt) {
+          var file = evt.target.files && evt.target.files[0];
+          if (!file) return;
+
+          var reader = new FileReader();
+          reader.onload = function (e) {
+            try {
+              var text = e.target.result;
+              var parsed = JSON.parse(text);
+              applyCustomTuningData(parsed, 'Arquivo: ' + file.name);
+              showCustomTuningFeedback('✅ Arquivo <strong>"' + escapeHtml(file.name) + '"</strong> aberto e aplicado com sucesso ao teclado!', 'success');
+            } catch (err) {
+              showCustomTuningFeedback('❌ Erro ao abrir arquivo JSON: ' + escapeHtml(err.message), 'error');
+            }
+          };
+          reader.onerror = function () {
+            showCustomTuningFeedback('❌ Erro ao tentar ler o arquivo selecionado.', 'error');
+          };
+          reader.readAsText(file);
+        });
+      }
+
       // Boot
       initKeysWithRandomDetuning();
       buildKeyboardDOM();
       updateSliderForSelectedKey();
+      refreshSavedTuningsDropdown();
       renderAll();
       requestAnimationFrame(drawWaveScope);
     })();
