@@ -692,17 +692,17 @@
           <input type="range" id="tunerPegSlider" class="peg-slider" min="100" max="600" step="0.01" value="380" aria-label="Controle deslizante de afinação da nota selecionada">
 
           <div class="peg-nudge-grid" style="margin-top: 0.55rem;">
-            <button type="button" class="peg-nudge-btn" data-nudge="-5">-5 Hz</button>
-            <button type="button" class="peg-nudge-btn" data-nudge="-1">-1 Hz</button>
-            <button type="button" class="peg-nudge-btn" data-nudge="-0.2">-0,2 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="-1">-1,00 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="-0.1">-0,10 Hz</button>
             <button type="button" class="peg-nudge-btn" data-nudge="-0.03">-0,03 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="-0.01">-0,01 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="0.01">+0,01 Hz</button>
             <button type="button" class="peg-nudge-btn" data-nudge="0.03">+0,03 Hz</button>
-            <button type="button" class="peg-nudge-btn" data-nudge="0.2">+0,2 Hz</button>
-            <button type="button" class="peg-nudge-btn" data-nudge="1">+1 Hz</button>
-            <button type="button" class="peg-nudge-btn" data-nudge="5">+5 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="0.1">+0,10 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="1">+1,00 Hz</button>
           </div>
-          <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-soft); margin-top: 0.45rem; text-align: center;">
-            Dica: Nas setas do teclado, <strong>← / →</strong> ajustam de <strong>0,15 Hz</strong> em 0,15 Hz e <strong>↓ / ↑</strong> ajustam de <strong>0,50 Hz</strong> (segure <strong>Shift + Setas</strong> para ajuste ultra-fino de <strong>0,03 Hz</strong>!).
+          <div id="pegPrecisionBadge" style="font-family: var(--font-mono); font-size: 0.73rem; color: #fde047; margin-top: 0.55rem; padding: 0.4rem 0.65rem; border-radius: 6px; background: rgba(234, 179, 8, 0.12); border: 1px solid rgba(234, 179, 8, 0.35); text-align: center;">
+            ⚡ <strong>Precisão Automática das Setas:</strong> Longe da afinação muda de <strong>1,00 Hz em 1,00 Hz</strong>; quando estiver <strong>quase afinado</strong>, muda automaticamente para <strong>centésimos de Hz (0,01 Hz)</strong>!
           </div>
         </div>
       </div>
@@ -969,6 +969,89 @@
         tunerPegSlider.disabled = kObj.isReferenceC4;
       }
 
+      // Compute the closest pure (zero-beat) target frequency for the selected key
+      // based on any other sounding note (Fifth 3/2 or 2/3, Fourth 4/3 or 3/4, Octave 2/1 or 1/2, Unison 1/1)
+      // plus fallback to the Pythagorean / standard frequency relative to Dó4.
+      function getNearestTargetAnalysis(kObj) {
+        if (!kObj) return { nearestPureFreq: 392.44, distToPureHz: 999, distToAnyTargetHz: 999, isNearZone: false, stepHz: 1.00 };
+
+        var pureTargets = [];
+        var temperedTargets = [];
+
+        // 1. Check all other currently sounding notes
+        keyOrderIds.forEach(function (otherId) {
+          if (otherId === kObj.id) return;
+          var other = keysById[otherId];
+          if (!other || !other.sounding) return;
+          var fRef = other.freq;
+          // Pure ratios (zero beating):
+          var pureRatios = [1.0, 1.5, 2.0 / 3.0, 4.0 / 3.0, 0.75, 2.0, 0.5, 3.0, 1.0 / 3.0, 4.0, 0.25];
+          pureRatios.forEach(function (r) {
+            pureTargets.push(fRef * r);
+          });
+          // Equal-tempered fifth/fourth ratios around fRef:
+          var tempRatios = [
+            Math.pow(2, 7 / 12),
+            Math.pow(2, -7 / 12),
+            Math.pow(2, 5 / 12),
+            Math.pow(2, -5 / 12)
+          ];
+          tempRatios.forEach(function (tr) {
+            temperedTargets.push(fRef * tr);
+          });
+        });
+
+        // 2. Fallback: if no other note is sounding, use Dó4 (261.63 Hz) pure fifth/octave intervals and the note's standard pitch
+        if (pureTargets.length === 0) {
+          var c4Freq = keysById['Dó4'] ? keysById['Dó4'].freq : 261.6255653;
+          // Compute Pythagorean pitch of this key in the circle of fifths from C (Dó=0, Sol=1, Ré=2, Lá=3, Mi=4, Si=5, Fá#=6, Dó#=7, Sol#=8, Ré#=9, Lá#=10, Fá=-1)
+          var fifthStepsByNoteIdx = [0, 7, 2, 9, 4, 11, 6, 1, 8, 3, 10, 5]; // standard 11 fifths where Fá is -1 or +11
+          var steps = fifthStepsByNoteIdx[kObj.noteIndex];
+          var pythC4 = c4Freq * Math.pow(1.5, steps);
+          // Normalize into octave 4 then shift to kObj.octave
+          while (pythC4 >= c4Freq * 2.0) pythC4 /= 2.0;
+          while (pythC4 < c4Freq) pythC4 *= 2.0;
+          var pythTarget = pythC4 * Math.pow(2, kObj.octave - 4);
+          pureTargets.push(pythTarget);
+          // Also include Fá as 1 fifth below Dó (4/3)
+          if (kObj.noteIndex === 5) {
+            pureTargets.push((c4Freq * (4.0 / 3.0)) * Math.pow(2, kObj.octave - 4));
+          }
+          temperedTargets.push(kObj.standardFreq);
+        }
+
+        var nearestPure = pureTargets[0];
+        var minPureDist = Math.abs(kObj.freq - nearestPure);
+        for (var i = 1; i < pureTargets.length; i++) {
+          var d = Math.abs(kObj.freq - pureTargets[i]);
+          if (d < minPureDist) {
+            minPureDist = d;
+            nearestPure = pureTargets[i];
+          }
+        }
+
+        var minAnyDist = minPureDist;
+        for (var j = 0; j < temperedTargets.length; j++) {
+          var dt = Math.abs(kObj.freq - temperedTargets[j]);
+          if (dt < minAnyDist) {
+            minAnyDist = dt;
+          }
+        }
+
+        // When far (> 1.15 Hz away from both pure and tempered target): step is 1.00 Hz (de Hz em Hz).
+        // When near / almost tuned (<= 1.15 Hz away): step automatically switches to hundredths of a Hz (0.01 Hz)!
+        var isNearZone = (minPureDist <= 1.15 || minAnyDist <= 1.05);
+        var stepHz = isNearZone ? 0.01 : 1.00;
+
+        return {
+          nearestPureFreq: nearestPure,
+          distToPureHz: minPureDist,
+          distToAnyTargetHz: minAnyDist,
+          isNearZone: isNearZone,
+          stepHz: stepHz
+        };
+      }
+
       // Adjust ONLY the selected key's frequency (never auto-tunes other octaves!)
       function adjustSelectedKeyFrequency(newFreq) {
         var kObj = keysById[selectedPegKeyId];
@@ -979,6 +1062,13 @@
         var minF = parseFloat(tunerPegSlider.min) || 60;
         var maxF = parseFloat(tunerPegSlider.max) || 1600;
         var clamped = Math.max(minF, Math.min(maxF, newFreq));
+
+        // If within half a hundredth of a Hz (0.006 Hz) of the pure zero-beat target, snap to exact zero-beat frequency!
+        var analysis = getNearestTargetAnalysis(kObj);
+        if (Math.abs(clamped - analysis.nearestPureFreq) <= 0.006) {
+          clamped = analysis.nearestPureFreq;
+        }
+
         kObj.freq = clamped;
         tunerPegSlider.value = clamped.toFixed(2);
         if (activeVoices[selectedPegKeyId]) {
@@ -989,8 +1079,8 @@
 
       // Format beating rate with layperson explanation when < 1.0 beat/second!
       function formatBeatingForLayperson(beatsPerSec) {
-        if (beatsPerSec < 0.03) {
-          return '~0,00 batimentos/s (Som 100% liso / Sem batimentos perceptíveis!)';
+        if (beatsPerSec < 0.015) {
+          return '0,00 batimentos/s (Som 100% liso / Zero batimentos!)';
         }
         if (beatsPerSec < 1.0) {
           var secondsPerBeat = 1.0 / beatsPerSec;
@@ -1106,7 +1196,7 @@
 
           var hzText = (blind && !kObj.isReferenceC4)
             ? '??? Hz'
-            : (kObj.freq.toFixed(1).replace('.', ',') + ' Hz');
+            : (kObj.freq.toFixed(2).replace('.', ',') + ' Hz');
 
           btn.innerHTML =
             statusHtml +
@@ -1172,27 +1262,27 @@
           var beatHz = Math.abs(2 * highNote.freq - 3 * lowNote.freq);
           var beatDesc = formatBeatingForLayperson(beatHz);
 
-          if (Math.abs(centsToPureFifth) <= 0.45) {
+          if (beatHz < 0.015) {
             beatingStatusBanner.classList.add('is-pure');
             beatingHeadline.style.color = '#6ee7b7';
             beatingHeadline.textContent = '✨ QUINTA PURA PITAGÓRICA (3/2) ENCONTRADA! (' + lowNote.id + ' + ' + highNote.id + ')';
             beatingExplanation.innerHTML =
-              'Parabéns! Você atingiu a razão exata de <strong>3/2 (701,96 cents)</strong> entre <strong>' + lowNote.id + '</strong> e <strong>' + highNote.id + '</strong>! Os harmônicos se encaixaram sem batimentos. Você já pode usar esta nota para afinar a próxima quinta!';
+              'Parabéns! Você atingiu a razão exata de <strong>3/2 (701,96 cents)</strong> entre <strong>' + lowNote.id + '</strong> e <strong>' + highNote.id + '</strong> com <strong>0,00 batimentos/s</strong>! Você já pode usar esta nota para afinar a próxima quinta!';
             beatingRateBox.innerHTML = 'Batimento da Quinta (3:2): <strong>' + beatDesc + '</strong>';
-          } else if (Math.abs(centsToTemperedFifth) <= 0.75) {
+          } else if (Math.abs(centsToTemperedFifth) <= 0.65) {
             beatingStatusBanner.classList.add('is-tempered');
             beatingHeadline.style.color = '#7dd3fc';
             beatingHeadline.textContent = '🎹 Atenção: Você está na Quinta do Sistema Temperado (Piano Moderno · 700 cents)!';
             beatingExplanation.innerHTML =
               'Esta quinta entre <strong>' + lowNote.id + '</strong> e <strong>' + highNote.id + '</strong> está afinada como em um piano moderno (encurtada em -1,96 cent). Repare que ela ainda tem um batimento lento!<br>' +
-              '🎯 <strong>O seu desafio aqui é encontrar a Quinta Pura (701,96 cents), totalmente lisa e SEM BATIMENTOS!</strong> Suba mais um pouquinho a nota aguda (ou desça a grave) com as setas!';
+              '🎯 <strong>O seu desafio aqui é encontrar a Quinta Pura (701,96 cents), totalmente lisa e com 0 de batimentos!</strong> As setas agora estão em <strong>precisão de centésimos de Hz (0,01 Hz)</strong>: suba mais um pouquinho a nota aguda (ou desça a grave)!';
             beatingRateBox.innerHTML = 'Batimento da Quinta: <strong>' + beatDesc + '</strong>';
           } else {
             beatingStatusBanner.classList.add('is-near');
             beatingHeadline.style.color = '#fde047';
             beatingHeadline.textContent = '👂 Afinando a Quinta (' + lowNote.id + ' + ' + highNote.id + ') — Ouça os batimentos!';
             beatingExplanation.innerHTML =
-              'Use as setas (<strong>← / ↓</strong> para descer ou <strong>→ / ↑</strong> para subir a nota <strong>' + selectedPegKeyId + '</strong>) e preste atenção na velocidade do <em>"uá-uá-uá"</em> até ele desacelerar e parar completamente na Quinta Pura!';
+              'Use as setas (<strong>← / ↓</strong> para descer ou <strong>→ / ↑</strong> para subir a nota <strong>' + selectedPegKeyId + '</strong>) e preste atenção na velocidade do <em>"uá-uá-uá"</em> até ele desacelerar e zerar na Quinta Pura!';
             beatingRateBox.innerHTML = 'Batimento da Quinta (3:2): <strong>' + beatDesc + '</strong>';
           }
         } else if (Math.abs(centsToPureFourth) < 90) {
@@ -1200,19 +1290,19 @@
           var beatFourthHz = Math.abs(3 * highNote.freq - 4 * lowNote.freq);
           var beatFourthDesc = formatBeatingForLayperson(beatFourthHz);
 
-          if (Math.abs(centsToPureFourth) <= 0.45) {
+          if (beatFourthHz < 0.015) {
             beatingStatusBanner.classList.add('is-pure');
             beatingHeadline.style.color = '#6ee7b7';
             beatingHeadline.textContent = '✨ QUARTA PURA / QUINTA INVERTIDA (4/3) ENCONTRADA! (' + lowNote.id + ' + ' + highNote.id + ')';
             beatingExplanation.innerHTML =
-              'Perfeito! A razão <strong>4/3 (498,04 cents)</strong> equivale a subir uma Quinta Pura e descer uma Oitava Pura. O som está 100% liso e sem batimentos!';
+              'Perfeito! A razão <strong>4/3 (498,04 cents)</strong> equivale a subir uma Quinta Pura e descer uma Oitava Pura. O som está 100% liso com <strong>0,00 batimentos/s</strong>!';
             beatingRateBox.innerHTML = 'Batimento (4:3): <strong>' + beatFourthDesc + '</strong>';
-          } else if (Math.abs(centsToTemperedFourth) <= 0.75) {
+          } else if (Math.abs(centsToTemperedFourth) <= 0.65) {
             beatingStatusBanner.classList.add('is-tempered');
             beatingHeadline.style.color = '#7dd3fc';
             beatingHeadline.textContent = '🎹 Atenção: Este intervalo está como no Sistema Temperado (500 cents)!';
             beatingExplanation.innerHTML =
-              'No sistema temperado há um batimento lento. <strong>O desafio é encontrar o intervalo puro pitagórico (498,04 cents), sem batimentos!</strong>';
+              'No sistema temperado há um batimento lento. <strong>O desafio é encontrar o intervalo puro pitagórico (498,04 cents), com 0 de batimentos!</strong> As setas estão em precisão de <strong>0,01 Hz</strong>.';
             beatingRateBox.innerHTML = 'Batimento (4:3): <strong>' + beatFourthDesc + '</strong>';
           } else {
             beatingStatusBanner.classList.add('is-near');
@@ -1226,19 +1316,19 @@
           var beatOctHz = Math.abs(highNote.freq - 2 * lowNote.freq);
           var beatOctDesc = formatBeatingForLayperson(beatOctHz);
 
-          if (Math.abs(centsToPureOctave) <= 0.45) {
+          if (beatOctHz < 0.015) {
             beatingStatusBanner.classList.add('is-pure');
             beatingHeadline.style.color = '#6ee7b7';
             beatingHeadline.textContent = '✨ OITAVA PURA (2/1) ENCONTRADA! (' + lowNote.id + ' + ' + highNote.id + ')';
             beatingExplanation.innerHTML =
-              'Excelente! A nota <strong>' + highNote.id + '</strong> está exatamente com o dobro da frequência de <strong>' + lowNote.id + '</strong> (razão 2:1, sem batimentos).';
+              'Excelente! A nota <strong>' + highNote.id + '</strong> está exatamente com o dobro da frequência de <strong>' + lowNote.id + '</strong> (razão 2:1, com <strong>0,00 batimentos/s</strong>).';
             beatingRateBox.innerHTML = 'Batimento da Oitava (2:1): <strong>' + beatOctDesc + '</strong>';
           } else {
             beatingStatusBanner.classList.add('is-near');
             beatingHeadline.style.color = '#fde047';
             beatingHeadline.textContent = '👂 Afinando Oitava (2/1) entre ' + lowNote.id + ' e ' + highNote.id;
             beatingExplanation.innerHTML =
-              'Ajuste com as setas até que o batimento entre as duas oitavas desapareça totalmente!';
+              'Ajuste com as setas até que o batimento entre as duas oitavas chegue a 0,00!';
             beatingRateBox.innerHTML = 'Batimento da Oitava (2:1): <strong>' + beatOctDesc + '</strong>';
           }
         } else {
@@ -1265,6 +1355,24 @@
           pegFreqReadoutEl.textContent = blind
             ? '??? Hz (Modo Ouvido)'
             : (kObj.freq.toFixed(2).replace('.', ',') + ' Hz');
+        }
+
+        var badgeEl = document.getElementById('pegPrecisionBadge');
+        if (badgeEl && !kObj.isReferenceC4) {
+          var analysis = getNearestTargetAnalysis(kObj);
+          if (analysis.isNearZone) {
+            badgeEl.style.background = 'rgba(52, 211, 153, 0.16)';
+            badgeEl.style.borderColor = '#34d399';
+            badgeEl.style.color = '#a7f3d0';
+            badgeEl.innerHTML =
+              '🔬 <strong>Quase afinado! Precisão de Centésimos Ativa:</strong> As setas agora mudam de <strong>0,01 Hz em 0,01 Hz</strong> para você zerar os batimentos (0,00 batimentos/s)!';
+          } else {
+            badgeEl.style.background = 'rgba(234, 179, 8, 0.12)';
+            badgeEl.style.borderColor = 'rgba(234, 179, 8, 0.35)';
+            badgeEl.style.color = '#fde047';
+            badgeEl.innerHTML =
+              '⚡ <strong>Modo Rápido (Longe da afinação):</strong> As setas mudam de <strong>1,00 Hz em 1,00 Hz</strong>. Quando estiver próximo da afinação, mudarão sozinhas para <strong>0,01 Hz (centésimos de Hz)</strong>!';
+          }
         }
       }
 
@@ -1324,56 +1432,48 @@
       // Keyboard Arrow Controls:
       // Left Arrow (←) or Down Arrow (↓) = LOWERS pitch (desce a afinação)
       // Right Arrow (→) or Up Arrow (↑) = RAISES pitch (sobe a afinação)
+      // Automatically uses 1.00 Hz steps when far from tuned, and switches to 0.01 Hz (hundredths of a Hz) ONLY when almost tuned!
       window.addEventListener('keydown', function (ev) {
         if (ev.target && (ev.target.tagName === 'INPUT' && ev.target.type !== 'range')) return;
 
-        var step = 0;
-        var isDownDir = false;
-        var isUpDir = false;
+        var isDownDir = (ev.key === 'ArrowLeft' || ev.key === 'ArrowDown');
+        var isUpDir = (ev.key === 'ArrowRight' || ev.key === 'ArrowUp');
 
-        if (ev.key === 'ArrowLeft') {
-          step = ev.shiftKey ? -0.03 : -0.15;
-          isDownDir = true;
-        } else if (ev.key === 'ArrowDown') {
-          step = ev.shiftKey ? -0.03 : -0.50;
-          isDownDir = true;
-        } else if (ev.key === 'ArrowRight') {
-          step = ev.shiftKey ? 0.03 : 0.15;
-          isUpDir = true;
-        } else if (ev.key === 'ArrowUp') {
-          step = ev.shiftKey ? 0.03 : 0.50;
-          isUpDir = true;
+        if (!isDownDir && !isUpDir) return;
+
+        ev.preventDefault();
+        var kObj = keysById[selectedPegKeyId];
+        if (kObj && !kObj.isReferenceC4) {
+          var analysis = getNearestTargetAnalysis(kObj);
+          var stepMag = analysis.stepHz; // 1.00 Hz when far, 0.01 Hz when almost tuned!
+          var delta = isDownDir ? -stepMag : stepMag;
+          adjustSelectedKeyFrequency(kObj.freq + delta);
         }
 
-        if (step !== 0) {
-          ev.preventDefault();
-          var kObj = keysById[selectedPegKeyId];
-          if (kObj && !kObj.isReferenceC4) {
-            adjustSelectedKeyFrequency(kObj.freq + step);
-          }
-          if (isDownDir) {
-            arrowDownCard.classList.add('is-pressed');
-            setTimeout(function () { arrowDownCard.classList.remove('is-pressed'); }, 140);
-          }
-          if (isUpDir) {
-            arrowUpCard.classList.add('is-pressed');
-            setTimeout(function () { arrowUpCard.classList.remove('is-pressed'); }, 140);
-          }
+        if (isDownDir) {
+          arrowDownCard.classList.add('is-pressed');
+          setTimeout(function () { arrowDownCard.classList.remove('is-pressed'); }, 140);
+        }
+        if (isUpDir) {
+          arrowUpCard.classList.add('is-pressed');
+          setTimeout(function () { arrowUpCard.classList.remove('is-pressed'); }, 140);
         }
       });
 
-      // Clicking the visual arrow cards also lowers/raises the pitch
+      // Clicking the visual arrow cards also uses the adaptive step (1.00 Hz when far, 0.01 Hz when almost tuned)
       arrowDownCard.addEventListener('click', function () {
         var kObj = keysById[selectedPegKeyId];
         if (kObj && !kObj.isReferenceC4) {
-          adjustSelectedKeyFrequency(kObj.freq - 0.20);
+          var analysis = getNearestTargetAnalysis(kObj);
+          adjustSelectedKeyFrequency(kObj.freq - analysis.stepHz);
         }
       });
 
       arrowUpCard.addEventListener('click', function () {
         var kObj = keysById[selectedPegKeyId];
         if (kObj && !kObj.isReferenceC4) {
-          adjustSelectedKeyFrequency(kObj.freq + 0.20);
+          var analysis = getNearestTargetAnalysis(kObj);
+          adjustSelectedKeyFrequency(kObj.freq + analysis.stepHz);
         }
       });
 
