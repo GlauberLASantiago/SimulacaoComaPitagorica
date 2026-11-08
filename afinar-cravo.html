@@ -1,0 +1,1171 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Oficina Prática: Afinador de Cravo (3 Oitavas · Onda Senoidal) · UFSCar</title>
+  <meta name="description" content="Sub-aplicativo interativo para simular o trabalho de afinar um cravo de 3 oitavas de ouvido por quintas puras com síntese senoidal. Desenvolvido pelo Prof. Glauber Santiago (UFSCar).">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230c0a09'/><circle cx='16' cy='16' r='10' fill='none' stroke='%23eab308' stroke-width='2' stroke-dasharray='48 6'/><circle cx='16' cy='6' r='2.8' fill='%2334d399'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700&family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --canvas: #0c0a09;
+      --surface: #171310;
+      --ink: #faf6f0;
+      --ink-soft: #b8aca0;
+      --gold: #eab308;
+      --jade: #34d399;
+      --wolf: #fb7185;
+      --hairline: rgba(250, 246, 240, 0.12);
+      --hairline-strong: rgba(250, 246, 240, 0.22);
+      --font-display: "Fraunces", Georgia, serif;
+      --font-sans: "Plus Jakarta Sans", system-ui, sans-serif;
+      --font-text: "Inter", system-ui, sans-serif;
+      --font-mono: "JetBrains Mono", ui-monospace, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: radial-gradient(120% 80% at 50% 0%, #1c1612 0%, #0c0a09 65%);
+      color: var(--ink);
+      font-family: var(--font-text);
+      line-height: 1.5;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(12, 10, 9, 0.88);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--hairline-strong);
+      padding: 0.75rem clamp(1rem, 4vw, 2.5rem);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.45rem 0.9rem;
+      border-radius: 999px;
+      background: #1f1916;
+      color: #fde047;
+      border: 1px solid rgba(234, 179, 8, 0.45);
+      font-family: var(--font-mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: background-color 150ms ease;
+    }
+
+    .back-link:hover {
+      background: #2d241e;
+    }
+
+    .wrap {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: clamp(1.5rem, 3vw, 2.5rem) clamp(1rem, 4vw, 2.5rem);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.24rem 0.65rem;
+      border-radius: 6px;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 700;
+      background: rgba(234, 179, 8, 0.14);
+      color: #fde047;
+      border: 1px solid rgba(234, 179, 8, 0.35);
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.6vw, 2.75rem);
+      margin: 0.4rem 0;
+      line-height: 1.12;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 1.25rem;
+      padding: 0.85rem 1.1rem;
+      background: #16120f;
+      border: 1px solid var(--hairline-strong);
+      border-radius: 10px;
+    }
+
+    .btn {
+      background: #211a16;
+      color: var(--ink);
+      border: 1px solid var(--hairline-strong);
+      border-radius: 6px;
+      padding: 0.55rem 0.9rem;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 140ms ease;
+    }
+
+    .btn:hover {
+      background: #2e241e;
+      border-color: var(--gold);
+      color: #fde047;
+    }
+
+    .workbench {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 1.25rem;
+      margin-top: 1.25rem;
+    }
+
+    @media (min-width: 940px) {
+      .workbench {
+        grid-template-columns: 1fr 1.28fr;
+      }
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--hairline-strong);
+      border-radius: 12px;
+      padding: 1.35rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45);
+    }
+
+    .panel--base {
+      border-top: 4px solid var(--jade);
+    }
+
+    .panel--target {
+      border-top: 4px solid var(--gold);
+    }
+
+    .select-input {
+      background: #0c0a09;
+      color: var(--ink);
+      border: 1px solid var(--hairline-strong);
+      border-radius: 6px;
+      padding: 0.5rem 0.75rem;
+      font-family: var(--font-mono);
+      font-size: 0.84rem;
+      cursor: pointer;
+    }
+
+    .lock-drone-btn {
+      width: 100%;
+      padding: 0.95rem 1.1rem;
+      border-radius: 8px;
+      border: 2px solid rgba(52, 211, 153, 0.55);
+      background: rgba(52, 211, 153, 0.13);
+      color: #6ee7b7;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+
+    .lock-drone-btn:hover {
+      background: rgba(52, 211, 153, 0.22);
+    }
+
+    .lock-drone-btn.is-locked {
+      background: var(--jade);
+      color: #06130e;
+      border-color: #a7f3d0;
+      box-shadow: 0 0 24px rgba(52, 211, 153, 0.4);
+    }
+
+    .target-sound-btn {
+      width: 100%;
+      padding: 0.95rem 1.1rem;
+      border-radius: 8px;
+      border: 2px solid rgba(234, 179, 8, 0.55);
+      background: rgba(234, 179, 8, 0.13);
+      color: #fde047;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 150ms ease;
+    }
+
+    .target-sound-btn:hover {
+      background: rgba(234, 179, 8, 0.22);
+    }
+
+    .target-sound-btn.is-sounding {
+      background: var(--gold);
+      color: #171105;
+      border-color: #fef08a;
+      box-shadow: 0 0 24px rgba(234, 179, 8, 0.4);
+    }
+
+    .peg-slider {
+      width: 100%;
+      height: 10px;
+      accent-color: var(--gold);
+      cursor: pointer;
+    }
+
+    .peg-nudge-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.4rem;
+    }
+
+    @media (min-width: 640px) {
+      .peg-nudge-grid {
+        grid-template-columns: repeat(8, 1fr);
+      }
+    }
+
+    .peg-nudge-btn {
+      background: #231c18;
+      color: var(--ink);
+      border: 1px solid var(--hairline-strong);
+      border-radius: 5px;
+      padding: 0.45rem 0.25rem;
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-align: center;
+      transition: all 120ms ease;
+    }
+
+    .peg-nudge-btn:hover {
+      background: #332822;
+      border-color: var(--gold);
+      color: #fde047;
+    }
+
+    .status-banner {
+      padding: 0.8rem 1rem;
+      border-radius: 8px;
+      background: #100d0b;
+      border: 1px solid var(--hairline-strong);
+      font-family: var(--font-mono);
+      font-size: 0.8rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .status-banner.is-pure {
+      background: rgba(52, 211, 153, 0.16);
+      border-color: var(--jade);
+      color: #6ee7b7;
+    }
+
+    .status-banner.is-near {
+      background: rgba(251, 113, 133, 0.15);
+      border-color: var(--wolf);
+      color: #fda4af;
+    }
+
+    .octave-bank {
+      margin-top: 1.5rem;
+      background: #14100e;
+      border: 1px solid var(--hairline-strong);
+      border-radius: 12px;
+      padding: 1.25rem;
+    }
+
+    .octave-row-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.45rem;
+      margin-top: 0.5rem;
+    }
+
+    @media (min-width: 640px) {
+      .octave-row-grid {
+        grid-template-columns: repeat(6, 1fr);
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .octave-row-grid {
+        grid-template-columns: repeat(12, 1fr);
+      }
+    }
+
+    .cravo-key {
+      background: #211b17;
+      border: 1px solid rgba(250, 246, 240, 0.16);
+      border-bottom: 4px solid #0c0908;
+      border-radius: 6px;
+      padding: 0.55rem 0.35rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.25rem;
+      cursor: pointer;
+      color: var(--ink);
+      font-family: var(--font-mono);
+      transition: transform 80ms ease, border-color 120ms ease, background-color 120ms ease;
+      min-height: 78px;
+    }
+
+    .cravo-key--sharp {
+      background: #120e0c;
+      border-color: rgba(234, 179, 8, 0.24);
+    }
+
+    .cravo-key:hover {
+      transform: translateY(-2px);
+      border-color: var(--gold);
+    }
+
+    .cravo-key.is-tuned {
+      border-color: rgba(52, 211, 153, 0.65);
+      background: rgba(52, 211, 153, 0.11);
+    }
+
+    .cravo-key.is-base-key {
+      outline: 2px solid var(--jade);
+      box-shadow: 0 0 12px rgba(52, 211, 153, 0.35);
+    }
+
+    .cravo-key.is-target-key {
+      outline: 2px solid var(--gold);
+      box-shadow: 0 0 14px rgba(234, 179, 8, 0.45);
+      background: rgba(234, 179, 8, 0.18);
+    }
+
+    .cravo-key__name {
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+
+    .cravo-key__hz {
+      font-size: 0.65rem;
+      color: var(--ink-soft);
+    }
+
+    .cravo-key__badge {
+      font-size: 0.58rem;
+      padding: 0.12rem 0.32rem;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--ink-soft);
+    }
+
+    .cravo-key.is-tuned .cravo-key__badge {
+      background: rgba(52, 211, 153, 0.22);
+      color: #6ee7b7;
+    }
+
+    .site-footer {
+      margin-top: 2.5rem;
+      padding-top: 1.25rem;
+      border-top: 1px solid var(--hairline-strong);
+      font-family: var(--font-mono);
+      font-size: 0.74rem;
+      line-height: 1.6;
+      color: var(--ink-soft);
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+    }
+
+    .site-footer a {
+      color: #fde047;
+      text-decoration: none;
+    }
+
+    .site-footer a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <a href="index.html" class="back-link">← Voltar para a Simulação da Coma Pitagórica</a>
+    <span style="font-family: var(--font-mono); font-size: 0.76rem; color: var(--ink-soft);">
+      Sub-Aplicativo Prático · Afinador de Cravo (3 Oitavas · Onda Senoidal)
+    </span>
+  </header>
+
+  <main class="wrap">
+
+    <div style="max-width: 82ch;">
+      <span class="badge">Atividade de Exploração Prática · Simulador do Afinador de Cravo (Onda Senoidal · 3 Oitavas)</span>
+      <h1>Oficina Prática: Afine você mesmo um "Cravo" de 3 Oitavas</h1>
+      <p style="color: var(--ink-soft); font-size: 0.95rem; margin: 0.4rem 0;">
+        Neste sub-aplicativo você assume o papel do afinador diante de um instrumento de <strong>3 oitavas (Oitavas 3, 4 e 5)</strong> sintetizado com <strong>ondas senoidais</strong>:
+      </p>
+      <p style="color: var(--ink-soft); font-size: 0.88rem; margin: 0.3rem 0;">
+        • <strong>Estado inicial:</strong> Em cada oitava, a nota <strong>Dó</strong> já vem afinada (<code>Dó3 = 130,81 Hz</code>, <code>Dó4 = 261,63 Hz</code>, <code>Dó5 = 523,25 Hz</code>). Todas as demais 11 notas daquela oitava começam inicialmente com a <strong>mesma afinação deste Dó</strong>!<br>
+        • <strong>Como afinar:</strong> Use o dispositivo à esquerda para <strong>travar a execução da Nota Base</strong> (ex.: <code>Dó4</code>), escolha a nota que deseja afinar à direita (ex.: <code>Sol4</code>) e vá <strong>subindo ou descendo a afinação na cravelha</strong> até ouvir a <strong>Quinta Pura (razão 3/2 = 1,500×)</strong> sem batimentos!
+      </p>
+    </div>
+
+    <!-- Top Quick Toolbar -->
+    <div class="toolbar">
+      <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
+        <label style="display: inline-flex; align-items: center; gap: 0.45rem; font-family: var(--font-mono); font-size: 0.75rem; cursor: pointer;">
+          <input type="checkbox" id="tunerHarmonicsCheck" checked style="accent-color: var(--gold); width: 15px; height: 15px;">
+          <span>Onda Senoidal + Harmônicos Senoidais (2f/3f) <span style="color: var(--ink-soft);">(para ouvir o batimento real da Quinta 3:2)</span></span>
+        </label>
+        <label style="display: inline-flex; align-items: center; gap: 0.45rem; font-family: var(--font-mono); font-size: 0.75rem; cursor: pointer;">
+          <input type="checkbox" id="tunerBlindModeCheck" style="accent-color: var(--jade); width: 15px; height: 15px;">
+          <span>🙈 Modo Treino Cego de Ouvido (ocultar Hz e Razão)</span>
+        </label>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+        <button type="button" id="tunerSilenceAllBtn" class="btn" style="border-color: rgba(251, 113, 133, 0.45); color: #fda4af;">
+          ⏹ Silenciar Tudo
+        </button>
+        <button type="button" id="tunerResetAllBtn" class="btn">
+          🔄 Reiniciar Cravo (Todas = Dó)
+        </button>
+      </div>
+    </div>
+
+    <!-- Dual Tuning Device: Base Note Lock (Left) + Target Peg Cravelha (Right) -->
+    <div class="workbench">
+
+      <!-- LEFT PANEL: Dispositivo de Trava da Nota Base -->
+      <div class="panel panel--base">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
+          <div>
+            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #6ee7b7; font-weight: 700; text-transform: uppercase;">
+              1. Dispositivo da Nota Base (Referência Fixa)
+            </span>
+            <h2 style="font-family: var(--font-display); font-size: 1.45rem; margin: 0.15rem 0 0 0;">
+              Nota Base da Dupla
+            </h2>
+          </div>
+          <span style="font-family: var(--font-mono); font-size: 0.7rem; padding: 0.2rem 0.5rem; border-radius: 4px; background: rgba(52, 211, 153, 0.14); color: #6ee7b7;">
+            Trava de Sustentação
+          </span>
+        </div>
+
+        <p style="font-size: 0.82rem; color: var(--ink-soft); margin: 0;">
+          Escolha a nota já afinada que servirá de referência e <strong>trave a execução</strong> para que ela continue soando enquanto você afina a outra nota da dupla:
+        </p>
+
+        <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
+          <label for="tunerBaseSelect" style="font-family: var(--font-mono); font-size: 0.76rem; color: var(--ink-soft);">
+            Escolher Nota Base:
+          </label>
+          <select id="tunerBaseSelect" class="select-input" style="flex: 1; min-width: 170px;"></select>
+        </div>
+
+        <div style="background: #0e0b0a; border: 1px solid var(--hairline-strong); border-radius: 8px; padding: 0.9rem 1rem; display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem;">
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-soft);">NOTA BASE SELECIONADA</div>
+            <div id="tunerBaseNameBig" style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: #6ee7b7; line-height: 1.1;">Dó4 ✅</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-soft);">FREQUÊNCIA DA BASE</div>
+            <div id="tunerBaseHzBig" style="font-family: var(--font-mono); font-size: 1.35rem; font-weight: 700; color: var(--ink);">261,63 Hz</div>
+          </div>
+        </div>
+
+        <button type="button" id="tunerLockBaseBtn" class="lock-drone-btn">
+          🔒 Travar Execução da Nota Base (Dó4)
+        </button>
+
+        <div style="border-top: 1px solid var(--hairline); padding-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem;">
+          <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-soft);">
+            ATALHOS DO CICLO DE AFINAÇÃO:
+          </div>
+          <button type="button" id="tunerPromoteTargetBtn" class="btn" style="width: 100%; text-align: left;">
+            ⏭️ Já afinei! Usar a Nota Alvo atual como nova Nota Base e ir para a próxima Quinta
+          </button>
+          <button type="button" id="tunerPlayBothQuickBtn" class="btn" style="width: 100%; text-align: left; border-color: rgba(234, 179, 8, 0.45); color: #fde047;">
+            ▶️ Travar Nota Base + Ligar Nota Alvo Juntas Agora
+          </button>
+        </div>
+      </div>
+
+      <!-- RIGHT PANEL: Cravelha da Nota Alvo -->
+      <div class="panel panel--target">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; flex-wrap: wrap;">
+          <div>
+            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #fde047; font-weight: 700; text-transform: uppercase;">
+              2. Cravelha de Afinação (Subir ou Descer a Nota Alvo)
+            </span>
+            <h2 style="font-family: var(--font-display); font-size: 1.45rem; margin: 0.15rem 0 0 0;">
+              Corda na Cravelha: <span id="tunerTargetNameTitle" style="color: #fde047;">Sol4</span>
+            </h2>
+          </div>
+          <div style="display: flex; gap: 0.4rem; align-items: center;">
+            <label for="tunerTargetSelect" style="font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-soft);">Nota Alvo:</label>
+            <select id="tunerTargetSelect" class="select-input"></select>
+          </div>
+        </div>
+
+        <div style="background: #0e0b0a; border: 1px solid var(--hairline-strong); border-radius: 8px; padding: 0.9rem 1rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; align-items: center;">
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 0.66rem; color: var(--ink-soft);">FREQUÊNCIA ATUAL</div>
+            <div id="tunerTargetHzBig" style="font-family: var(--font-mono); font-size: 1.25rem; font-weight: 700; color: #fde047;">261,63 Hz</div>
+          </div>
+          <div>
+            <div style="font-family: var(--font-mono); font-size: 0.66rem; color: var(--ink-soft);">RAZÃO (ALVO ÷ BASE)</div>
+            <div id="tunerRatioBig" style="font-family: var(--font-mono); font-size: 1.05rem; font-weight: 700; color: var(--ink);">1,0000× (Uníssono)</div>
+          </div>
+          <div style="text-align: right;">
+            <div style="font-family: var(--font-mono); font-size: 0.66rem; color: var(--ink-soft);">ALVO QUINTA PURA (3/2)</div>
+            <div id="tunerIdealFifthHz" style="font-family: var(--font-mono); font-size: 0.95rem; font-weight: 700; color: #6ee7b7;">392,44 Hz</div>
+          </div>
+        </div>
+
+        <button type="button" id="tunerTargetSoundBtn" class="target-sound-btn">
+          🔊 Ligar Som da Nota Alvo (Ouvir enquanto gira a cravelha)
+        </button>
+
+        <div style="background: #120e0c; border: 1px solid var(--hairline); border-radius: 8px; padding: 0.75rem 1rem;">
+          <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-soft); margin-bottom: 0.35rem;">
+            <span>↓ Mais Grave (Descer)</span>
+            <span style="color: #fde047; font-weight: 700;">Gire a Cravelha (Arraste ou use os botões)</span>
+            <span>Mais Agudo (Subir) ↑</span>
+          </div>
+          <input type="range" id="tunerPegSlider" class="peg-slider" min="120" max="560" step="0.01" value="261.63" aria-label="Subir ou descer a afinação da nota alvo">
+
+          <div class="peg-nudge-grid" style="margin-top: 0.55rem;">
+            <button type="button" class="peg-nudge-btn" data-nudge="-10">-10 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="-2">-2 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="-0.5">-0,5 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="-0.05">-0,05 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="0.05">+0,05 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="0.5">+0,5 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="2">+2 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="10">+10 Hz</button>
+          </div>
+        </div>
+
+        <div id="tunerStatusBanner" class="status-banner">
+          <span id="tunerStatusText">📌 A nota Sol4 começa em 261,63 Hz (igual ao Dó4). Suba a afinação até ~392,44 Hz (1,500×) para encontrar a Quinta Pura!</span>
+          <span id="tunerBeatRateBadge" style="font-weight: 700; color: #fde047;">Batimento 5ª: --</span>
+        </div>
+
+        <canvas id="tuner-wave-canvas" style="width: 100%; height: 64px; background: #0a0807; border: 1px solid var(--hairline); border-radius: 6px; display: block;"></canvas>
+
+        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+          <button type="button" id="tunerMarkTunedBtn" class="btn" style="border-color: rgba(52, 211, 153, 0.5); color: #6ee7b7; flex: 1;">
+            ✅ Confirmar Nota como "Afinada"
+          </button>
+          <button type="button" id="tunerSpreadOctavesBtn" class="btn" style="border-color: rgba(234, 179, 8, 0.45); color: #fde047; flex: 1;">
+            📋 Copiar esta Nota para as 3 Oitavas (2:1)
+          </button>
+          <button type="button" id="tunerSnapNearFifthBtn" class="btn" title="Leva a corda para perto da quinta pura (faltando ~2 Hz) para você treinar o ajuste fino do batimento">
+            🎯 Deixar perto da Quinta (Treinar Ajuste Fino)
+          </button>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- 3-Octave Interactive Harpsichord Keyboard -->
+    <div class="octave-bank">
+      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.75rem;">
+        <div>
+          <span style="font-family: var(--font-mono); font-size: 0.74rem; color: var(--gold); font-weight: 700; text-transform: uppercase;">
+            Teclado do Cravo de 3 Oitavas (36 Cordas · Clique em uma tecla para afiná-la na Cravelha)
+          </span>
+          <div style="font-size: 0.78rem; color: var(--ink-soft); margin-top: 0.1rem;">
+            Dica: <strong>Clique simples</strong> escolhe a tecla como <strong>Nota Alvo (Cravelha)</strong>. Segure <strong>Shift + Clique</strong> para definir a tecla como <strong>Nota Base (Referência)</strong>.
+          </div>
+        </div>
+        <div style="display: flex; gap: 0.75rem; font-family: var(--font-mono); font-size: 0.7rem; flex-wrap: wrap;">
+          <span style="color: #6ee7b7;">● Tecla Verde = Já Afinada</span>
+          <span style="color: #fde047;">● Borda Dourada = Nota Alvo na Cravelha</span>
+          <span style="color: var(--ink-soft);">● Cinza = Ainda na frequência inicial do Dó</span>
+        </div>
+      </div>
+
+      <div id="tunerKeyboardContainer" style="display: flex; flex-direction: column; gap: 1rem;"></div>
+    </div>
+
+    <!-- Institutional Footer -->
+    <footer class="site-footer">
+      <div>
+        <strong>Observação Pedagógica:</strong> Esta simulação utiliza a Notação Científica Internacional de Altura (ISO 16), onde o Dó central do piano é chamado de <strong>Dó4</strong> (261,63 Hz).
+      </div>
+      <div>
+        Desenvolvido pelo professor Glauber Santiago — DAC/UFSCar ·
+        <a href="https://aprenda-musica-comigo.web.app/" target="_blank" rel="noopener noreferrer">aprenda-musica-comigo.web.app</a> •
+        <a href="https://servidores.ufscar.br/glauber/" target="_blank" rel="noopener noreferrer">servidores.ufscar.br/glauber/</a> •
+        <a href="https://glauberia.web.app/" target="_blank" rel="noopener noreferrer">https://glauberia.web.app/</a>
+      </div>
+      <div>
+        Apoio: Grupo de Estudos e Pesquisas sobre Inovação em Educação, Tecnologias e Linguagens (Grupo Horizonte-UFSCar) —
+        <a href="https://grupohorizonte.ufscar.br/" target="_blank" rel="noopener noreferrer">grupohorizonte.ufscar.br</a>
+      </div>
+    </footer>
+
+  </main>
+
+  <script>
+    (function () {
+      'use strict';
+
+      var noteNamesPT = ['Dó', 'Dó#', 'Ré', 'Ré#', 'Mi', 'Fá', 'Fá#', 'Sol', 'Sol#', 'Lá', 'Lá#', 'Si'];
+      var tunerOctaves = [3, 4, 5];
+      var tunerOctaveBaseC = {
+        3: 130.8128,
+        4: 261.6256,
+        5: 523.2511
+      };
+      var tunerSharpIndices = [1, 3, 6, 8, 10];
+      var fifthNextIndexMap = [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6];
+
+      var cravoKeys = {};
+      var tunerBaseId = 'Dó4';
+      var tunerTargetId = 'Sol4';
+      var isBaseLocked = false;
+      var isTargetSounding = false;
+      var animPhase = 0;
+
+      var audioCtx = null;
+      var baseVoice = null;
+      var targetVoice = null;
+
+      var tunerBaseSelect = document.getElementById('tunerBaseSelect');
+      var tunerTargetSelect = document.getElementById('tunerTargetSelect');
+      var tunerBaseNameBig = document.getElementById('tunerBaseNameBig');
+      var tunerBaseHzBig = document.getElementById('tunerBaseHzBig');
+      var tunerLockBaseBtn = document.getElementById('tunerLockBaseBtn');
+      var tunerPromoteTargetBtn = document.getElementById('tunerPromoteTargetBtn');
+      var tunerPlayBothQuickBtn = document.getElementById('tunerPlayBothQuickBtn');
+
+      var tunerTargetNameTitle = document.getElementById('tunerTargetNameTitle');
+      var tunerTargetHzBig = document.getElementById('tunerTargetHzBig');
+      var tunerRatioBig = document.getElementById('tunerRatioBig');
+      var tunerIdealFifthHz = document.getElementById('tunerIdealFifthHz');
+      var tunerTargetSoundBtn = document.getElementById('tunerTargetSoundBtn');
+      var tunerPegSlider = document.getElementById('tunerPegSlider');
+      var tunerStatusBanner = document.getElementById('tunerStatusBanner');
+      var tunerStatusText = document.getElementById('tunerStatusText');
+      var tunerBeatRateBadge = document.getElementById('tunerBeatRateBadge');
+      var tunerWaveCanvas = document.getElementById('tuner-wave-canvas');
+
+      var tunerMarkTunedBtn = document.getElementById('tunerMarkTunedBtn');
+      var tunerSpreadOctavesBtn = document.getElementById('tunerSpreadOctavesBtn');
+      var tunerSnapNearFifthBtn = document.getElementById('tunerSnapNearFifthBtn');
+      var tunerHarmonicsCheck = document.getElementById('tunerHarmonicsCheck');
+      var tunerBlindModeCheck = document.getElementById('tunerBlindModeCheck');
+      var tunerSilenceAllBtn = document.getElementById('tunerSilenceAllBtn');
+      var tunerResetAllBtn = document.getElementById('tunerResetAllBtn');
+      var tunerKeyboardContainer = document.getElementById('tunerKeyboardContainer');
+
+      function initCravoState() {
+        cravoKeys = {};
+        tunerOctaves.forEach(function (oct) {
+          var cFreq = tunerOctaveBaseC[oct];
+          noteNamesPT.forEach(function (nName, nIdx) {
+            var id = nName + oct;
+            cravoKeys[id] = {
+              id: id,
+              noteName: nName,
+              noteIndex: nIdx,
+              octave: oct,
+              freq: cFreq,
+              initialCFreq: cFreq,
+              tuned: (nIdx === 0)
+            };
+          });
+        });
+      }
+
+      function ensureWebAudio() {
+        if (!audioCtx) {
+          var AudioContextClass = window.AudioContext || window.webkitAudioContext;
+          audioCtx = new AudioContextClass();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        return audioCtx;
+      }
+
+      function createSineVoice(freq) {
+        var ctx = ensureWebAudio();
+        var masterGain = ctx.createGain();
+        masterGain.gain.setValueAtTime(0.001, ctx.currentTime);
+        masterGain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.04);
+        masterGain.connect(ctx.destination);
+
+        var useHarmonics = tunerHarmonicsCheck ? tunerHarmonicsCheck.checked : true;
+
+        var osc1 = ctx.createOscillator();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(freq, ctx.currentTime);
+        osc1.connect(masterGain);
+        osc1.start();
+
+        var gain2 = ctx.createGain();
+        gain2.gain.setValueAtTime(useHarmonics ? 0.35 : 0.0, ctx.currentTime);
+        gain2.connect(masterGain);
+        var osc2 = ctx.createOscillator();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(freq * 2, ctx.currentTime);
+        osc2.connect(gain2);
+        osc2.start();
+
+        var gain3 = ctx.createGain();
+        gain3.gain.setValueAtTime(useHarmonics ? 0.25 : 0.0, ctx.currentTime);
+        gain3.connect(masterGain);
+        var osc3 = ctx.createOscillator();
+        osc3.type = 'sine';
+        osc3.frequency.setValueAtTime(freq * 3, ctx.currentTime);
+        osc3.connect(gain3);
+        osc3.start();
+
+        return {
+          setFreq: function (newF) {
+            var now = ctx.currentTime;
+            osc1.frequency.setTargetAtTime(newF, now, 0.012);
+            osc2.frequency.setTargetAtTime(newF * 2, now, 0.012);
+            osc3.frequency.setTargetAtTime(newF * 3, now, 0.012);
+          },
+          setHarmonics: function (enabled) {
+            var now = ctx.currentTime;
+            gain2.gain.setTargetAtTime(enabled ? 0.35 : 0.0, now, 0.02);
+            gain3.gain.setTargetAtTime(enabled ? 0.25 : 0.0, now, 0.02);
+          },
+          stop: function () {
+            try {
+              var now = ctx.currentTime;
+              masterGain.gain.setTargetAtTime(0.0001, now, 0.02);
+              setTimeout(function () {
+                try {
+                  osc1.stop();
+                  osc2.stop();
+                  osc3.stop();
+                  masterGain.disconnect();
+                } catch (e) {}
+              }, 90);
+            } catch (e) {}
+          }
+        };
+      }
+
+      function syncAudioVoices() {
+        var baseKey = cravoKeys[tunerBaseId];
+        var targetKey = cravoKeys[tunerTargetId];
+
+        if (isBaseLocked && baseKey) {
+          if (!baseVoice) {
+            baseVoice = createSineVoice(baseKey.freq);
+          } else {
+            baseVoice.setFreq(baseKey.freq);
+          }
+        } else if (baseVoice) {
+          baseVoice.stop();
+          baseVoice = null;
+        }
+
+        if (isTargetSounding && targetKey) {
+          if (!targetVoice) {
+            targetVoice = createSineVoice(targetKey.freq);
+          } else {
+            targetVoice.setFreq(targetKey.freq);
+          }
+        } else if (targetVoice) {
+          targetVoice.stop();
+          targetVoice = null;
+        }
+      }
+
+      function populateTunerSelectors() {
+        tunerBaseSelect.innerHTML = '';
+        tunerTargetSelect.innerHTML = '';
+
+        tunerOctaves.forEach(function (oct) {
+          noteNamesPT.forEach(function (nName) {
+            var id = nName + oct;
+            var keyObj = cravoKeys[id];
+            var opt1 = document.createElement('option');
+            opt1.value = id;
+            opt1.textContent = id + ' (' + keyObj.freq.toFixed(2).replace('.', ',') + ' Hz' + (keyObj.tuned ? ' · ✅ Afinada' : '') + ')';
+            tunerBaseSelect.appendChild(opt1);
+
+            var opt2 = document.createElement('option');
+            opt2.value = id;
+            opt2.textContent = id + ' (' + keyObj.freq.toFixed(2).replace('.', ',') + ' Hz' + (keyObj.tuned ? ' · ✅ Afinada' : '') + ')';
+            tunerTargetSelect.appendChild(opt2);
+          });
+        });
+
+        tunerBaseSelect.value = tunerBaseId;
+        tunerTargetSelect.value = tunerTargetId;
+      }
+
+      function updateSliderRangeForTarget() {
+        var targetKey = cravoKeys[tunerTargetId];
+        var baseKey = cravoKeys[tunerBaseId];
+        if (!targetKey) return;
+
+        var refC = targetKey.initialCFreq;
+        var minF = Math.min(refC * 0.48, (baseKey ? baseKey.freq * 0.48 : 80));
+        var maxF = Math.max(refC * 2.25, (baseKey ? baseKey.freq * 2.25 : 900));
+        tunerPegSlider.min = minF.toFixed(2);
+        tunerPegSlider.max = maxF.toFixed(2);
+        tunerPegSlider.value = targetKey.freq.toFixed(2);
+      }
+
+      function renderTunerUI() {
+        var baseKey = cravoKeys[tunerBaseId];
+        var targetKey = cravoKeys[tunerTargetId];
+        if (!baseKey || !targetKey) return;
+
+        var blind = tunerBlindModeCheck.checked;
+
+        if (tunerBaseSelect.value !== tunerBaseId) tunerBaseSelect.value = tunerBaseId;
+        if (tunerTargetSelect.value !== tunerTargetId) tunerTargetSelect.value = tunerTargetId;
+
+        tunerBaseNameBig.textContent = baseKey.id + (baseKey.tuned ? ' ✅' : '');
+        tunerBaseHzBig.textContent = baseKey.freq.toFixed(2).replace('.', ',') + ' Hz';
+
+        if (isBaseLocked) {
+          tunerLockBaseBtn.classList.add('is-locked');
+          tunerLockBaseBtn.textContent = '🔒 Nota Base TRAVADA e Soando (' + baseKey.id + ') — Clique para Destravar';
+        } else {
+          tunerLockBaseBtn.classList.remove('is-locked');
+          tunerLockBaseBtn.textContent = '🔒 Travar Execução da Nota Base (' + baseKey.id + ')';
+        }
+
+        tunerTargetNameTitle.textContent = targetKey.id;
+        tunerTargetHzBig.textContent = blind ? '??? Hz (Ouvido)' : (targetKey.freq.toFixed(2).replace('.', ',') + ' Hz');
+
+        if (isTargetSounding) {
+          tunerTargetSoundBtn.classList.add('is-sounding');
+          tunerTargetSoundBtn.textContent = '🔊 Nota Alvo (' + targetKey.id + ') SOANDO — Clique para Desligar';
+        } else {
+          tunerTargetSoundBtn.classList.remove('is-sounding');
+          tunerTargetSoundBtn.textContent = '🔊 Ligar Som da Nota Alvo (' + targetKey.id + ')';
+        }
+
+        var ratio = targetKey.freq / baseKey.freq;
+        var idealFifthUp = baseKey.freq * 1.5;
+        var idealFourthDown = baseKey.freq * 0.75;
+
+        tunerIdealFifthHz.textContent = blind
+          ? 'Oculto (Modo Ouvido)'
+          : (idealFifthUp.toFixed(2).replace('.', ',') + ' Hz (ou ' + idealFourthDown.toFixed(2).replace('.', ',') + ' Hz 8ª abaixo)');
+
+        var centsToFifthUp = 1200 * Math.log2(ratio / 1.5);
+        var centsToFifthDownOct = 1200 * Math.log2(ratio / 0.75);
+        var centsToOctaveUp = 1200 * Math.log2(ratio / 2.0);
+        var centsToOctaveDown = 1200 * Math.log2(ratio / 0.5);
+        var centsToUnison = 1200 * Math.log2(ratio / 1.0);
+
+        var beatFifthUp = Math.abs(2 * targetKey.freq - 3 * baseKey.freq);
+        var beatFifthDownOct = Math.abs(4 * targetKey.freq - 3 * baseKey.freq);
+
+        var ratioLabel = ratio.toFixed(4).replace('.', ',') + '×';
+        tunerStatusBanner.className = 'status-banner';
+
+        if (Math.abs(centsToFifthUp) < 0.8) {
+          ratioLabel += ' (Quinta Pura 3/2!)';
+          tunerStatusBanner.classList.add('is-pure');
+          tunerStatusText.innerHTML = '✨ <strong>QUINTA PURA (3/2) AFINADA!</strong> O som de <strong>' + baseKey.id + ' + ' + targetKey.id + '</strong> ficou liso e sem batimentos! Clique em "✅ Confirmar Nota como Afinada".';
+          tunerBeatRateBadge.textContent = 'Batimento: ' + beatFifthUp.toFixed(2).replace('.', ',') + ' bat/s (Zero!)';
+        } else if (Math.abs(centsToFifthDownOct) < 0.8) {
+          ratioLabel += ' (Quinta 1 Oitava Abaixo · 3/4!)';
+          tunerStatusBanner.classList.add('is-pure');
+          tunerStatusText.innerHTML = '✨ <strong>QUINTA PURA + OITAVA ABAIXO (3/4) AFINADA!</strong> Zigue-zague perfeito na oitava central sem batimento!';
+          tunerBeatRateBadge.textContent = 'Batimento: ' + beatFifthDownOct.toFixed(2).replace('.', ',') + ' bat/s (Zero!)';
+        } else if (Math.abs(centsToOctaveUp) < 0.8 || Math.abs(centsToOctaveDown) < 0.8) {
+          ratioLabel += ' (Oitava Pura 2:1!)';
+          tunerStatusBanner.classList.add('is-pure');
+          tunerStatusText.innerHTML = '✨ <strong>OITAVA PURA (2:1) AFINADA!</strong> Cópia de oitava sem batimentos.';
+          tunerBeatRateBadge.textContent = 'Batimento 8ª: ~0,0 bat/s';
+        } else if (Math.abs(centsToUnison) < 1.2) {
+          ratioLabel += ' (Uníssono 1:1)';
+          tunerStatusText.innerHTML = '📌 <strong>' + targetKey.id + '</strong> está na mesma frequência de <strong>' + baseKey.id + '</strong> (Uníssono). Suba a cravelha em direção a 1,500× para encontrar a Quinta Pura!';
+          tunerBeatRateBadge.textContent = 'Diferença p/ 5ª: ' + centsToFifthUp.toFixed(1).replace('.', ',') + ' cents';
+        } else if (Math.abs(centsToFifthUp) < 35) {
+          tunerStatusBanner.classList.add('is-near');
+          tunerStatusText.innerHTML = '👂 <strong>Quase lá! Você está perto da Quinta Pura!</strong> Ouça o batimento <em>"uá-uá-uá"</em> (' + beatFifthUp.toFixed(1).replace('.', ',') + ' por segundo) e ajuste nos botões finos (+/- 0,5 Hz e +/- 0,05 Hz) até o batimento parar!';
+          tunerBeatRateBadge.textContent = 'Batimento 5ª: ' + beatFifthUp.toFixed(1).replace('.', ',') + ' bat/s';
+        } else {
+          tunerStatusText.innerHTML = '🔧 Girando a cravelha de <strong>' + targetKey.id + '</strong>... Continue subindo ou descendo até ouvir os batimentos da Quinta Pura (3/2 = 1,500×).';
+          tunerBeatRateBadge.textContent = blind ? 'Ouça o batimento' : ('Distância p/ 5ª: ' + (centsToFifthUp > 0 ? '+' : '') + centsToFifthUp.toFixed(0) + ' cents');
+        }
+
+        tunerRatioBig.textContent = blind ? '??? × (Ouvido)' : ratioLabel;
+        renderKeyboardGrid();
+      }
+
+      function renderKeyboardGrid() {
+        tunerKeyboardContainer.innerHTML = '';
+
+        [5, 4, 3].forEach(function (oct) {
+          var rowWrap = document.createElement('div');
+          var label = document.createElement('div');
+          label.style.fontFamily = 'var(--font-mono)';
+          label.style.fontSize = '0.74rem';
+          label.style.color = 'var(--ink-soft)';
+          label.innerHTML = '<strong>Oitava ' + oct + '</strong> (Dó' + oct + ' inicial = ' + tunerOctaveBaseC[oct].toFixed(2).replace('.', ',') + ' Hz)';
+          rowWrap.appendChild(label);
+
+          var grid = document.createElement('div');
+          grid.className = 'octave-row-grid';
+
+          noteNamesPT.forEach(function (nName, nIdx) {
+            var id = nName + oct;
+            var kObj = cravoKeys[id];
+            var isSharp = tunerSharpIndices.indexOf(nIdx) !== -1;
+
+            var btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'cravo-key' +
+              (isSharp ? ' cravo-key--sharp' : '') +
+              (kObj.tuned ? ' is-tuned' : '') +
+              (id === tunerBaseId ? ' is-base-key' : '') +
+              (id === tunerTargetId ? ' is-target-key' : '');
+
+            var badgeText = kObj.tuned ? '✅ Afinada' : 'Igual Dó' + oct;
+            if (id === tunerBaseId) badgeText = '🔒 Base';
+            if (id === tunerTargetId) badgeText = '🔧 Alvo';
+
+            btn.innerHTML =
+              '<span class="cravo-key__name">' + id + '</span>' +
+              '<span class="cravo-key__hz">' + kObj.freq.toFixed(1).replace('.', ',') + ' Hz</span>' +
+              '<span class="cravo-key__badge">' + badgeText + '</span>';
+
+            btn.addEventListener('click', function (ev) {
+              if (ev.shiftKey) {
+                tunerBaseId = id;
+              } else {
+                tunerTargetId = id;
+              }
+              populateTunerSelectors();
+              updateSliderRangeForTarget();
+              syncAudioVoices();
+              renderTunerUI();
+            });
+
+            grid.appendChild(btn);
+          });
+
+          rowWrap.appendChild(grid);
+          tunerKeyboardContainer.appendChild(rowWrap);
+        });
+      }
+
+      function setTargetFrequency(newFreq) {
+        var targetKey = cravoKeys[tunerTargetId];
+        if (!targetKey) return;
+        var clamped = Math.max(50, Math.min(2400, newFreq));
+        targetKey.freq = clamped;
+        if (clamped < parseFloat(tunerPegSlider.min)) tunerPegSlider.min = (clamped * 0.8).toFixed(2);
+        if (clamped > parseFloat(tunerPegSlider.max)) tunerPegSlider.max = (clamped * 1.2).toFixed(2);
+        tunerPegSlider.value = clamped.toFixed(2);
+        if (targetVoice) {
+          targetVoice.setFreq(clamped);
+        }
+        renderTunerUI();
+      }
+
+      function drawTunerWaveScope() {
+        var rect = tunerWaveCanvas.getBoundingClientRect();
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        var w = Math.max(10, Math.round(rect.width * dpr));
+        var h = Math.max(10, Math.round(rect.height * dpr));
+        if (tunerWaveCanvas.width !== w || tunerWaveCanvas.height !== h) {
+          tunerWaveCanvas.width = w;
+          tunerWaveCanvas.height = h;
+        }
+        var ctx = tunerWaveCanvas.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        var cw = rect.width;
+        var ch = rect.height;
+        ctx.clearRect(0, 0, cw, ch);
+
+        var baseKey = cravoKeys[tunerBaseId];
+        var targetKey = cravoKeys[tunerTargetId];
+        if (!baseKey || !targetKey) return;
+
+        var cy = ch / 2;
+        var ratio = targetKey.freq / baseKey.freq;
+        var beatEnvSpeed = Math.abs(2 * targetKey.freq - 3 * baseKey.freq) * 0.12;
+
+        ctx.strokeStyle = (isBaseLocked || isTargetSounding) ? '#eab308' : 'rgba(184, 172, 160, 0.35)';
+        ctx.lineWidth = 1.8;
+        ctx.beginPath();
+        for (var x = 0; x <= cw; x += 2) {
+          var t = (x / cw) * Math.PI * 10;
+          var w1 = Math.sin(t - animPhase * 1.5);
+          var w2 = Math.sin(t * ratio - animPhase * 1.5 * ratio + Math.sin(animPhase * beatEnvSpeed));
+          var y = cy + ((w1 + w2) * 0.5) * (ch * 0.36);
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+
+        animPhase += 0.04;
+        requestAnimationFrame(drawTunerWaveScope);
+      }
+
+      tunerBaseSelect.addEventListener('change', function () {
+        tunerBaseId = tunerBaseSelect.value;
+        updateSliderRangeForTarget();
+        syncAudioVoices();
+        renderTunerUI();
+      });
+
+      tunerTargetSelect.addEventListener('change', function () {
+        tunerTargetId = tunerTargetSelect.value;
+        updateSliderRangeForTarget();
+        syncAudioVoices();
+        renderTunerUI();
+      });
+
+      tunerLockBaseBtn.addEventListener('click', function () {
+        isBaseLocked = !isBaseLocked;
+        syncAudioVoices();
+        renderTunerUI();
+      });
+
+      tunerTargetSoundBtn.addEventListener('click', function () {
+        isTargetSounding = !isTargetSounding;
+        syncAudioVoices();
+        renderTunerUI();
+      });
+
+      tunerPlayBothQuickBtn.addEventListener('click', function () {
+        isBaseLocked = true;
+        isTargetSounding = true;
+        syncAudioVoices();
+        renderTunerUI();
+      });
+
+      tunerSilenceAllBtn.addEventListener('click', function () {
+        isBaseLocked = false;
+        isTargetSounding = false;
+        syncAudioVoices();
+        renderTunerUI();
+      });
+
+      tunerPegSlider.addEventListener('input', function () {
+        setTargetFrequency(parseFloat(tunerPegSlider.value));
+      });
+
+      document.querySelectorAll('[data-nudge]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var delta = parseFloat(btn.getAttribute('data-nudge')) || 0;
+          var targetKey = cravoKeys[tunerTargetId];
+          if (targetKey) {
+            setTargetFrequency(targetKey.freq + delta);
+          }
+        });
+      });
+
+      tunerMarkTunedBtn.addEventListener('click', function () {
+        var targetKey = cravoKeys[tunerTargetId];
+        if (targetKey) {
+          targetKey.tuned = true;
+          populateTunerSelectors();
+          renderTunerUI();
+        }
+      });
+
+      tunerSpreadOctavesBtn.addEventListener('click', function () {
+        var targetKey = cravoKeys[tunerTargetId];
+        if (!targetKey) return;
+        targetKey.tuned = true;
+        tunerOctaves.forEach(function (oct) {
+          var siblingId = targetKey.noteName + oct;
+          if (cravoKeys[siblingId]) {
+            var octDiff = oct - targetKey.octave;
+            cravoKeys[siblingId].freq = targetKey.freq * Math.pow(2, octDiff);
+            cravoKeys[siblingId].tuned = true;
+          }
+        });
+        populateTunerSelectors();
+        renderTunerUI();
+        tunerStatusBanner.className = 'status-banner is-pure';
+        tunerStatusText.innerHTML = '📋 <strong>Oitavas Espalhadas!</strong> Todas as teclas <strong>' + targetKey.noteName + '3, ' + targetKey.noteName + '4 e ' + targetKey.noteName + '5</strong> foram afinadas em oitavas 2:1 puras!';
+      });
+
+      tunerPromoteTargetBtn.addEventListener('click', function () {
+        var currentTarget = cravoKeys[tunerTargetId];
+        if (!currentTarget) return;
+        currentTarget.tuned = true;
+        tunerBaseId = currentTarget.id;
+        var nextNoteIndex = fifthNextIndexMap[currentTarget.noteIndex];
+        var nextNoteName = noteNamesPT[nextNoteIndex];
+        tunerTargetId = nextNoteName + currentTarget.octave;
+        populateTunerSelectors();
+        updateSliderRangeForTarget();
+        syncAudioVoices();
+        renderTunerUI();
+      });
+
+      tunerSnapNearFifthBtn.addEventListener('click', function () {
+        var baseKey = cravoKeys[tunerBaseId];
+        if (!baseKey) return;
+        setTargetFrequency(baseKey.freq * 1.5 - 2.2);
+        isBaseLocked = true;
+        isTargetSounding = true;
+        syncAudioVoices();
+        renderTunerUI();
+      });
+
+      tunerHarmonicsCheck.addEventListener('change', function () {
+        var en = tunerHarmonicsCheck.checked;
+        if (baseVoice) baseVoice.setHarmonics(en);
+        if (targetVoice) targetVoice.setHarmonics(en);
+      });
+
+      tunerBlindModeCheck.addEventListener('change', function () {
+        renderTunerUI();
+      });
+
+      tunerResetAllBtn.addEventListener('click', function () {
+        isBaseLocked = false;
+        isTargetSounding = false;
+        syncAudioVoices();
+        initCravoState();
+        tunerBaseId = 'Dó4';
+        tunerTargetId = 'Sol4';
+        populateTunerSelectors();
+        updateSliderRangeForTarget();
+        renderTunerUI();
+      });
+
+      initCravoState();
+      populateTunerSelectors();
+      updateSliderRangeForTarget();
+      renderTunerUI();
+      requestAnimationFrame(drawTunerWaveScope);
+    })();
+  </script>
+</body>
+</html>
