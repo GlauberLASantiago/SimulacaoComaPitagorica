@@ -558,13 +558,19 @@
 
   <header class="topbar">
     <a href="index.html" class="back-link">← Voltar para a Simulação da Coma Pitagórica</a>
-    <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
+    <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
+      <button type="button" id="tunerTestModeBtn" class="btn" style="border-color: rgba(56, 189, 248, 0.65); color: #7dd3fc; font-weight: 700;">
+        🎹 Ativar Modo Testar (Tocar sem Travar)
+      </button>
+      <button type="button" id="tunerPlayDemoBtn" class="btn" style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.24), rgba(52, 211, 153, 0.2)); border-color: var(--gold); color: #fde047; font-weight: 700;">
+        🎵 Tocar Demonstração
+      </button>
       <label style="display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.74rem; cursor: pointer;">
         <input type="checkbox" id="tunerBlindModeCheck" style="accent-color: var(--jade); width: 15px; height: 15px;">
-        <span>🙈 Ocultar Frequências (Treino Cego de Ouvido)</span>
+        <span>🙈 Ocultar Frequências</span>
       </label>
       <button type="button" id="tunerSilenceAllBtn" class="btn" style="border-color: rgba(251, 113, 133, 0.5); color: #fda4af;">
-        ⏹ Desligar Todas as Notas Soando
+        ⏹ Desligar Notas
       </button>
       <button type="button" id="tunerResetAllBtn" class="btn">
         🎲 Sortear Novas Desafinações
@@ -611,15 +617,19 @@
     <section class="harpsichord-case" aria-label="Teclado do Cravo de 3 Oitavas">
       <div class="harpsichord-header">
         <div>
-          <span style="font-family: var(--font-mono); font-size: 0.75rem; color: #fde047; font-weight: 700;">
-            🎹 TECLADO DO CRAVO (3 OITAVAS: DÓ3 A SI5) · 1 Clique = Liga/Desliga Som · Duplo Clique = Seleciona para Afinar
+          <span id="keyboardModeBannerText" style="font-family: var(--font-mono); font-size: 0.75rem; color: #fde047; font-weight: 700;">
+            🎹 MODO AFINAR ATIVO · 1 Clique = Trava/Desliga Som · Duplo Clique = Seleciona para Afinar
           </span>
         </div>
-        <div style="display: flex; gap: 0.9rem; font-family: var(--font-mono); font-size: 0.7rem; flex-wrap: wrap;">
-          <span style="color: #6ee7b7;">● Verde = Nota Soando (Travada)</span>
-          <span style="color: #fde047;">● Contorno Dourado = Selecionada na Cravelha (Duplo Clique)</span>
-          <span style="color: #a7f3d0;">★ Dó4 = Única Nota Afinada de Fábrica (261,63 Hz)</span>
+        <div style="display: flex; gap: 0.9rem; font-family: var(--font-mono); font-size: 0.7rem; flex-wrap: wrap; align-items: center;">
+          <span style="color: #6ee7b7;">● Verde = Nota Soando</span>
+          <span style="color: #fde047;">● Contorno Dourado = Cravelha (Duplo Clique)</span>
+          <span style="color: #a7f3d0;">★ Dó4 = Fixa (261,63 Hz)</span>
         </div>
+      </div>
+
+      <div id="demoStatusBanner" style="display: none; margin-bottom: 0.65rem; padding: 0.55rem 0.9rem; border-radius: 6px; background: rgba(234, 179, 8, 0.16); border: 1px solid var(--gold); font-family: var(--font-mono); font-size: 0.8rem; color: #fef08a; font-weight: 700;">
+        🎵 Preparando demonstração...
       </div>
 
       <div class="velvet-strip" aria-hidden="true"></div>
@@ -777,13 +787,22 @@
       var keysById = {};
       var keyOrderIds = [];
       var selectedPegKeyId = 'Sol4'; // Selected via double-click
-      var activeVoices = {}; // keyId -> WebAudio sine voice (toggled via single click)
+      var activeVoices = {}; // keyId -> WebAudio sine voice
+      var isTestPlayMode = false; // When true, keyboard acts like a normal piano/harpsichord without locking notes
+      var momentaryReleaseTimers = {}; // keyId -> timeout id for normal keyboard play mode
+      var momentaryStartTime = {}; // keyId -> timestamp when pressed
+      var isDemoPlaying = false;
+      var demoTimeoutIds = [];
       var animPhase = 0;
 
       var audioCtx = null;
 
       // DOM Elements
       var pianoKeyboardEl = document.getElementById('pianoKeyboard');
+      var keyboardModeBannerText = document.getElementById('keyboardModeBannerText');
+      var demoStatusBanner = document.getElementById('demoStatusBanner');
+      var tunerTestModeBtn = document.getElementById('tunerTestModeBtn');
+      var tunerPlayDemoBtn = document.getElementById('tunerPlayDemoBtn');
       var pegNoteNameEl = document.getElementById('pegNoteName');
       var pegNoteInlineEl = document.getElementById('pegNoteInline');
       var markKeyBtnLabelEl = document.getElementById('markKeyBtnLabel');
@@ -1146,7 +1165,36 @@
       }
 
       function bindKeyInteractions(btn, id) {
+        // In Modo Testar (isTestPlayMode = true), pressing plays the note immediately and releasing stops it (without locking!).
+        btn.addEventListener('mousedown', function (ev) {
+          if (!isTestPlayMode || ev.button !== 0) return;
+          startMomentaryKey(id);
+        });
+
+        btn.addEventListener('mouseup', function () {
+          if (!isTestPlayMode) return;
+          stopMomentaryKey(id);
+        });
+
+        btn.addEventListener('mouseleave', function () {
+          if (!isTestPlayMode) return;
+          stopMomentaryKey(id);
+        });
+
+        btn.addEventListener('touchstart', function (ev) {
+          if (!isTestPlayMode) return;
+          ev.preventDefault();
+          startMomentaryKey(id);
+        }, { passive: false });
+
+        btn.addEventListener('touchend', function () {
+          if (!isTestPlayMode) return;
+          stopMomentaryKey(id);
+        });
+
+        // In Modo Afinar (isTestPlayMode = false), 1 click locks/unlocks sound, double-click selects for tuning.
         btn.addEventListener('click', function () {
+          if (isTestPlayMode) return; // Handled by mousedown/mouseup without locking
           if (clickTimers[id]) {
             clearTimeout(clickTimers[id]);
             delete clickTimers[id];
@@ -1166,6 +1214,45 @@
           }
           selectKeyForPeg(id);
         });
+      }
+
+      function startMomentaryKey(id) {
+        var kObj = keysById[id];
+        if (!kObj) return;
+        if (momentaryReleaseTimers[id]) {
+          clearTimeout(momentaryReleaseTimers[id]);
+          delete momentaryReleaseTimers[id];
+        }
+        momentaryStartTime[id] = performance.now();
+        if (!kObj.sounding) {
+          kObj.sounding = true;
+          if (!activeVoices[id]) {
+            activeVoices[id] = createSineVoice(kObj.freq);
+          }
+          renderAll();
+        }
+      }
+
+      function stopMomentaryKey(id) {
+        var kObj = keysById[id];
+        if (!kObj || !kObj.sounding) return;
+        var elapsed = performance.now() - (momentaryStartTime[id] || 0);
+        var minPlayMs = 170; // Ensure even a quick click sounds clearly
+        var remaining = Math.max(0, minPlayMs - elapsed);
+        if (momentaryReleaseTimers[id]) {
+          clearTimeout(momentaryReleaseTimers[id]);
+        }
+        momentaryReleaseTimers[id] = setTimeout(function () {
+          delete momentaryReleaseTimers[id];
+          if (keysById[id]) {
+            keysById[id].sounding = false;
+          }
+          if (activeVoices[id]) {
+            activeVoices[id].stop();
+            delete activeVoices[id];
+          }
+          renderAll();
+        }, remaining);
       }
 
       function updateKeyboardDOM() {
@@ -1510,9 +1597,290 @@
         });
       });
 
-      tunerSilenceAllBtn.addEventListener('click', silenceAllKeys);
+      // Toggle "Modo Testar" (normal keyboard without locking notes)
+      function updateTestModeUI() {
+        if (!tunerTestModeBtn) return;
+        if (isTestPlayMode) {
+          tunerTestModeBtn.style.background = 'rgba(56, 189, 248, 0.25)';
+          tunerTestModeBtn.style.borderColor = '#38bdf8';
+          tunerTestModeBtn.style.color = '#e0f2fe';
+          tunerTestModeBtn.innerHTML = '🎹 Modo Testar: ATIVO (Clique p/ Voltar ao Modo Afinar)';
+          if (keyboardModeBannerText) {
+            keyboardModeBannerText.style.color = '#7dd3fc';
+            keyboardModeBannerText.textContent = '🎹 MODO TESTAR ATIVO (TECLADO NORMAL SEM TRAVAR NOTAS) · Toque livremente nas teclas para testar sua afinação!';
+          }
+        } else {
+          tunerTestModeBtn.style.background = '#211a16';
+          tunerTestModeBtn.style.borderColor = 'rgba(56, 189, 248, 0.65)';
+          tunerTestModeBtn.style.color = '#7dd3fc';
+          tunerTestModeBtn.innerHTML = '🎹 Ativar Modo Testar (Tocar sem Travar)';
+          if (keyboardModeBannerText) {
+            keyboardModeBannerText.style.color = '#fde047';
+            keyboardModeBannerText.textContent = '🎹 MODO AFINAR ATIVO · 1 Clique = Trava/Desliga Som · Duplo Clique = Seleciona para Afinar';
+          }
+        }
+      }
+
+      if (tunerTestModeBtn) {
+        tunerTestModeBtn.addEventListener('click', function () {
+          stopDemonstration();
+          silenceAllKeys();
+          isTestPlayMode = !isTestPlayMode;
+          updateTestModeUI();
+        });
+      }
+
+      // Demonstration Player:
+      // 1) 13 Major Triads: C, F, Bb, Eb, Ab, C#, F#, B, E, A, D, G, C (300ms per triad)
+      // 2) "Happy Birthday to You" with accompaniment in F Major (starting on note C / Dó4)
+      // 3) "Happy Birthday to You" with accompaniment in G Major (starting on note D / Ré4)
+      function stopDemonstration() {
+        if (demoTimeoutIds.length > 0) {
+          demoTimeoutIds.forEach(function (tid) { clearTimeout(tid); });
+          demoTimeoutIds = [];
+        }
+        if (isDemoPlaying) {
+          isDemoPlaying = false;
+          silenceAllKeys();
+        }
+        if (demoStatusBanner) {
+          demoStatusBanner.style.display = 'none';
+        }
+        if (tunerPlayDemoBtn) {
+          tunerPlayDemoBtn.innerHTML = '🎵 Tocar Demonstração';
+          tunerPlayDemoBtn.style.borderColor = 'var(--gold)';
+          tunerPlayDemoBtn.style.color = '#fde047';
+        }
+      }
+
+      function buildDemonstrationEvents() {
+        var events = [];
+
+        // Part 1: 13 Major Triads (300ms each)
+        var triads = [
+          { label: 'Tríade de Dó Maior (C)', notes: ['Dó4', 'Mi4', 'Sol4'], ms: 300 },
+          { label: 'Tríade de Fá Maior (F)', notes: ['Fá3', 'Lá3', 'Dó4'], ms: 300 },
+          { label: 'Tríade de Si♭ Maior (Bb)', notes: ['Lá#3', 'Ré4', 'Fá4'], ms: 300 },
+          { label: 'Tríade de Mi♭ Maior (Eb)', notes: ['Ré#4', 'Sol4', 'Lá#4'], ms: 300 },
+          { label: 'Tríade de Lá♭ Maior (Ab)', notes: ['Sol#3', 'Dó4', 'Ré#4'], ms: 300 },
+          { label: 'Tríade de Dó# Maior (C#)', notes: ['Dó#4', 'Fá4', 'Sol#4'], ms: 300 },
+          { label: 'Tríade de Fá# Maior (F#)', notes: ['Fá#3', 'Lá#3', 'Dó#4'], ms: 300 },
+          { label: 'Tríade de Si Maior (B)', notes: ['Si3', 'Ré#4', 'Fá#4'], ms: 300 },
+          { label: 'Tríade de Mi Maior (E)', notes: ['Mi4', 'Sol#4', 'Si4'], ms: 300 },
+          { label: 'Tríade de Lá Maior (A)', notes: ['Lá3', 'Dó#4', 'Mi4'], ms: 300 },
+          { label: 'Tríade de Ré Maior (D)', notes: ['Ré4', 'Fá#4', 'Lá4'], ms: 300 },
+          { label: 'Tríade de Sol Maior (G)', notes: ['Sol3', 'Si3', 'Ré4'], ms: 300 },
+          { label: 'Tríade de Dó Maior (C)', notes: ['Dó4', 'Mi4', 'Sol4'], ms: 420 }
+        ];
+
+        triads.forEach(function (t, idx) {
+          events.push({
+            banner: '🎹 Ciclo de Tríades Maiores (' + (idx + 1) + '/13): ' + t.label + ' [' + t.notes.join(' + ') + ']',
+            notes: t.notes,
+            durationMs: t.ms,
+            gapMs: 25
+          });
+        });
+
+        // Short pause before Happy Birthday in F Major
+        events.push({
+          banner: '🎂 Preparando: "Happy Birthday to You" em Fá Maior (iniciando em Dó4)...',
+          notes: [],
+          durationMs: 380,
+          gapMs: 0
+        });
+
+        // Part 2: Happy Birthday to You in F Major (starting on note C / Dó4)
+        var b = 370; // 1 beat in ms
+        var hbFMajor = [
+          // "Hap-py" (pickup on Dó4)
+          { lyric: 'Hap-', chord: 'Anacruse (Dó4)', notes: ['Dó4'], ms: Math.round(b * 0.72) },
+          { lyric: 'py', chord: 'Anacruse (Dó4)', notes: ['Dó4'], ms: Math.round(b * 0.28) },
+          // "birth-day to you" (F Major accompaniment: Fá3 + Lá3 + Dó4 -> C Major: Mi3 + Sol3 + Dó4)
+          { lyric: 'birth-', chord: 'Fá Maior (F)', notes: ['Fá3', 'Lá3', 'Dó4', 'Ré4'], ms: b },
+          { lyric: 'day', chord: 'Fá Maior (F)', notes: ['Fá3', 'Lá3', 'Dó4'], ms: b },
+          { lyric: 'to', chord: 'Fá Maior (F)', notes: ['Fá3', 'Lá3', 'Dó4', 'Fá4'], ms: b },
+          { lyric: 'you...', chord: 'Dó Maior (C)', notes: ['Mi3', 'Sol3', 'Dó4', 'Mi4'], ms: b * 2 },
+          // "Hap-py" (pickup on Dó4)
+          { lyric: 'Hap-', chord: 'Dó Maior (C)', notes: ['Dó4'], ms: Math.round(b * 0.72) },
+          { lyric: 'py', chord: 'Dó Maior (C)', notes: ['Dó4'], ms: Math.round(b * 0.28) },
+          // "birth-day to you" (C7/C Major -> F Major)
+          { lyric: 'birth-', chord: 'Dó7 (C7)', notes: ['Mi3', 'Sol3', 'Lá#3', 'Ré4'], ms: b },
+          { lyric: 'day', chord: 'Dó Maior (C)', notes: ['Mi3', 'Sol3', 'Dó4'], ms: b },
+          { lyric: 'to', chord: 'Dó7 (C7)', notes: ['Mi3', 'Sol3', 'Lá#3', 'Sol4'], ms: b },
+          { lyric: 'you...', chord: 'Fá Maior (F)', notes: ['Fá3', 'Lá3', 'Dó4', 'Fá4'], ms: b * 2 },
+          // "Hap-py" (pickup on Dó4)
+          { lyric: 'Hap-', chord: 'Fá Maior (F)', notes: ['Dó4'], ms: Math.round(b * 0.72) },
+          { lyric: 'py', chord: 'Fá Maior (F)', notes: ['Dó4'], ms: Math.round(b * 0.28) },
+          // "birth-day dear..." (F Major -> Bb Major)
+          { lyric: 'birth-', chord: 'Fá Maior (F)', notes: ['Fá3', 'Lá3', 'Dó4', 'Dó5'], ms: b },
+          { lyric: 'day', chord: 'Fá Maior (F)', notes: ['Fá3', 'Lá3', 'Dó4', 'Lá4'], ms: b },
+          { lyric: 'dear', chord: 'Fá Maior (F)', notes: ['Fá3', 'Lá3', 'Dó4', 'Fá4'], ms: b },
+          { lyric: 'friend...', chord: 'Si♭ Maior (Bb)', notes: ['Lá#3', 'Ré4', 'Mi4'], ms: b },
+          { lyric: '...', chord: 'Si♭ Maior (Bb)', notes: ['Lá#3', 'Ré4', 'Fá4'], ms: b },
+          // "Hap-py" (pickup on Sib4 = Lá#4)
+          { lyric: 'Hap-', chord: 'Si♭ (Bb)', notes: ['Lá#4'], ms: Math.round(b * 0.72) },
+          { lyric: 'py', chord: 'Si♭ (Bb)', notes: ['Lá#4'], ms: Math.round(b * 0.28) },
+          // "birth-day to you!" (F Major -> C Major -> F Major)
+          { lyric: 'birth-', chord: 'Fá Maior (F)', notes: ['Fá3', 'Lá3', 'Dó4', 'Lá4'], ms: b },
+          { lyric: 'day', chord: 'Fá Maior (F)', notes: ['Fá3', 'Lá3', 'Dó4', 'Fá4'], ms: b },
+          { lyric: 'to', chord: 'Dó Maior (C)', notes: ['Mi3', 'Sol3', 'Dó4', 'Sol4'], ms: b },
+          { lyric: 'you! (Fim Fá Maior)', chord: 'Fá Maior (F)', notes: ['Fá3', 'Lá3', 'Dó4', 'Fá4'], ms: Math.round(b * 2.3) }
+        ];
+
+        hbFMajor.forEach(function (step) {
+          events.push({
+            banner: '🎂 Happy Birthday em Fá Maior (iniciando em Dó4) · "' + step.lyric + '" · Acorde: ' + step.chord,
+            notes: step.notes,
+            durationMs: step.ms,
+            gapMs: 32
+          });
+        });
+
+        // Short pause before Happy Birthday in G Major
+        events.push({
+          banner: '🎂 Agora em Sol Maior (iniciando com a nota Ré4)...',
+          notes: [],
+          durationMs: 450,
+          gapMs: 0
+        });
+
+        // Part 3: Happy Birthday to You in G Major (starting on note D / Ré4)
+        var hbGMajor = [
+          // "Hap-py" (pickup on Ré4)
+          { lyric: 'Hap-', chord: 'Anacruse (Ré4)', notes: ['Ré4'], ms: Math.round(b * 0.72) },
+          { lyric: 'py', chord: 'Anacruse (Ré4)', notes: ['Ré4'], ms: Math.round(b * 0.28) },
+          // "birth-day to you" (G Major accompaniment: Sol3 + Si3 + Ré4 -> D Major: Ré3 + Fá#3 + Lá3)
+          { lyric: 'birth-', chord: 'Sol Maior (G)', notes: ['Sol3', 'Si3', 'Mi4'], ms: b },
+          { lyric: 'day', chord: 'Sol Maior (G)', notes: ['Sol3', 'Si3', 'Ré4'], ms: b },
+          { lyric: 'to', chord: 'Sol Maior (G)', notes: ['Sol3', 'Si3', 'Ré4', 'Sol4'], ms: b },
+          { lyric: 'you...', chord: 'Ré Maior (D)', notes: ['Ré3', 'Fá#3', 'Lá3', 'Fá#4'], ms: b * 2 },
+          // "Hap-py" (pickup on Ré4)
+          { lyric: 'Hap-', chord: 'Ré Maior (D)', notes: ['Ré4'], ms: Math.round(b * 0.72) },
+          { lyric: 'py', chord: 'Ré Maior (D)', notes: ['Ré4'], ms: Math.round(b * 0.28) },
+          // "birth-day to you" (D7/D Major -> G Major)
+          { lyric: 'birth-', chord: 'Ré7 (D7)', notes: ['Ré3', 'Fá#3', 'Lá3', 'Mi4'], ms: b },
+          { lyric: 'day', chord: 'Ré Maior (D)', notes: ['Ré3', 'Fá#3', 'Lá3', 'Ré4'], ms: b },
+          { lyric: 'to', chord: 'Ré7 (D7)', notes: ['Ré3', 'Fá#3', 'Dó4', 'Lá4'], ms: b },
+          { lyric: 'you...', chord: 'Sol Maior (G)', notes: ['Sol3', 'Si3', 'Ré4', 'Sol4'], ms: b * 2 },
+          // "Hap-py" (pickup on Ré4)
+          { lyric: 'Hap-', chord: 'Sol Maior (G)', notes: ['Ré4'], ms: Math.round(b * 0.72) },
+          { lyric: 'py', chord: 'Sol Maior (G)', notes: ['Ré4'], ms: Math.round(b * 0.28) },
+          // "birth-day dear..." (G Major -> C Major)
+          { lyric: 'birth-', chord: 'Sol Maior (G)', notes: ['Sol3', 'Si3', 'Ré4', 'Ré5'], ms: b },
+          { lyric: 'day', chord: 'Sol Maior (G)', notes: ['Sol3', 'Si3', 'Ré4', 'Si4'], ms: b },
+          { lyric: 'dear', chord: 'Sol Maior (G)', notes: ['Sol3', 'Si3', 'Ré4', 'Sol4'], ms: b },
+          { lyric: 'friend...', chord: 'Dó Maior (C)', notes: ['Dó3', 'Mi3', 'Sol3', 'Fá#4'], ms: b },
+          { lyric: '...', chord: 'Dó Maior (C)', notes: ['Dó3', 'Mi3', 'Sol3', 'Mi4'], ms: b },
+          // "Hap-py" (pickup on Dó5)
+          { lyric: 'Hap-', chord: 'Dó (C)', notes: ['Dó5'], ms: Math.round(b * 0.72) },
+          { lyric: 'py', chord: 'Dó (C)', notes: ['Dó5'], ms: Math.round(b * 0.28) },
+          // "birth-day to you!" (G Major -> D Major -> G Major)
+          { lyric: 'birth-', chord: 'Sol Maior (G)', notes: ['Sol3', 'Si3', 'Ré4', 'Si4'], ms: b },
+          { lyric: 'day', chord: 'Sol Maior (G)', notes: ['Sol3', 'Si3', 'Ré4', 'Sol4'], ms: b },
+          { lyric: 'to', chord: 'Ré Maior (D)', notes: ['Ré3', 'Fá#3', 'Lá3', 'Lá4'], ms: b },
+          { lyric: 'you! (Fim Sol Maior)', chord: 'Sol Maior (G)', notes: ['Sol3', 'Si3', 'Ré4', 'Sol4'], ms: Math.round(b * 2.5) }
+        ];
+
+        hbGMajor.forEach(function (step) {
+          events.push({
+            banner: '🎂 Happy Birthday em Sol Maior (iniciando em Ré4) · "' + step.lyric + '" · Acorde: ' + step.chord,
+            notes: step.notes,
+            durationMs: step.ms,
+            gapMs: 32
+          });
+        });
+
+        return events;
+      }
+
+      function playDemonstration() {
+        if (isDemoPlaying) {
+          stopDemonstration();
+          return;
+        }
+        ensureWebAudio();
+        silenceAllKeys();
+        isDemoPlaying = true;
+
+        if (tunerPlayDemoBtn) {
+          tunerPlayDemoBtn.innerHTML = '⏹ Parar Demonstração';
+          tunerPlayDemoBtn.style.borderColor = 'var(--wolf)';
+          tunerPlayDemoBtn.style.color = '#fda4af';
+        }
+        if (demoStatusBanner) {
+          demoStatusBanner.style.display = 'block';
+        }
+
+        var events = buildDemonstrationEvents();
+        var cursorMs = 0;
+
+        events.forEach(function (ev) {
+          var startAt = cursorMs;
+          var playLen = Math.max(20, ev.durationMs - (ev.gapMs || 0));
+
+          var tStart = setTimeout(function () {
+            if (!isDemoPlaying) return;
+            // Silence previous step notes
+            Object.keys(activeVoices).forEach(function (id) {
+              activeVoices[id].stop();
+              delete activeVoices[id];
+            });
+            keyOrderIds.forEach(function (id) {
+              keysById[id].sounding = false;
+            });
+
+            if (demoStatusBanner) {
+              demoStatusBanner.textContent = ev.banner;
+            }
+
+            // Start new chord/melody notes using their current frequencies on the keyboard
+            ev.notes.forEach(function (id) {
+              var kObj = keysById[id];
+              if (kObj) {
+                kObj.sounding = true;
+                activeVoices[id] = createSineVoice(kObj.freq);
+              }
+            });
+            renderAll();
+          }, startAt);
+          demoTimeoutIds.push(tStart);
+
+          if (ev.gapMs && ev.gapMs > 0) {
+            var tGap = setTimeout(function () {
+              if (!isDemoPlaying) return;
+              Object.keys(activeVoices).forEach(function (id) {
+                activeVoices[id].stop();
+                delete activeVoices[id];
+              });
+              keyOrderIds.forEach(function (id) {
+                keysById[id].sounding = false;
+              });
+              renderAll();
+            }, startAt + playLen);
+            demoTimeoutIds.push(tGap);
+          }
+
+          cursorMs += ev.durationMs;
+        });
+
+        var tEnd = setTimeout(function () {
+          stopDemonstration();
+        }, cursorMs + 80);
+        demoTimeoutIds.push(tEnd);
+      }
+
+      if (tunerPlayDemoBtn) {
+        tunerPlayDemoBtn.addEventListener('click', playDemonstration);
+      }
+
+      tunerSilenceAllBtn.addEventListener('click', function () {
+        stopDemonstration();
+        silenceAllKeys();
+      });
 
       tunerResetAllBtn.addEventListener('click', function () {
+        stopDemonstration();
         silenceAllKeys();
         initKeysWithRandomDetuning();
         selectedPegKeyId = 'Sol4';
