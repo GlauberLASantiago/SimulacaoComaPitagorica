@@ -612,6 +612,67 @@
     </div>
 
     <!-- =======================================================================
+         AUTOMATIC TUNING SYSTEM PRESET SELECTOR (10 SYSTEMS + ROOT NOTE)
+         ======================================================================= -->
+    <section style="background: linear-gradient(135deg, #1b1511 0%, #111815 100%); border: 1px solid rgba(234, 179, 8, 0.45); border-radius: var(--radius-md); padding: 0.9rem 1.15rem; margin-bottom: 1.2rem; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35);" aria-label="Seletor de Sistema de Afinação Automática">
+      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.85rem;">
+        <div style="display: flex; flex-direction: column; gap: 0.15rem;">
+          <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #6ee7b7; font-weight: 700; text-transform: uppercase;">
+            🎛️ Afinação Automática do Teclado (Opcional · Para Comparar Sistemas e Ouvir na Demonstração)
+          </span>
+          <span style="font-size: 0.82rem; color: var(--ink-soft);">
+            Escolha um dos <strong>10 sistemas de afinação</strong> (e a <strong>Nota Padrão de Referência</strong> nos sistemas históricos) para afinar automaticamente todas as 36 teclas:
+          </span>
+        </div>
+
+        <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
+          <label style="display: flex; flex-direction: column; gap: 0.2rem; font-family: var(--font-mono); font-size: 0.7rem; color: #fde047;">
+            <span>SISTEMA DE AFINAÇÃO (10 OPÇÕES):</span>
+            <select id="presetSystemSelect" style="background: #100d0b; color: var(--ink); border: 1px solid rgba(234, 179, 8, 0.55); border-radius: 6px; padding: 0.45rem 0.65rem; font-family: var(--font-mono); font-size: 0.76rem; cursor: pointer;">
+              <option value="random_challenge">🎲 Desafio Manual (Apenas Dó4 afinado · Demais desafinadas)</option>
+              <option value="equal">1. Temperamento Igual (Moderno · 12-TET · Sem Lobo)</option>
+              <option value="pythagorean_historic">2. Pitagórico Histórico (Quintas 3:2 · Lobo em Sol#–Mib)</option>
+              <option value="pythagorean_up">3. Pitagórico Linear (11 Quintas Subindo · Lobo em Fá–Dó)</option>
+              <option value="just_intonation">4. Entonação Justa Pura (Ptolomeu · 5-Limites · Terças 5:4 Puras)</option>
+              <option value="meantone_quarter">5. Mesotônico de 1/4 de Coma (Pietro Aaron, 1523 · 8 Terças Puras)</option>
+              <option value="meantone_sixth">6. Mesotônico de 1/6 de Coma (Gottfried Silbermann · Barroco)</option>
+              <option value="werckmeister_iii">7. Bom Temperamento: Werckmeister III (1691 · Época de Bach)</option>
+              <option value="kirnberger_iii">8. Bom Temperamento: Kirnberger III (1779 · Aluno de Bach)</option>
+              <option value="vallotti">9. Bom Temperamento: Vallotti (1754 · 6 Quintas de 1/6 de Coma)</option>
+              <option value="young_ii">10. Bom Temperamento: Thomas Young II (1800 · Clássico)</option>
+            </select>
+          </label>
+
+          <label id="presetRootNoteWrapper" style="display: flex; flex-direction: column; gap: 0.2rem; font-family: var(--font-mono); font-size: 0.7rem; color: #7dd3fc;">
+            <span>NOTA PADRÃO (TÔNICA BASE):</span>
+            <select id="presetRootNoteSelect" disabled style="background: #100d0b; color: var(--ink); border: 1px solid rgba(56, 189, 248, 0.55); border-radius: 6px; padding: 0.45rem 0.65rem; font-family: var(--font-mono); font-size: 0.76rem; cursor: pointer;">
+              <option value="0">Dó (C)</option>
+              <option value="1">Dó# / Ré♭ (C# / Db)</option>
+              <option value="2">Ré (D)</option>
+              <option value="3">Ré# / Mi♭ (Eb)</option>
+              <option value="4">Mi (E)</option>
+              <option value="5">Fá (F)</option>
+              <option value="6">Fá# / Sol♭ (F# / Gb)</option>
+              <option value="7">Sol (G)</option>
+              <option value="8">Sol# / Lá♭ (Ab)</option>
+              <option value="9">Lá (A)</option>
+              <option value="10">Lá# / Si♭ (Bb)</option>
+              <option value="11">Si (B)</option>
+            </select>
+          </label>
+
+          <button type="button" id="applyPresetTuningBtn" class="btn" style="margin-top: 1.05rem; background: rgba(52, 211, 153, 0.2); border-color: var(--jade); color: #a7f3d0; font-weight: 700;">
+            ✨ Aplicar Afinação no Teclado
+          </button>
+        </div>
+      </div>
+
+      <div id="presetSystemDescription" style="margin-top: 0.6rem; padding-top: 0.5rem; border-top: 1px solid rgba(250, 246, 240, 0.1); font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-soft);">
+        💡 <strong>Modo atual: Desafio Manual (Padrão).</strong> Apenas o <strong>Dó4 (261,63 Hz)</strong> vem afinado e as outras 35 teclas estão desafinadas aleatoriamente. Se quiser ouvir o cravo inteiro afinado automaticamente em qualquer um dos 10 sistemas históricos, selecione acima!
+      </div>
+    </section>
+
+    <!-- =======================================================================
          3-OCTAVE REALISTIC HARPSICHORD / PIANO KEYBOARD
          ======================================================================= -->
     <section class="harpsichord-case" aria-label="Teclado do Cravo de 3 Oitavas">
@@ -1883,10 +1944,181 @@
         stopDemonstration();
         silenceAllKeys();
         initKeysWithRandomDetuning();
+        if (presetSystemSelect) presetSystemSelect.value = 'random_challenge';
+        updatePresetSelectorState();
         selectedPegKeyId = 'Sol4';
         updateSliderForSelectedKey();
         renderAll();
       });
+
+      // =======================================================================
+      // 10 STANDARD / HISTORICAL TUNING SYSTEMS + ROOT NOTE SELECTOR
+      // =======================================================================
+      var presetSystemSelect = document.getElementById('presetSystemSelect');
+      var presetRootNoteSelect = document.getElementById('presetRootNoteSelect');
+      var applyPresetTuningBtn = document.getElementById('applyPresetTuningBtn');
+      var presetSystemDescription = document.getElementById('presetSystemDescription');
+
+      // Exact cents from the chosen Root Note (degree 0..11) for all 10 tuning systems:
+      var TUNING_SYSTEMS = {
+        equal: {
+          name: 'Temperamento Igual (Moderno · 12-TET)',
+          needsRoot: false,
+          cents: [0, 100, 200, 300, 400, 500, 600, 700, 800, 900, 1000, 1100],
+          desc: '🎹 <strong>Temperamento Igual (12-TET):</strong> Divide a oitava em 12 semitons idênticos de 100 cents. Todas as 12 quintas são ligeiramente encurtadas (700 cents = -1,96c) e todas as terças maiores são largas (400 cents = +13,69c). Não existe Quinta do Lobo e todas as tonalidades soam iguais!'
+        },
+        pythagorean_historic: {
+          name: 'Pitagórico Histórico (Lobo escondido no 8º/3º grau)',
+          needsRoot: true,
+          // 8 pure fifths up from root, 3 pure fifths down from root -> Wolf fifth falls between degree 8 (Sol#) and degree 3 (Mib)
+          cents: [0.000, 113.685, 203.910, 294.135, 407.820, 498.045, 611.730, 701.955, 815.640, 905.865, 996.090, 1109.775],
+          desc: '🐺 <strong>Pitagórico Histórico (8 quintas subindo e 3 descendo):</strong> Possui 11 Quintas 100% Puras (701,96 cents, zero batimento), escondendo a Quinta do Lobo (-23,46 cents) entre o 8º e o 3º grau cromático (Sol#–Mib quando a base é Dó). As terças maiores (407,82c) são duras e vibrantes!'
+        },
+        pythagorean_up: {
+          name: 'Pitagórico Linear (11 Quintas Subindo direto da Nota Base)',
+          needsRoot: true,
+          // 11 pure fifths stacked strictly upwards from root (0->7->2->9->4->11->6->1->8->3->10->5) -> Wolf fifth falls between degree 5 (Fá) and degree 0 (Dó)!
+          cents: [0.000, 113.685, 203.910, 317.595, 407.820, 521.505, 611.730, 701.955, 815.640, 905.865, 1019.550, 1109.775],
+          desc: '⚡ <strong>Pitagórico Linear (11 Quintas Subindo):</strong> Afina 11 quintas puras subindo diretamente a partir da Nota Base. Toda a sobra da Coma Pitagórica (-23,46 cents) cai na 12ª quinta (entre o 4º grau/Fá e a Tônica/Dó): clique em "Tocar Demonstração" e ouça como o acorde de Fá Maior uiva!'
+        },
+        just_intonation: {
+          name: 'Entonação Justa Pura (Ptolomeu · 5-Limites)',
+          needsRoot: true,
+          // Pure ratios: 1/1, 16/15, 9/8, 6/5, 5/4, 4/3, 45/32, 3/2, 8/5, 5/3, 16/9, 15/8
+          cents: [0.000, 111.731, 203.910, 315.641, 386.314, 498.045, 590.224, 701.955, 813.686, 884.359, 996.090, 1088.269],
+          desc: '✨ <strong>Entonação Justa (5-Limites de Ptolomeu):</strong> Construída com frações harmônicas puras (Terça Maior 5/4 = 386,31c sem batimentos e Quinta 3/2 = 701,96c). Os acordes próximos da Nota Base soam celestiais e cristalinos, mas acordes distantes e até a quinta Ré–Lá (680,45c) desafinam fortemente!'
+        },
+        meantone_quarter: {
+          name: 'Mesotônico de 1/4 de Coma (Pietro Aaron, 1523)',
+          needsRoot: true,
+          // 11 fifths narrowed by 1/4 syntonic comma (696.578c) so 8 major thirds are 100% pure (386.314c)
+          cents: [0.000, 76.049, 193.157, 310.265, 386.314, 503.422, 579.471, 696.578, 772.627, 889.735, 1006.843, 1082.892],
+          desc: '🏛️ <strong>Mesotônico de 1/4 de Coma (1523):</strong> O temperamento favorito da Renascença e início do Barroco! Encurta cada quinta em 1/4 de coma sintônica (696,58c) para deixar <strong>8 Terças Maiores 100% Puras (386,31c)</strong>. Em compensação, a Quinta do Lobo e as tríades distantes (Láb, Dó#, Fá#, Si) uivam intensamente!'
+        },
+        meantone_sixth: {
+          name: 'Mesotônico de 1/6 de Coma (Gottfried Silbermann)',
+          needsRoot: true,
+          cents: [0.000, 86.965, 196.741, 306.518, 393.482, 503.259, 590.224, 698.371, 786.965, 895.112, 1004.888, 1091.853],
+          desc: '🎻 <strong>Mesotônico de 1/6 de Coma (Silbermann):</strong> Encurta 11 quintas em 1/6 de coma sintônica (698,37c). Suaviza a Quinta do Lobo e mantém terças doces (393,48c) nas tonalidades mais usadas do período barroco.'
+        },
+        werckmeister_iii: {
+          name: 'Bom Temperamento: Werckmeister III (1691)',
+          needsRoot: true,
+          cents: [0.000, 90.225, 192.180, 294.135, 390.225, 498.045, 588.270, 696.090, 792.180, 888.270, 996.090, 1092.180],
+          desc: '🎼 <strong>Werckmeister III (1691 · "O Cravo Bem Temperado"):</strong> Divide a Coma Pitagórica em apenas 4 quintas (1/4 de coma cada) e mantém 8 quintas 100% puras! Elimina a Quinta do Lobo permitindo tocar em todos os 12 tons, mas dá uma "cor emocional" única para cada tonalidade!'
+        },
+        kirnberger_iii: {
+          name: 'Bom Temperamento: Kirnberger III (1779)',
+          needsRoot: true,
+          cents: [0.000, 90.225, 193.157, 294.135, 386.314, 498.045, 590.224, 696.578, 792.180, 889.735, 996.090, 1088.269],
+          desc: '👑 <strong>Kirnberger III (1779 · Aluno de J.S. Bach):</strong> Divide a coma sintônica em 4 quintas para garantir uma Terça Maior 100% Pura (386,31c) na Tônica Base, mantendo 7 quintas perfeitamente puras (701,96c) e sem Quinta do Lobo.'
+        },
+        vallotti: {
+          name: 'Bom Temperamento: Vallotti (1754)',
+          needsRoot: true,
+          cents: [0.000, 94.135, 196.090, 298.045, 392.180, 501.955, 592.180, 698.045, 796.090, 894.135, 1000.000, 1090.225],
+          desc: '🇮🇹 <strong>Vallotti (1754 · Barroco Italiano):</strong> Divide a Coma Pitagórica igualmente entre 6 quintas diatônicas (encurtadas em 1/6 de coma = 698,04c) e deixa as 6 quintas cromáticas 100% puras (701,96c).'
+        },
+        young_ii: {
+          name: 'Bom Temperamento: Thomas Young II (1800)',
+          needsRoot: true,
+          cents: [0.000, 90.225, 196.090, 294.135, 392.180, 498.045, 588.270, 698.045, 792.180, 894.135, 996.090, 1090.225],
+          desc: '🎩 <strong>Thomas Young II (1800):</strong> Sistema de transição para o período Clássico/Romântico, com 6 quintas temperadas em 1/6 de coma pitagórica e 6 quintas puras, oferecendo modulação suave por todo o ciclo de quintas.'
+        }
+      };
+
+      function updatePresetSelectorState() {
+        if (!presetSystemSelect || !presetRootNoteSelect) return;
+        var sysKey = presetSystemSelect.value;
+        if (sysKey === 'random_challenge') {
+          presetRootNoteSelect.disabled = true;
+          presetRootNoteSelect.style.opacity = '0.5';
+          if (presetSystemDescription) {
+            presetSystemDescription.innerHTML =
+              '💡 <strong>Modo atual: Desafio Manual (Padrão).</strong> Apenas o <strong>Dó4 (261,63 Hz)</strong> vem afinado e as outras 35 teclas estão desafinadas aleatoriamente. Se quiser ouvir o cravo inteiro afinado automaticamente em qualquer um dos 10 sistemas históricos, selecione acima!';
+          }
+          return;
+        }
+        var sys = TUNING_SYSTEMS[sysKey];
+        if (!sys) return;
+        presetRootNoteSelect.disabled = !sys.needsRoot;
+        presetRootNoteSelect.style.opacity = sys.needsRoot ? '1' : '0.5';
+      }
+
+      function applySelectedTuningSystem() {
+        if (!presetSystemSelect) return;
+        var sysKey = presetSystemSelect.value;
+        stopDemonstration();
+        silenceAllKeys();
+
+        if (sysKey === 'random_challenge') {
+          initKeysWithRandomDetuning();
+          updatePresetSelectorState();
+          updateSliderForSelectedKey();
+          renderAll();
+          return;
+        }
+
+        var sys = TUNING_SYSTEMS[sysKey];
+        if (!sys) return;
+
+        var rootIdx = sys.needsRoot ? (parseInt(presetRootNoteSelect.value, 10) || 0) : 0;
+        var rootName = noteNamesPT[rootIdx];
+
+        // Reference frequency of the chosen Root Note in Octave 4 (keeping Dó4 = 261.6256 Hz / A4 = 440 Hz standard reference)
+        var rootFreqOct4 = getStandardEqualTemperedFreq(rootIdx, 4);
+
+        octaves.forEach(function (oct) {
+          var rootFreqThisOctave = rootFreqOct4 * Math.pow(2, oct - 4);
+          noteNamesPT.forEach(function (nName, nIdx) {
+            var id = nName + oct;
+            var kObj = keysById[id];
+            if (!kObj) return;
+
+            var degree = (nIdx - rootIdx + 12) % 12;
+            var centsFromRoot = sys.cents[degree];
+            // If nIdx < rootIdx within the same octave number (e.g. Dó4 when Root is Sol4), shift down 1 octave (-1200 cents) so it stays in octave `oct`!
+            var effectiveCents = (nIdx < rootIdx) ? (centsFromRoot - 1200.0) : centsFromRoot;
+            var tunedFreq = rootFreqThisOctave * Math.pow(2, effectiveCents / 1200.0);
+
+            kObj.freq = tunedFreq;
+            kObj.userMarkedTuned = true;
+          });
+        });
+
+        updatePresetSelectorState();
+        if (presetSystemDescription) {
+          var rootBadge = sys.needsRoot
+            ? (' · <strong>Nota Padrão (Tônica Base): ' + rootName + '</strong>')
+            : ' · <strong>Simétrico em todas as notas</strong>';
+          presetSystemDescription.innerHTML =
+            '✅ <strong>Teclado afinado automaticamente em: ' + sys.name + '</strong>' + rootBadge + '<br>' +
+            sys.desc + ' <em>(Clique em <strong>"🎵 Tocar Demonstração"</strong> ou ative o <strong>"🎹 Modo Testar"</strong> para ouvir o resultado!)</em>';
+        }
+
+        updateSliderForSelectedKey();
+        renderAll();
+      }
+
+      if (presetSystemSelect) {
+        presetSystemSelect.addEventListener('change', function () {
+          applySelectedTuningSystem();
+        });
+      }
+
+      if (presetRootNoteSelect) {
+        presetRootNoteSelect.addEventListener('change', function () {
+          if (presetSystemSelect && presetSystemSelect.value !== 'random_challenge') {
+            applySelectedTuningSystem();
+          }
+        });
+      }
+
+      if (applyPresetTuningBtn) {
+        applyPresetTuningBtn.addEventListener('click', function () {
+          applySelectedTuningSystem();
+        });
+      }
 
       // Boot
       initKeysWithRandomDetuning();
