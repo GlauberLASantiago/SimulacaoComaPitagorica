@@ -18,6 +18,7 @@
       --gold: #eab308;
       --jade: #34d399;
       --wolf: #fb7185;
+      --sky: #38bdf8;
       --hairline: rgba(250, 246, 240, 0.12);
       --hairline-strong: rgba(250, 246, 240, 0.22);
       --font-display: "Fraunces", Georgia, serif;
@@ -42,11 +43,11 @@
     .topbar {
       position: sticky;
       top: 0;
-      z-index: 50;
-      background: rgba(12, 10, 9, 0.88);
+      z-index: 60;
+      background: rgba(12, 10, 9, 0.9);
       backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--hairline-strong);
-      padding: 0.75rem clamp(1rem, 4vw, 2.5rem);
+      padding: 0.7rem clamp(1rem, 3.5vw, 2.5rem);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -58,7 +59,7 @@
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      padding: 0.45rem 0.9rem;
+      padding: 0.45rem 0.95rem;
       border-radius: 999px;
       background: #1f1916;
       color: #fde047;
@@ -75,9 +76,9 @@
     }
 
     .wrap {
-      max-width: 1240px;
+      max-width: 1320px;
       margin: 0 auto;
-      padding: clamp(1.5rem, 3vw, 2.5rem) clamp(1rem, 4vw, 2.5rem);
+      padding: clamp(1.25rem, 2.5vw, 2rem) clamp(1rem, 3vw, 2rem);
     }
 
     .badge {
@@ -95,43 +96,236 @@
 
     h1 {
       font-family: var(--font-display);
-      font-size: clamp(1.8rem, 3.6vw, 2.75rem);
-      margin: 0.4rem 0;
+      font-size: clamp(1.7rem, 3.2vw, 2.5rem);
+      margin: 0.35rem 0;
       line-height: 1.12;
     }
 
-    .toolbar {
-      display: flex;
-      flex-wrap: wrap;
+    /* Quick How-to Rules Banner */
+    .rules-strip {
+      display: grid;
+      grid-template-columns: 1fr;
       gap: 0.75rem;
-      align-items: center;
-      justify-content: space-between;
-      margin-top: 1.25rem;
-      padding: 0.85rem 1.1rem;
+      margin-top: 1rem;
+    }
+
+    @media (min-width: 860px) {
+      .rules-strip {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .rule-pill-card {
       background: #16120f;
       border: 1px solid var(--hairline-strong);
+      border-left: 4px solid var(--gold);
       border-radius: 10px;
+      padding: 0.8rem 1rem;
+      font-size: 0.83rem;
     }
 
-    .btn {
-      background: #211a16;
-      color: var(--ink);
-      border: 1px solid var(--hairline-strong);
-      border-radius: 6px;
-      padding: 0.55rem 0.9rem;
-      font-family: var(--font-mono);
-      font-size: 0.76rem;
-      font-weight: 600;
+    .rule-pill-card--jade {
+      border-left-color: var(--jade);
+    }
+
+    .rule-pill-card--sky {
+      border-left-color: var(--sky);
+    }
+
+    /* =========================================================================
+       AUTHENTIC 3-OCTAVE PIANO / HARPSICHORD KEYBOARD
+       ========================================================================= */
+    .harpsichord-case {
+      margin-top: 1.25rem;
+      background: linear-gradient(180deg, #2b1d16 0%, #17100c 100%);
+      border: 2px solid #473226;
+      border-radius: 14px;
+      padding: 1rem 1rem 1.3rem 1rem;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    }
+
+    .harpsichord-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+      margin-bottom: 0.75rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid rgba(250, 246, 240, 0.14);
+    }
+
+    /* Red Velvet Strip above the keys (classic harpsichord/piano fallboard felt) */
+    .velvet-strip {
+      height: 8px;
+      background: linear-gradient(90deg, #6b141a, #991b1b, #6b141a);
+      border-radius: 4px 4px 0 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+    }
+
+    .keyboard-scroll-container {
+      overflow-x: auto;
+      padding-bottom: 0.4rem;
+    }
+
+    .piano-keyboard {
+      position: relative;
+      min-width: 960px;
+      height: 248px;
+      display: flex;
+      background: #090706;
+      padding: 0 2px 4px 2px;
+      border-radius: 0 0 8px 8px;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    /* 21 White Keys (7 per octave x 3 octaves: Octaves 3, 4, 5) */
+    .piano-key-white {
+      position: relative;
+      flex: 1 1 0%;
+      height: 100%;
+      margin: 0 1.5px;
+      background: linear-gradient(180deg, #f7f2e7 0%, #efe6d5 82%, #ded2bc 100%);
+      border: 1px solid #3c2f26;
+      border-bottom: 7px solid #b8a990;
+      border-radius: 0 0 7px 7px;
       cursor: pointer;
-      transition: all 140ms ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 0.45rem 0.15rem 0.55rem 0.15rem;
+      color: #1c1613;
+      font-family: var(--font-mono);
+      transition: transform 60ms ease, background 120ms ease, box-shadow 120ms ease;
+      z-index: 1;
     }
 
-    .btn:hover {
-      background: #2e241e;
-      border-color: var(--gold);
-      color: #fde047;
+    .piano-key-white:hover {
+      background: linear-gradient(180deg, #fffdf9 0%, #f5ebd9 85%, #e5d8c1 100%);
     }
 
+    /* 15 Black Keys positioned over the gaps */
+    .piano-key-black {
+      position: absolute;
+      top: 0;
+      width: 3.1%;
+      height: 61%;
+      transform: translateX(-50%);
+      background: linear-gradient(180deg, #292320 0%, #14110f 78%, #090807 100%);
+      border: 1px solid #000;
+      border-bottom: 6px solid #050404;
+      border-radius: 0 0 5px 5px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 0.35rem 0.1rem 0.45rem 0.1rem;
+      color: #f5efe6;
+      font-family: var(--font-mono);
+      box-shadow: 0 5px 10px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.15);
+      transition: transform 60ms ease, background 120ms ease, box-shadow 120ms ease;
+      z-index: 10;
+    }
+
+    .piano-key-black:hover {
+      background: linear-gradient(180deg, #38302c 0%, #1d1815 80%, #0c0a09 100%);
+    }
+
+    /* Fixed Reference Key: Dó4 */
+    .piano-key-white.is-reference-c4 {
+      background: linear-gradient(180deg, #d1fae5 0%, #a7f3d0 82%, #6ee7b7 100%);
+      border-bottom-color: #059669;
+    }
+
+    /* Key Currently Sounding (Locked On via Single Click) */
+    .piano-key-white.is-sounding {
+      background: linear-gradient(180deg, #a7f3d0 0%, #34d399 85%, #10b981 100%);
+      border-bottom-width: 3px;
+      transform: translateY(3px);
+      box-shadow: 0 0 20px rgba(52, 211, 153, 0.55);
+      color: #041f15;
+    }
+
+    .piano-key-black.is-sounding {
+      background: linear-gradient(180deg, #34d399 0%, #059669 85%, #047857 100%);
+      border-bottom-width: 2px;
+      transform: translateX(-50%) translateY(3px);
+      box-shadow: 0 0 18px rgba(52, 211, 153, 0.65);
+      color: #031c13;
+    }
+
+    /* Key Selected for Peg Tuning (Double-Clicked) */
+    .piano-key-white.is-selected-peg {
+      outline: 3px solid var(--gold);
+      outline-offset: -3px;
+      box-shadow: 0 0 22px rgba(234, 179, 8, 0.75);
+    }
+
+    .piano-key-black.is-selected-peg {
+      outline: 2.5px solid #fde047;
+      box-shadow: 0 0 20px rgba(234, 179, 8, 0.85);
+    }
+
+    /* Key Marked as Tuned by User */
+    .piano-key-white.is-user-tuned:not(.is-sounding):not(.is-reference-c4) {
+      background: linear-gradient(180deg, #ecfdf5 0%, #d1fae5 85%, #a7f3d0 100%);
+    }
+
+    .piano-key-black.is-user-tuned:not(.is-sounding) {
+      border-color: #34d399;
+      border-bottom-color: #10b981;
+    }
+
+    .key-note-label {
+      font-size: 0.78rem;
+      font-weight: 800;
+      line-height: 1.1;
+    }
+
+    .piano-key-black .key-note-label {
+      font-size: 0.66rem;
+    }
+
+    .key-hz-label {
+      font-size: 0.61rem;
+      opacity: 0.82;
+      margin-top: 2px;
+    }
+
+    .piano-key-black .key-hz-label {
+      font-size: 0.54rem;
+    }
+
+    .key-status-dot {
+      font-size: 0.58rem;
+      font-weight: 700;
+      padding: 1px 4px;
+      border-radius: 3px;
+      margin-bottom: 4px;
+      text-transform: uppercase;
+    }
+
+    .key-status-dot--sound {
+      background: #064e3b;
+      color: #a7f3d0;
+    }
+
+    .key-status-dot--peg {
+      background: #713f12;
+      color: #fef08a;
+    }
+
+    .key-status-dot--ref {
+      background: #065f46;
+      color: #ecfdf5;
+    }
+
+    /* =========================================================================
+       TUNING WORKBENCH: ARROW KEYS CONTROLLER + ACTIVE NOTES MONITOR
+       ========================================================================= */
     .workbench {
       display: grid;
       grid-template-columns: 1fr;
@@ -139,9 +333,9 @@
       margin-top: 1.25rem;
     }
 
-    @media (min-width: 940px) {
+    @media (min-width: 960px) {
       .workbench {
-        grid-template-columns: 1fr 1.28fr;
+        grid-template-columns: 1.25fr 1fr;
       }
     }
 
@@ -156,73 +350,70 @@
       box-shadow: 0 14px 32px rgba(0, 0, 0, 0.45);
     }
 
-    .panel--base {
-      border-top: 4px solid var(--jade);
-    }
-
-    .panel--target {
+    .panel--peg {
       border-top: 4px solid var(--gold);
     }
 
-    .select-input {
-      background: #0c0a09;
-      color: var(--ink);
-      border: 1px solid var(--hairline-strong);
+    .panel--monitor {
+      border-top: 4px solid var(--jade);
+    }
+
+    /* Visual Arrow Key Guide Box */
+    .arrow-guide-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.85rem;
+    }
+
+    .arrow-card {
+      background: #100d0b;
+      border: 1.5px solid var(--hairline-strong);
+      border-radius: 10px;
+      padding: 0.85rem 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      gap: 0.4rem;
+      cursor: pointer;
+      transition: all 130ms ease;
+      user-select: none;
+    }
+
+    .arrow-card--down:hover, .arrow-card--down.is-pressed {
+      border-color: var(--wolf);
+      background: rgba(251, 113, 133, 0.12);
+      transform: translateY(1px);
+    }
+
+    .arrow-card--up:hover, .arrow-card--up.is-pressed {
+      border-color: var(--jade);
+      background: rgba(52, 211, 153, 0.12);
+      transform: translateY(-1px);
+    }
+
+    .kbd-row {
+      display: flex;
+      gap: 0.4rem;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .kbd-cap {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 36px;
+      height: 34px;
+      padding: 0 0.5rem;
+      background: #261f1b;
+      border: 1px solid rgba(250, 246, 240, 0.3);
+      border-bottom: 3px solid #0c0908;
       border-radius: 6px;
-      padding: 0.5rem 0.75rem;
       font-family: var(--font-mono);
-      font-size: 0.84rem;
-      cursor: pointer;
-    }
-
-    .lock-drone-btn {
-      width: 100%;
-      padding: 0.95rem 1.1rem;
-      border-radius: 8px;
-      border: 2px solid rgba(52, 211, 153, 0.55);
-      background: rgba(52, 211, 153, 0.13);
-      color: #6ee7b7;
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
+      font-size: 0.95rem;
       font-weight: 700;
-      cursor: pointer;
-      transition: all 150ms ease;
-    }
-
-    .lock-drone-btn:hover {
-      background: rgba(52, 211, 153, 0.22);
-    }
-
-    .lock-drone-btn.is-locked {
-      background: var(--jade);
-      color: #06130e;
-      border-color: #a7f3d0;
-      box-shadow: 0 0 24px rgba(52, 211, 153, 0.4);
-    }
-
-    .target-sound-btn {
-      width: 100%;
-      padding: 0.95rem 1.1rem;
-      border-radius: 8px;
-      border: 2px solid rgba(234, 179, 8, 0.55);
-      background: rgba(234, 179, 8, 0.13);
       color: #fde047;
-      font-family: var(--font-mono);
-      font-size: 0.85rem;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 150ms ease;
-    }
-
-    .target-sound-btn:hover {
-      background: rgba(234, 179, 8, 0.22);
-    }
-
-    .target-sound-btn.is-sounding {
-      background: var(--gold);
-      color: #171105;
-      border-color: #fef08a;
-      box-shadow: 0 0 24px rgba(234, 179, 8, 0.4);
     }
 
     .peg-slider {
@@ -249,9 +440,9 @@
       color: var(--ink);
       border: 1px solid var(--hairline-strong);
       border-radius: 5px;
-      padding: 0.45rem 0.25rem;
+      padding: 0.45rem 0.2rem;
       font-family: var(--font-mono);
-      font-size: 0.74rem;
+      font-size: 0.72rem;
       font-weight: 700;
       cursor: pointer;
       text-align: center;
@@ -265,123 +456,79 @@
     }
 
     .status-banner {
-      padding: 0.8rem 1rem;
+      padding: 0.9rem 1.05rem;
       border-radius: 8px;
       background: #100d0b;
-      border: 1px solid var(--hairline-strong);
+      border: 1.5px solid var(--hairline-strong);
       font-family: var(--font-mono);
-      font-size: 0.8rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.5rem;
+      font-size: 0.81rem;
+      line-height: 1.5;
     }
 
     .status-banner.is-pure {
       background: rgba(52, 211, 153, 0.16);
       border-color: var(--jade);
-      color: #6ee7b7;
+      color: #a7f3d0;
+    }
+
+    .status-banner.is-tempered {
+      background: rgba(56, 189, 248, 0.15);
+      border-color: var(--sky);
+      color: #bae6fd;
     }
 
     .status-banner.is-near {
-      background: rgba(251, 113, 133, 0.15);
+      background: rgba(234, 179, 8, 0.14);
+      border-color: var(--gold);
+      color: #fef08a;
+    }
+
+    .btn {
+      background: #211a16;
+      color: var(--ink);
+      border: 1px solid var(--hairline-strong);
+      border-radius: 6px;
+      padding: 0.55rem 0.9rem;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 140ms ease;
+    }
+
+    .btn:hover {
+      background: #2e241e;
+      border-color: var(--gold);
+      color: #fde047;
+    }
+
+    .sounding-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.45rem;
+      min-height: 38px;
+      align-items: center;
+    }
+
+    .sounding-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 0.65rem;
+      border-radius: 999px;
+      background: rgba(52, 211, 153, 0.16);
+      border: 1px solid rgba(52, 211, 153, 0.5);
+      color: #6ee7b7;
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .sounding-chip:hover {
+      background: rgba(251, 113, 133, 0.2);
       border-color: var(--wolf);
       color: #fda4af;
-    }
-
-    .octave-bank {
-      margin-top: 1.5rem;
-      background: #14100e;
-      border: 1px solid var(--hairline-strong);
-      border-radius: 12px;
-      padding: 1.25rem;
-    }
-
-    .octave-row-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 0.45rem;
-      margin-top: 0.5rem;
-    }
-
-    @media (min-width: 640px) {
-      .octave-row-grid {
-        grid-template-columns: repeat(6, 1fr);
-      }
-    }
-
-    @media (min-width: 1024px) {
-      .octave-row-grid {
-        grid-template-columns: repeat(12, 1fr);
-      }
-    }
-
-    .cravo-key {
-      background: #211b17;
-      border: 1px solid rgba(250, 246, 240, 0.16);
-      border-bottom: 4px solid #0c0908;
-      border-radius: 6px;
-      padding: 0.55rem 0.35rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: space-between;
-      gap: 0.25rem;
-      cursor: pointer;
-      color: var(--ink);
-      font-family: var(--font-mono);
-      transition: transform 80ms ease, border-color 120ms ease, background-color 120ms ease;
-      min-height: 78px;
-    }
-
-    .cravo-key--sharp {
-      background: #120e0c;
-      border-color: rgba(234, 179, 8, 0.24);
-    }
-
-    .cravo-key:hover {
-      transform: translateY(-2px);
-      border-color: var(--gold);
-    }
-
-    .cravo-key.is-tuned {
-      border-color: rgba(52, 211, 153, 0.65);
-      background: rgba(52, 211, 153, 0.11);
-    }
-
-    .cravo-key.is-base-key {
-      outline: 2px solid var(--jade);
-      box-shadow: 0 0 12px rgba(52, 211, 153, 0.35);
-    }
-
-    .cravo-key.is-target-key {
-      outline: 2px solid var(--gold);
-      box-shadow: 0 0 14px rgba(234, 179, 8, 0.45);
-      background: rgba(234, 179, 8, 0.18);
-    }
-
-    .cravo-key__name {
-      font-size: 0.8rem;
-      font-weight: 700;
-    }
-
-    .cravo-key__hz {
-      font-size: 0.65rem;
-      color: var(--ink-soft);
-    }
-
-    .cravo-key__badge {
-      font-size: 0.58rem;
-      padding: 0.12rem 0.32rem;
-      border-radius: 3px;
-      background: rgba(255, 255, 255, 0.06);
-      color: var(--ink-soft);
-    }
-
-    .cravo-key.is-tuned .cravo-key__badge {
-      background: rgba(52, 211, 153, 0.22);
-      color: #6ee7b7;
     }
 
     .site-footer {
@@ -411,203 +558,191 @@
 
   <header class="topbar">
     <a href="index.html" class="back-link">← Voltar para a Simulação da Coma Pitagórica</a>
-    <span style="font-family: var(--font-mono); font-size: 0.76rem; color: var(--ink-soft);">
-      Sub-Aplicativo Prático · Afinador de Cravo (3 Oitavas · Onda Senoidal)
-    </span>
+    <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
+      <label style="display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.74rem; cursor: pointer;">
+        <input type="checkbox" id="tunerBlindModeCheck" style="accent-color: var(--jade); width: 15px; height: 15px;">
+        <span>🙈 Ocultar Frequências (Treino Cego de Ouvido)</span>
+      </label>
+      <button type="button" id="tunerSilenceAllBtn" class="btn" style="border-color: rgba(251, 113, 133, 0.5); color: #fda4af;">
+        ⏹ Desligar Todas as Notas Soando
+      </button>
+      <button type="button" id="tunerResetAllBtn" class="btn">
+        🎲 Sortear Novas Desafinações
+      </button>
+    </div>
   </header>
 
   <main class="wrap">
 
-    <div style="max-width: 82ch;">
-      <span class="badge">Atividade de Exploração Prática · Simulador do Afinador de Cravo (Onda Senoidal · 3 Oitavas)</span>
+    <div>
+      <span class="badge">Sub-Aplicativo Prático · Simulador do Afinador de Cravo (Onda Senoidal · 3 Oitavas)</span>
       <h1>Oficina Prática: Afine você mesmo um "Cravo" de 3 Oitavas</h1>
-      <p style="color: var(--ink-soft); font-size: 0.95rem; margin: 0.4rem 0;">
-        Neste sub-aplicativo você assume o papel do afinador diante de um instrumento de <strong>3 oitavas (Oitavas 3, 4 e 5)</strong> sintetizado com <strong>ondas senoidais</strong>:
-      </p>
-      <p style="color: var(--ink-soft); font-size: 0.88rem; margin: 0.3rem 0;">
-        • <strong>Estado inicial:</strong> Em cada oitava, a nota <strong>Dó</strong> já vem afinada (<code>Dó3 = 130,81 Hz</code>, <code>Dó4 = 261,63 Hz</code>, <code>Dó5 = 523,25 Hz</code>). Todas as demais 11 notas daquela oitava começam inicialmente com a <strong>mesma afinação deste Dó</strong>!<br>
-        • <strong>Como afinar:</strong> Use o dispositivo à esquerda para <strong>travar a execução da Nota Base</strong> (ex.: <code>Dó4</code>), escolha a nota que deseja afinar à direita (ex.: <code>Sol4</code>) e vá <strong>subindo ou descendo a afinação na cravelha</strong> até ouvir a <strong>Quinta Pura (razão 3/2 = 1,500×)</strong> sem batimentos!
-      </p>
     </div>
 
-    <!-- Top Quick Toolbar -->
-    <div class="toolbar">
-      <div style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: center;">
-        <label style="display: inline-flex; align-items: center; gap: 0.45rem; font-family: var(--font-mono); font-size: 0.75rem; cursor: pointer;">
-          <input type="checkbox" id="tunerHarmonicsCheck" checked style="accent-color: var(--gold); width: 15px; height: 15px;">
-          <span>Onda Senoidal + Harmônicos Senoidais (2f/3f) <span style="color: var(--ink-soft);">(para ouvir o batimento real da Quinta 3:2)</span></span>
-        </label>
-        <label style="display: inline-flex; align-items: center; gap: 0.45rem; font-family: var(--font-mono); font-size: 0.75rem; cursor: pointer;">
-          <input type="checkbox" id="tunerBlindModeCheck" style="accent-color: var(--jade); width: 15px; height: 15px;">
-          <span>🙈 Modo Treino Cego de Ouvido (ocultar Hz e Razão)</span>
-        </label>
+    <!-- Clear 3-Step Rules Strip -->
+    <div class="rules-strip">
+      <div class="rule-pill-card rule-pill-card--jade">
+        <strong style="color: #6ee7b7; font-family: var(--font-mono); font-size: 0.76rem; display: block; margin-bottom: 0.2rem;">
+          1. UM CLIQUE = TRAVA / DESLIGA O SOM
+        </strong>
+        Para travar o som de uma nota, basta dar <strong>1 clique simples</strong> na tecla do cravo. Para desligar o som dela, dê <strong>outro clique simples</strong>. Apenas o <strong>Dó4 (261,63 Hz)</strong> já vem afinado; todas as outras 35 teclas estão desafinadas aleatoriamente em até 1 semitom!
       </div>
-      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-        <button type="button" id="tunerSilenceAllBtn" class="btn" style="border-color: rgba(251, 113, 133, 0.45); color: #fda4af;">
-          ⏹ Silenciar Tudo
-        </button>
-        <button type="button" id="tunerResetAllBtn" class="btn">
-          🔄 Reiniciar Cravo (Todas = Dó)
-        </button>
+
+      <div class="rule-pill-card">
+        <strong style="color: #fde047; font-family: var(--font-mono); font-size: 0.76rem; display: block; margin-bottom: 0.2rem;">
+          2. DUPLO CLIQUE = ESCOLHE A NOTA PARA AFINAR
+        </strong>
+        Dê um <strong>clique duplo (2 cliques rápidos)</strong> na tecla que você quer afinar (por exemplo, <strong>Sol4</strong>). Cada tecla é afinada individualmente (afinar uma nota altera apenas aquela tecla, e não a oitava dela).
+      </div>
+
+      <div class="rule-pill-card rule-pill-card--sky">
+        <strong style="color: #7dd3fc; font-family: var(--font-mono); font-size: 0.76rem; display: block; margin-bottom: 0.2rem;">
+          3. SETAS DO TECLADO = SOBE OU DESCE A AFINAÇÃO
+        </strong>
+        Use as setas do teclado do computador (ou os botões na tela):<br>
+        • <strong>Seta ⬅️ Esquerda</strong> ou <strong>⬇️ Baixo</strong> = <strong>DESCE</strong> a afinação (mais grave).<br>
+        • <strong>Seta ➡️ Direita</strong> ou <strong>⬆️ Cima</strong> = <strong>SOBE</strong> a afinação (mais agudo).
       </div>
     </div>
 
-    <!-- Dual Tuning Device: Base Note Lock (Left) + Target Peg Cravelha (Right) -->
-    <div class="workbench">
-
-      <!-- LEFT PANEL: Dispositivo de Trava da Nota Base -->
-      <div class="panel panel--base">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem;">
-          <div>
-            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #6ee7b7; font-weight: 700; text-transform: uppercase;">
-              1. Dispositivo da Nota Base (Referência Fixa)
-            </span>
-            <h2 style="font-family: var(--font-display); font-size: 1.45rem; margin: 0.15rem 0 0 0;">
-              Nota Base da Dupla
-            </h2>
-          </div>
-          <span style="font-family: var(--font-mono); font-size: 0.7rem; padding: 0.2rem 0.5rem; border-radius: 4px; background: rgba(52, 211, 153, 0.14); color: #6ee7b7;">
-            Trava de Sustentação
+    <!-- =======================================================================
+         3-OCTAVE REALISTIC HARPSICHORD / PIANO KEYBOARD
+         ======================================================================= -->
+    <section class="harpsichord-case" aria-label="Teclado do Cravo de 3 Oitavas">
+      <div class="harpsichord-header">
+        <div>
+          <span style="font-family: var(--font-mono); font-size: 0.75rem; color: #fde047; font-weight: 700;">
+            🎹 TECLADO DO CRAVO (3 OITAVAS: DÓ3 A SI5) · 1 Clique = Liga/Desliga Som · Duplo Clique = Seleciona para Afinar
           </span>
         </div>
-
-        <p style="font-size: 0.82rem; color: var(--ink-soft); margin: 0;">
-          Escolha a nota já afinada que servirá de referência e <strong>trave a execução</strong> para que ela continue soando enquanto você afina a outra nota da dupla:
-        </p>
-
-        <div style="display: flex; gap: 0.6rem; align-items: center; flex-wrap: wrap;">
-          <label for="tunerBaseSelect" style="font-family: var(--font-mono); font-size: 0.76rem; color: var(--ink-soft);">
-            Escolher Nota Base:
-          </label>
-          <select id="tunerBaseSelect" class="select-input" style="flex: 1; min-width: 170px;"></select>
-        </div>
-
-        <div style="background: #0e0b0a; border: 1px solid var(--hairline-strong); border-radius: 8px; padding: 0.9rem 1rem; display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 0.5rem;">
-          <div>
-            <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-soft);">NOTA BASE SELECIONADA</div>
-            <div id="tunerBaseNameBig" style="font-family: var(--font-display); font-size: 2rem; font-weight: 700; color: #6ee7b7; line-height: 1.1;">Dó4 ✅</div>
-          </div>
-          <div style="text-align: right;">
-            <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-soft);">FREQUÊNCIA DA BASE</div>
-            <div id="tunerBaseHzBig" style="font-family: var(--font-mono); font-size: 1.35rem; font-weight: 700; color: var(--ink);">261,63 Hz</div>
-          </div>
-        </div>
-
-        <button type="button" id="tunerLockBaseBtn" class="lock-drone-btn">
-          🔒 Travar Execução da Nota Base (Dó4)
-        </button>
-
-        <div style="border-top: 1px solid var(--hairline); padding-top: 0.75rem; display: flex; flex-direction: column; gap: 0.5rem;">
-          <div style="font-family: var(--font-mono); font-size: 0.7rem; color: var(--ink-soft);">
-            ATALHOS DO CICLO DE AFINAÇÃO:
-          </div>
-          <button type="button" id="tunerPromoteTargetBtn" class="btn" style="width: 100%; text-align: left;">
-            ⏭️ Já afinei! Usar a Nota Alvo atual como nova Nota Base e ir para a próxima Quinta
-          </button>
-          <button type="button" id="tunerPlayBothQuickBtn" class="btn" style="width: 100%; text-align: left; border-color: rgba(234, 179, 8, 0.45); color: #fde047;">
-            ▶️ Travar Nota Base + Ligar Nota Alvo Juntas Agora
-          </button>
+        <div style="display: flex; gap: 0.9rem; font-family: var(--font-mono); font-size: 0.7rem; flex-wrap: wrap;">
+          <span style="color: #6ee7b7;">● Verde = Nota Soando (Travada)</span>
+          <span style="color: #fde047;">● Contorno Dourado = Selecionada na Cravelha (Duplo Clique)</span>
+          <span style="color: #a7f3d0;">★ Dó4 = Única Nota Afinada de Fábrica (261,63 Hz)</span>
         </div>
       </div>
 
-      <!-- RIGHT PANEL: Cravelha da Nota Alvo -->
-      <div class="panel panel--target">
+      <div class="velvet-strip" aria-hidden="true"></div>
+
+      <div class="keyboard-scroll-container">
+        <div id="pianoKeyboard" class="piano-keyboard"></div>
+      </div>
+    </section>
+
+    <!-- =======================================================================
+         TUNING WORKBENCH: LEFT = ARROW KEY CRAVELHA | RIGHT = BEATING MONITOR
+         ======================================================================= -->
+    <div class="workbench">
+
+      <!-- LEFT PANEL: Cravelha da Nota Selecionada com Duplo Clique -->
+      <div class="panel panel--peg">
         <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; flex-wrap: wrap;">
           <div>
             <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #fde047; font-weight: 700; text-transform: uppercase;">
-              2. Cravelha de Afinação (Subir ou Descer a Nota Alvo)
+              🔧 Cravelha de Afinação (Selecione qualquer tecla com Duplo Clique)
             </span>
-            <h2 style="font-family: var(--font-display); font-size: 1.45rem; margin: 0.15rem 0 0 0;">
-              Corda na Cravelha: <span id="tunerTargetNameTitle" style="color: #fde047;">Sol4</span>
+            <h2 style="font-family: var(--font-display); font-size: 1.55rem; margin: 0.15rem 0 0 0;">
+              Nota Selecionada para Alterar: <span id="pegNoteName" style="color: #fde047;">Sol4</span>
             </h2>
           </div>
-          <div style="display: flex; gap: 0.4rem; align-items: center;">
-            <label for="tunerTargetSelect" style="font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-soft);">Nota Alvo:</label>
-            <select id="tunerTargetSelect" class="select-input"></select>
+          <button type="button" id="markKeyTunedBtn" class="btn" style="border-color: rgba(52, 211, 153, 0.5); color: #6ee7b7;">
+            ✅ Marcar <span id="markKeyBtnLabel">Sol4</span> como Afinada
+          </button>
+        </div>
+
+        <!-- Prominent Visual Indication of Left/Down vs Right/Up Arrows -->
+        <div class="arrow-guide-grid">
+          <div id="arrowDownCard" class="arrow-card arrow-card--down" role="button" tabindex="0" aria-label="Descer a afinação">
+            <div class="kbd-row">
+              <span class="kbd-cap" title="Seta para a Esquerda">⬅️</span>
+              <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-soft);">ou</span>
+              <span class="kbd-cap" title="Seta para Baixo">⬇️</span>
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 0.84rem; font-weight: 700; color: #fda4af; margin-top: 0.15rem;">
+              DESCE A AFINAÇÃO (Mais Grave)
+            </div>
+            <div style="font-size: 0.74rem; color: var(--ink-soft);">
+              Aperte <strong>Seta p/ Esquerda (←)</strong> ou <strong>Seta p/ Baixo (↓)</strong> no teclado (ou clique aqui)
+            </div>
+          </div>
+
+          <div id="arrowUpCard" class="arrow-card arrow-card--up" role="button" tabindex="0" aria-label="Subir a afinação">
+            <div class="kbd-row">
+              <span class="kbd-cap" title="Seta para a Direita">➡️</span>
+              <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-soft);">ou</span>
+              <span class="kbd-cap" title="Seta para Cima">⬆️</span>
+            </div>
+            <div style="font-family: var(--font-mono); font-size: 0.84rem; font-weight: 700; color: #6ee7b7; margin-top: 0.15rem;">
+              SOBE A AFINAÇÃO (Mais Agudo)
+            </div>
+            <div style="font-size: 0.74rem; color: var(--ink-soft);">
+              Aperte <strong>Seta p/ Direita (→)</strong> ou <strong>Seta p/ Cima (↑)</strong> no teclado (ou clique aqui)
+            </div>
           </div>
         </div>
 
-        <div style="background: #0e0b0a; border: 1px solid var(--hairline-strong); border-radius: 8px; padding: 0.9rem 1rem; display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; align-items: center;">
-          <div>
-            <div style="font-family: var(--font-mono); font-size: 0.66rem; color: var(--ink-soft);">FREQUÊNCIA ATUAL</div>
-            <div id="tunerTargetHzBig" style="font-family: var(--font-mono); font-size: 1.25rem; font-weight: 700; color: #fde047;">261,63 Hz</div>
+        <!-- Slider + Fine/Coarse Step Buttons -->
+        <div style="background: #120e0c; border: 1px solid var(--hairline); border-radius: 8px; padding: 0.8rem 1rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 0.74rem; margin-bottom: 0.4rem; flex-wrap: wrap; gap: 0.5rem;">
+            <span style="color: #fda4af;">← / ↓ Desce Afinação</span>
+            <span>Frequência de <strong id="pegNoteInline">Sol4</strong>: <strong id="pegFreqReadout" style="color: #fde047; font-size: 0.95rem;">-- Hz</strong></span>
+            <span style="color: #6ee7b7;">Sobe Afinação → / ↑</span>
           </div>
-          <div>
-            <div style="font-family: var(--font-mono); font-size: 0.66rem; color: var(--ink-soft);">RAZÃO (ALVO ÷ BASE)</div>
-            <div id="tunerRatioBig" style="font-family: var(--font-mono); font-size: 1.05rem; font-weight: 700; color: var(--ink);">1,0000× (Uníssono)</div>
-          </div>
-          <div style="text-align: right;">
-            <div style="font-family: var(--font-mono); font-size: 0.66rem; color: var(--ink-soft);">ALVO QUINTA PURA (3/2)</div>
-            <div id="tunerIdealFifthHz" style="font-family: var(--font-mono); font-size: 0.95rem; font-weight: 700; color: #6ee7b7;">392,44 Hz</div>
-          </div>
-        </div>
 
-        <button type="button" id="tunerTargetSoundBtn" class="target-sound-btn">
-          🔊 Ligar Som da Nota Alvo (Ouvir enquanto gira a cravelha)
-        </button>
-
-        <div style="background: #120e0c; border: 1px solid var(--hairline); border-radius: 8px; padding: 0.75rem 1rem;">
-          <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-soft); margin-bottom: 0.35rem;">
-            <span>↓ Mais Grave (Descer)</span>
-            <span style="color: #fde047; font-weight: 700;">Gire a Cravelha (Arraste ou use os botões)</span>
-            <span>Mais Agudo (Subir) ↑</span>
-          </div>
-          <input type="range" id="tunerPegSlider" class="peg-slider" min="120" max="560" step="0.01" value="261.63" aria-label="Subir ou descer a afinação da nota alvo">
+          <input type="range" id="tunerPegSlider" class="peg-slider" min="100" max="600" step="0.01" value="380" aria-label="Controle deslizante de afinação da nota selecionada">
 
           <div class="peg-nudge-grid" style="margin-top: 0.55rem;">
-            <button type="button" class="peg-nudge-btn" data-nudge="-10">-10 Hz</button>
-            <button type="button" class="peg-nudge-btn" data-nudge="-2">-2 Hz</button>
-            <button type="button" class="peg-nudge-btn" data-nudge="-0.5">-0,5 Hz</button>
-            <button type="button" class="peg-nudge-btn" data-nudge="-0.05">-0,05 Hz</button>
-            <button type="button" class="peg-nudge-btn" data-nudge="0.05">+0,05 Hz</button>
-            <button type="button" class="peg-nudge-btn" data-nudge="0.5">+0,5 Hz</button>
-            <button type="button" class="peg-nudge-btn" data-nudge="2">+2 Hz</button>
-            <button type="button" class="peg-nudge-btn" data-nudge="10">+10 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="-5">-5 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="-1">-1 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="-0.2">-0,2 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="-0.03">-0,03 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="0.03">+0,03 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="0.2">+0,2 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="1">+1 Hz</button>
+            <button type="button" class="peg-nudge-btn" data-nudge="5">+5 Hz</button>
+          </div>
+          <div style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-soft); margin-top: 0.45rem; text-align: center;">
+            Dica: Nas setas do teclado, <strong>← / →</strong> ajustam de <strong>0,15 Hz</strong> em 0,15 Hz e <strong>↓ / ↑</strong> ajustam de <strong>0,50 Hz</strong> (segure <strong>Shift + Setas</strong> para ajuste ultra-fino de <strong>0,03 Hz</strong>!).
           </div>
         </div>
-
-        <div id="tunerStatusBanner" class="status-banner">
-          <span id="tunerStatusText">📌 A nota Sol4 começa em 261,63 Hz (igual ao Dó4). Suba a afinação até ~392,44 Hz (1,500×) para encontrar a Quinta Pura!</span>
-          <span id="tunerBeatRateBadge" style="font-weight: 700; color: #fde047;">Batimento 5ª: --</span>
-        </div>
-
-        <canvas id="tuner-wave-canvas" style="width: 100%; height: 64px; background: #0a0807; border: 1px solid var(--hairline); border-radius: 6px; display: block;"></canvas>
-
-        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-          <button type="button" id="tunerMarkTunedBtn" class="btn" style="border-color: rgba(52, 211, 153, 0.5); color: #6ee7b7; flex: 1;">
-            ✅ Confirmar Nota como "Afinada"
-          </button>
-          <button type="button" id="tunerSpreadOctavesBtn" class="btn" style="border-color: rgba(234, 179, 8, 0.45); color: #fde047; flex: 1;">
-            📋 Copiar esta Nota para as 3 Oitavas (2:1)
-          </button>
-          <button type="button" id="tunerSnapNearFifthBtn" class="btn" title="Leva a corda para perto da quinta pura (faltando ~2 Hz) para você treinar o ajuste fino do batimento">
-            🎯 Deixar perto da Quinta (Treinar Ajuste Fino)
-          </button>
-        </div>
-
       </div>
 
-    </div>
-
-    <!-- 3-Octave Interactive Harpsichord Keyboard -->
-    <div class="octave-bank">
-      <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 0.75rem;">
+      <!-- RIGHT PANEL: Monitor de Notas Travadas e Diagnóstico de Batimentos -->
+      <div class="panel panel--monitor">
         <div>
-          <span style="font-family: var(--font-mono); font-size: 0.74rem; color: var(--gold); font-weight: 700; text-transform: uppercase;">
-            Teclado do Cravo de 3 Oitavas (36 Cordas · Clique em uma tecla para afiná-la na Cravelha)
+          <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #6ee7b7; font-weight: 700; text-transform: uppercase;">
+            🔊 Notas Soando Agora (Clique simples nas teclas para travar/desligar)
           </span>
-          <div style="font-size: 0.78rem; color: var(--ink-soft); margin-top: 0.1rem;">
-            Dica: <strong>Clique simples</strong> escolhe a tecla como <strong>Nota Alvo (Cravelha)</strong>. Segure <strong>Shift + Clique</strong> para definir a tecla como <strong>Nota Base (Referência)</strong>.
+          <div id="soundingNotesContainer" class="sounding-chips" style="margin-top: 0.45rem;"></div>
+        </div>
+
+        <!-- Acoustic Beating & Tempered vs Pure Fifth Detector -->
+        <div id="beatingStatusBanner" class="status-banner">
+          <div id="beatingHeadline" style="font-weight: 700; font-size: 0.88rem; margin-bottom: 0.25rem; color: #fde047;">
+            Como começar sua afinação:
+          </div>
+          <div id="beatingExplanation">
+            1) Dê <strong>1 clique simples</strong> no <strong>Dó4</strong> (já afinado) e <strong>1 clique simples</strong> no <strong>Sol4</strong> para travar o som das duas notas juntas.<br>
+            2) Dê um <strong>duplo clique</strong> no <strong>Sol4</strong> e use as setas (<strong>← / ↓</strong> para descer ou <strong>→ / ↑</strong> para subir) até encontrar a <strong>Quinta Pura (sem batimentos)</strong>!
+          </div>
+          <div id="beatingRateBox" style="margin-top: 0.55rem; padding-top: 0.45rem; border-top: 1px solid rgba(250, 246, 240, 0.12); font-size: 0.8rem; color: var(--ink);">
+            Batimento atual: <strong>--</strong>
           </div>
         </div>
-        <div style="display: flex; gap: 0.75rem; font-family: var(--font-mono); font-size: 0.7rem; flex-wrap: wrap;">
-          <span style="color: #6ee7b7;">● Tecla Verde = Já Afinada</span>
-          <span style="color: #fde047;">● Borda Dourada = Nota Alvo na Cravelha</span>
-          <span style="color: var(--ink-soft);">● Cinza = Ainda na frequência inicial do Dó</span>
+
+        <!-- Sine Wave Interference Scope -->
+        <div>
+          <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-soft); margin-bottom: 0.25rem;">
+            <span>ONDAS SENOIDAIS SOMADAS EM TEMPO REAL</span>
+            <label style="cursor: pointer;">
+              <input type="checkbox" id="tunerHarmonicsCheck" checked style="accent-color: var(--gold); vertical-align: middle;">
+              <span>Harmônicos senoidais 2f/3f ativos (para audição física do batimento)</span>
+            </label>
+          </div>
+          <canvas id="tuner-wave-canvas" style="width: 100%; height: 74px; background: #0a0807; border: 1px solid var(--hairline); border-radius: 6px; display: block;"></canvas>
         </div>
       </div>
 
-      <div id="tunerKeyboardContainer" style="display: flex; flex-direction: column; gap: 1rem;"></div>
     </div>
 
     <!-- Institutional Footer -->
@@ -633,70 +768,80 @@
     (function () {
       'use strict';
 
+      var A4 = 440;
       var noteNamesPT = ['Dó', 'Dó#', 'Ré', 'Ré#', 'Mi', 'Fá', 'Fá#', 'Sol', 'Sol#', 'Lá', 'Lá#', 'Si'];
-      var tunerOctaves = [3, 4, 5];
-      var tunerOctaveBaseC = {
-        3: 130.8128,
-        4: 261.6256,
-        5: 523.2511
-      };
-      var tunerSharpIndices = [1, 3, 6, 8, 10];
-      var fifthNextIndexMap = [7, 8, 9, 10, 11, 0, 1, 2, 3, 4, 5, 6];
+      var octaves = [3, 4, 5];
+      var sharpNoteIndices = [1, 3, 6, 8, 10];
 
-      var cravoKeys = {};
-      var tunerBaseId = 'Dó4';
-      var tunerTargetId = 'Sol4';
-      var isBaseLocked = false;
-      var isTargetSounding = false;
+      // All 36 keys across Octaves 3, 4, 5
+      var keysById = {};
+      var keyOrderIds = [];
+      var selectedPegKeyId = 'Sol4'; // Selected via double-click
+      var activeVoices = {}; // keyId -> WebAudio sine voice (toggled via single click)
       var animPhase = 0;
 
       var audioCtx = null;
-      var baseVoice = null;
-      var targetVoice = null;
 
-      var tunerBaseSelect = document.getElementById('tunerBaseSelect');
-      var tunerTargetSelect = document.getElementById('tunerTargetSelect');
-      var tunerBaseNameBig = document.getElementById('tunerBaseNameBig');
-      var tunerBaseHzBig = document.getElementById('tunerBaseHzBig');
-      var tunerLockBaseBtn = document.getElementById('tunerLockBaseBtn');
-      var tunerPromoteTargetBtn = document.getElementById('tunerPromoteTargetBtn');
-      var tunerPlayBothQuickBtn = document.getElementById('tunerPlayBothQuickBtn');
-
-      var tunerTargetNameTitle = document.getElementById('tunerTargetNameTitle');
-      var tunerTargetHzBig = document.getElementById('tunerTargetHzBig');
-      var tunerRatioBig = document.getElementById('tunerRatioBig');
-      var tunerIdealFifthHz = document.getElementById('tunerIdealFifthHz');
-      var tunerTargetSoundBtn = document.getElementById('tunerTargetSoundBtn');
+      // DOM Elements
+      var pianoKeyboardEl = document.getElementById('pianoKeyboard');
+      var pegNoteNameEl = document.getElementById('pegNoteName');
+      var pegNoteInlineEl = document.getElementById('pegNoteInline');
+      var markKeyBtnLabelEl = document.getElementById('markKeyBtnLabel');
+      var markKeyTunedBtn = document.getElementById('markKeyTunedBtn');
+      var pegFreqReadoutEl = document.getElementById('pegFreqReadout');
       var tunerPegSlider = document.getElementById('tunerPegSlider');
-      var tunerStatusBanner = document.getElementById('tunerStatusBanner');
-      var tunerStatusText = document.getElementById('tunerStatusText');
-      var tunerBeatRateBadge = document.getElementById('tunerBeatRateBadge');
+      var arrowDownCard = document.getElementById('arrowDownCard');
+      var arrowUpCard = document.getElementById('arrowUpCard');
+
+      var soundingNotesContainer = document.getElementById('soundingNotesContainer');
+      var beatingStatusBanner = document.getElementById('beatingStatusBanner');
+      var beatingHeadline = document.getElementById('beatingHeadline');
+      var beatingExplanation = document.getElementById('beatingExplanation');
+      var beatingRateBox = document.getElementById('beatingRateBox');
       var tunerWaveCanvas = document.getElementById('tuner-wave-canvas');
 
-      var tunerMarkTunedBtn = document.getElementById('tunerMarkTunedBtn');
-      var tunerSpreadOctavesBtn = document.getElementById('tunerSpreadOctavesBtn');
-      var tunerSnapNearFifthBtn = document.getElementById('tunerSnapNearFifthBtn');
-      var tunerHarmonicsCheck = document.getElementById('tunerHarmonicsCheck');
       var tunerBlindModeCheck = document.getElementById('tunerBlindModeCheck');
+      var tunerHarmonicsCheck = document.getElementById('tunerHarmonicsCheck');
       var tunerSilenceAllBtn = document.getElementById('tunerSilenceAllBtn');
       var tunerResetAllBtn = document.getElementById('tunerResetAllBtn');
-      var tunerKeyboardContainer = document.getElementById('tunerKeyboardContainer');
 
-      function initCravoState() {
-        cravoKeys = {};
-        tunerOctaves.forEach(function (oct) {
-          var cFreq = tunerOctaveBaseC[oct];
+      function getStandardEqualTemperedFreq(noteIdx, octave) {
+        var midi = (octave + 1) * 12 + noteIdx;
+        return A4 * Math.pow(2, (midi - 69) / 12);
+      }
+
+      // Initialize all 36 keys: ONLY Dó4 is pre-tuned (261.63 Hz); all other 35 keys are randomly detuned up to ±1 semitone (±100 cents)!
+      function initKeysWithRandomDetuning() {
+        keysById = {};
+        keyOrderIds = [];
+
+        octaves.forEach(function (oct) {
           noteNamesPT.forEach(function (nName, nIdx) {
             var id = nName + oct;
-            cravoKeys[id] = {
+            var exactFreq = getStandardEqualTemperedFreq(nIdx, oct);
+            var isReferenceC4 = (id === 'Dó4');
+
+            var startFreq = exactFreq;
+            if (!isReferenceC4) {
+              // Random detuning between -100 cents and +100 cents (at least ±18 cents away so it's noticeably out of tune)
+              var sign = Math.random() < 0.5 ? -1 : 1;
+              var centsDetune = sign * (18 + Math.random() * 82);
+              startFreq = exactFreq * Math.pow(2, centsDetune / 1200);
+            }
+
+            keysById[id] = {
               id: id,
               noteName: nName,
               noteIndex: nIdx,
               octave: oct,
-              freq: cFreq,
-              initialCFreq: cFreq,
-              tuned: (nIdx === 0)
+              isSharp: sharpNoteIndices.indexOf(nIdx) !== -1,
+              isReferenceC4: isReferenceC4,
+              standardFreq: exactFreq,
+              freq: startFreq,
+              userMarkedTuned: isReferenceC4,
+              sounding: false
             };
+            keyOrderIds.push(id);
           });
         });
       }
@@ -716,7 +861,7 @@
         var ctx = ensureWebAudio();
         var masterGain = ctx.createGain();
         masterGain.gain.setValueAtTime(0.001, ctx.currentTime);
-        masterGain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.04);
+        masterGain.gain.exponentialRampToValueAtTime(0.16, ctx.currentTime + 0.04);
         masterGain.connect(ctx.destination);
 
         var useHarmonics = tunerHarmonicsCheck ? tunerHarmonicsCheck.checked : true;
@@ -728,7 +873,7 @@
         osc1.start();
 
         var gain2 = ctx.createGain();
-        gain2.gain.setValueAtTime(useHarmonics ? 0.35 : 0.0, ctx.currentTime);
+        gain2.gain.setValueAtTime(useHarmonics ? 0.34 : 0.0, ctx.currentTime);
         gain2.connect(masterGain);
         var osc2 = ctx.createOscillator();
         osc2.type = 'sine';
@@ -737,7 +882,7 @@
         osc2.start();
 
         var gain3 = ctx.createGain();
-        gain3.gain.setValueAtTime(useHarmonics ? 0.25 : 0.0, ctx.currentTime);
+        gain3.gain.setValueAtTime(useHarmonics ? 0.24 : 0.0, ctx.currentTime);
         gain3.connect(masterGain);
         var osc3 = ctx.createOscillator();
         osc3.type = 'sine';
@@ -748,14 +893,14 @@
         return {
           setFreq: function (newF) {
             var now = ctx.currentTime;
-            osc1.frequency.setTargetAtTime(newF, now, 0.012);
-            osc2.frequency.setTargetAtTime(newF * 2, now, 0.012);
-            osc3.frequency.setTargetAtTime(newF * 3, now, 0.012);
+            osc1.frequency.setTargetAtTime(newF, now, 0.01);
+            osc2.frequency.setTargetAtTime(newF * 2, now, 0.01);
+            osc3.frequency.setTargetAtTime(newF * 3, now, 0.01);
           },
           setHarmonics: function (enabled) {
             var now = ctx.currentTime;
-            gain2.gain.setTargetAtTime(enabled ? 0.35 : 0.0, now, 0.02);
-            gain3.gain.setTargetAtTime(enabled ? 0.25 : 0.0, now, 0.02);
+            gain2.gain.setTargetAtTime(enabled ? 0.34 : 0.0, now, 0.02);
+            gain3.gain.setTargetAtTime(enabled ? 0.24 : 0.0, now, 0.02);
           },
           stop: function () {
             try {
@@ -774,226 +919,363 @@
         };
       }
 
-      function syncAudioVoices() {
-        var baseKey = cravoKeys[tunerBaseId];
-        var targetKey = cravoKeys[tunerTargetId];
-
-        if (isBaseLocked && baseKey) {
-          if (!baseVoice) {
-            baseVoice = createSineVoice(baseKey.freq);
-          } else {
-            baseVoice.setFreq(baseKey.freq);
+      // Toggle sound lock on single click
+      function toggleKeySound(id) {
+        var kObj = keysById[id];
+        if (!kObj) return;
+        kObj.sounding = !kObj.sounding;
+        if (kObj.sounding) {
+          if (!activeVoices[id]) {
+            activeVoices[id] = createSineVoice(kObj.freq);
           }
-        } else if (baseVoice) {
-          baseVoice.stop();
-          baseVoice = null;
-        }
-
-        if (isTargetSounding && targetKey) {
-          if (!targetVoice) {
-            targetVoice = createSineVoice(targetKey.freq);
-          } else {
-            targetVoice.setFreq(targetKey.freq);
+        } else {
+          if (activeVoices[id]) {
+            activeVoices[id].stop();
+            delete activeVoices[id];
           }
-        } else if (targetVoice) {
-          targetVoice.stop();
-          targetVoice = null;
         }
+        renderAll();
       }
 
-      function populateTunerSelectors() {
-        tunerBaseSelect.innerHTML = '';
-        tunerTargetSelect.innerHTML = '';
+      // Ensure a key is sounding (used when double-clicking a key so the user doesn't accidentally turn it off on the 2nd click)
+      function selectKeyForPeg(id) {
+        var kObj = keysById[id];
+        if (!kObj) return;
+        selectedPegKeyId = id;
+        updateSliderForSelectedKey();
+        renderAll();
+      }
 
-        tunerOctaves.forEach(function (oct) {
-          noteNamesPT.forEach(function (nName) {
-            var id = nName + oct;
-            var keyObj = cravoKeys[id];
-            var opt1 = document.createElement('option');
-            opt1.value = id;
-            opt1.textContent = id + ' (' + keyObj.freq.toFixed(2).replace('.', ',') + ' Hz' + (keyObj.tuned ? ' · ✅ Afinada' : '') + ')';
-            tunerBaseSelect.appendChild(opt1);
-
-            var opt2 = document.createElement('option');
-            opt2.value = id;
-            opt2.textContent = id + ' (' + keyObj.freq.toFixed(2).replace('.', ',') + ' Hz' + (keyObj.tuned ? ' · ✅ Afinada' : '') + ')';
-            tunerTargetSelect.appendChild(opt2);
-          });
+      function silenceAllKeys() {
+        Object.keys(activeVoices).forEach(function (id) {
+          activeVoices[id].stop();
+          delete activeVoices[id];
         });
-
-        tunerBaseSelect.value = tunerBaseId;
-        tunerTargetSelect.value = tunerTargetId;
+        keyOrderIds.forEach(function (id) {
+          keysById[id].sounding = false;
+        });
+        renderAll();
       }
 
-      function updateSliderRangeForTarget() {
-        var targetKey = cravoKeys[tunerTargetId];
-        var baseKey = cravoKeys[tunerBaseId];
-        if (!targetKey) return;
-
-        var refC = targetKey.initialCFreq;
-        var minF = Math.min(refC * 0.48, (baseKey ? baseKey.freq * 0.48 : 80));
-        var maxF = Math.max(refC * 2.25, (baseKey ? baseKey.freq * 2.25 : 900));
+      function updateSliderForSelectedKey() {
+        var kObj = keysById[selectedPegKeyId];
+        if (!kObj) return;
+        // Allow ±2.5 semitones around the standard pitch of that key
+        var minF = kObj.standardFreq * Math.pow(2, -2.5 / 12);
+        var maxF = kObj.standardFreq * Math.pow(2, 2.5 / 12);
         tunerPegSlider.min = minF.toFixed(2);
         tunerPegSlider.max = maxF.toFixed(2);
-        tunerPegSlider.value = targetKey.freq.toFixed(2);
+        tunerPegSlider.value = kObj.freq.toFixed(2);
+        tunerPegSlider.disabled = kObj.isReferenceC4;
       }
 
-      function renderTunerUI() {
-        var baseKey = cravoKeys[tunerBaseId];
-        var targetKey = cravoKeys[tunerTargetId];
-        if (!baseKey || !targetKey) return;
-
-        var blind = tunerBlindModeCheck.checked;
-
-        if (tunerBaseSelect.value !== tunerBaseId) tunerBaseSelect.value = tunerBaseId;
-        if (tunerTargetSelect.value !== tunerTargetId) tunerTargetSelect.value = tunerTargetId;
-
-        tunerBaseNameBig.textContent = baseKey.id + (baseKey.tuned ? ' ✅' : '');
-        tunerBaseHzBig.textContent = baseKey.freq.toFixed(2).replace('.', ',') + ' Hz';
-
-        if (isBaseLocked) {
-          tunerLockBaseBtn.classList.add('is-locked');
-          tunerLockBaseBtn.textContent = '🔒 Nota Base TRAVADA e Soando (' + baseKey.id + ') — Clique para Destravar';
-        } else {
-          tunerLockBaseBtn.classList.remove('is-locked');
-          tunerLockBaseBtn.textContent = '🔒 Travar Execução da Nota Base (' + baseKey.id + ')';
+      // Adjust ONLY the selected key's frequency (never auto-tunes other octaves!)
+      function adjustSelectedKeyFrequency(newFreq) {
+        var kObj = keysById[selectedPegKeyId];
+        if (!kObj) return;
+        if (kObj.isReferenceC4) {
+          return; // Dó4 is the fixed reference tuning fork!
         }
-
-        tunerTargetNameTitle.textContent = targetKey.id;
-        tunerTargetHzBig.textContent = blind ? '??? Hz (Ouvido)' : (targetKey.freq.toFixed(2).replace('.', ',') + ' Hz');
-
-        if (isTargetSounding) {
-          tunerTargetSoundBtn.classList.add('is-sounding');
-          tunerTargetSoundBtn.textContent = '🔊 Nota Alvo (' + targetKey.id + ') SOANDO — Clique para Desligar';
-        } else {
-          tunerTargetSoundBtn.classList.remove('is-sounding');
-          tunerTargetSoundBtn.textContent = '🔊 Ligar Som da Nota Alvo (' + targetKey.id + ')';
+        var minF = parseFloat(tunerPegSlider.min) || 60;
+        var maxF = parseFloat(tunerPegSlider.max) || 1600;
+        var clamped = Math.max(minF, Math.min(maxF, newFreq));
+        kObj.freq = clamped;
+        tunerPegSlider.value = clamped.toFixed(2);
+        if (activeVoices[selectedPegKeyId]) {
+          activeVoices[selectedPegKeyId].setFreq(clamped);
         }
-
-        var ratio = targetKey.freq / baseKey.freq;
-        var idealFifthUp = baseKey.freq * 1.5;
-        var idealFourthDown = baseKey.freq * 0.75;
-
-        tunerIdealFifthHz.textContent = blind
-          ? 'Oculto (Modo Ouvido)'
-          : (idealFifthUp.toFixed(2).replace('.', ',') + ' Hz (ou ' + idealFourthDown.toFixed(2).replace('.', ',') + ' Hz 8ª abaixo)');
-
-        var centsToFifthUp = 1200 * Math.log2(ratio / 1.5);
-        var centsToFifthDownOct = 1200 * Math.log2(ratio / 0.75);
-        var centsToOctaveUp = 1200 * Math.log2(ratio / 2.0);
-        var centsToOctaveDown = 1200 * Math.log2(ratio / 0.5);
-        var centsToUnison = 1200 * Math.log2(ratio / 1.0);
-
-        var beatFifthUp = Math.abs(2 * targetKey.freq - 3 * baseKey.freq);
-        var beatFifthDownOct = Math.abs(4 * targetKey.freq - 3 * baseKey.freq);
-
-        var ratioLabel = ratio.toFixed(4).replace('.', ',') + '×';
-        tunerStatusBanner.className = 'status-banner';
-
-        if (Math.abs(centsToFifthUp) < 0.8) {
-          ratioLabel += ' (Quinta Pura 3/2!)';
-          tunerStatusBanner.classList.add('is-pure');
-          tunerStatusText.innerHTML = '✨ <strong>QUINTA PURA (3/2) AFINADA!</strong> O som de <strong>' + baseKey.id + ' + ' + targetKey.id + '</strong> ficou liso e sem batimentos! Clique em "✅ Confirmar Nota como Afinada".';
-          tunerBeatRateBadge.textContent = 'Batimento: ' + beatFifthUp.toFixed(2).replace('.', ',') + ' bat/s (Zero!)';
-        } else if (Math.abs(centsToFifthDownOct) < 0.8) {
-          ratioLabel += ' (Quinta 1 Oitava Abaixo · 3/4!)';
-          tunerStatusBanner.classList.add('is-pure');
-          tunerStatusText.innerHTML = '✨ <strong>QUINTA PURA + OITAVA ABAIXO (3/4) AFINADA!</strong> Zigue-zague perfeito na oitava central sem batimento!';
-          tunerBeatRateBadge.textContent = 'Batimento: ' + beatFifthDownOct.toFixed(2).replace('.', ',') + ' bat/s (Zero!)';
-        } else if (Math.abs(centsToOctaveUp) < 0.8 || Math.abs(centsToOctaveDown) < 0.8) {
-          ratioLabel += ' (Oitava Pura 2:1!)';
-          tunerStatusBanner.classList.add('is-pure');
-          tunerStatusText.innerHTML = '✨ <strong>OITAVA PURA (2:1) AFINADA!</strong> Cópia de oitava sem batimentos.';
-          tunerBeatRateBadge.textContent = 'Batimento 8ª: ~0,0 bat/s';
-        } else if (Math.abs(centsToUnison) < 1.2) {
-          ratioLabel += ' (Uníssono 1:1)';
-          tunerStatusText.innerHTML = '📌 <strong>' + targetKey.id + '</strong> está na mesma frequência de <strong>' + baseKey.id + '</strong> (Uníssono). Suba a cravelha em direção a 1,500× para encontrar a Quinta Pura!';
-          tunerBeatRateBadge.textContent = 'Diferença p/ 5ª: ' + centsToFifthUp.toFixed(1).replace('.', ',') + ' cents';
-        } else if (Math.abs(centsToFifthUp) < 35) {
-          tunerStatusBanner.classList.add('is-near');
-          tunerStatusText.innerHTML = '👂 <strong>Quase lá! Você está perto da Quinta Pura!</strong> Ouça o batimento <em>"uá-uá-uá"</em> (' + beatFifthUp.toFixed(1).replace('.', ',') + ' por segundo) e ajuste nos botões finos (+/- 0,5 Hz e +/- 0,05 Hz) até o batimento parar!';
-          tunerBeatRateBadge.textContent = 'Batimento 5ª: ' + beatFifthUp.toFixed(1).replace('.', ',') + ' bat/s';
-        } else {
-          tunerStatusText.innerHTML = '🔧 Girando a cravelha de <strong>' + targetKey.id + '</strong>... Continue subindo ou descendo até ouvir os batimentos da Quinta Pura (3/2 = 1,500×).';
-          tunerBeatRateBadge.textContent = blind ? 'Ouça o batimento' : ('Distância p/ 5ª: ' + (centsToFifthUp > 0 ? '+' : '') + centsToFifthUp.toFixed(0) + ' cents');
-        }
-
-        tunerRatioBig.textContent = blind ? '??? × (Ouvido)' : ratioLabel;
-        renderKeyboardGrid();
+        renderAll();
       }
 
-      function renderKeyboardGrid() {
-        tunerKeyboardContainer.innerHTML = '';
+      // Format beating rate with layperson explanation when < 1.0 beat/second!
+      function formatBeatingForLayperson(beatsPerSec) {
+        if (beatsPerSec < 0.03) {
+          return '~0,00 batimentos/s (Som 100% liso / Sem batimentos perceptíveis!)';
+        }
+        if (beatsPerSec < 1.0) {
+          var secondsPerBeat = 1.0 / beatsPerSec;
+          return beatsPerSec.toFixed(2).replace('.', ',') + ' batimentos/s (isto é: 1 batimento a cada ' + secondsPerBeat.toFixed(1).replace('.', ',') + ' segundos)';
+        }
+        return beatsPerSec.toFixed(2).replace('.', ',') + ' batimentos por segundo';
+      }
 
-        [5, 4, 3].forEach(function (oct) {
-          var rowWrap = document.createElement('div');
-          var label = document.createElement('div');
-          label.style.fontFamily = 'var(--font-mono)';
-          label.style.fontSize = '0.74rem';
-          label.style.color = 'var(--ink-soft)';
-          label.innerHTML = '<strong>Oitava ' + oct + '</strong> (Dó' + oct + ' inicial = ' + tunerOctaveBaseC[oct].toFixed(2).replace('.', ',') + ' Hz)';
-          rowWrap.appendChild(label);
+      // Build the realistic 3-octave Piano/Harpsichord keyboard (21 white keys + 15 black keys)
+      // Single-click timer vs Double-click handler so double-clicking selects the note without toggling its sound twice!
+      var clickTimers = {};
 
-          var grid = document.createElement('div');
-          grid.className = 'octave-row-grid';
+      function buildKeyboardDOM() {
+        pianoKeyboardEl.innerHTML = '';
 
-          noteNamesPT.forEach(function (nName, nIdx) {
-            var id = nName + oct;
-            var kObj = cravoKeys[id];
-            var isSharp = tunerSharpIndices.indexOf(nIdx) !== -1;
+        // 21 white keys in order across Octaves 3, 4, 5
+        var whiteNoteIndices = [0, 2, 4, 5, 7, 9, 11]; // Dó, Ré, Mi, Fá, Sol, Lá, Si
+        var whiteKeyIndex = 0;
+        var totalWhiteKeys = 21;
 
+        octaves.forEach(function (oct, octPos) {
+          // 1. Create the 7 white keys of this octave
+          whiteNoteIndices.forEach(function (nIdx) {
+            var id = noteNamesPT[nIdx] + oct;
             var btn = document.createElement('button');
             btn.type = 'button';
-            btn.className = 'cravo-key' +
-              (isSharp ? ' cravo-key--sharp' : '') +
-              (kObj.tuned ? ' is-tuned' : '') +
-              (id === tunerBaseId ? ' is-base-key' : '') +
-              (id === tunerTargetId ? ' is-target-key' : '');
-
-            var badgeText = kObj.tuned ? '✅ Afinada' : 'Igual Dó' + oct;
-            if (id === tunerBaseId) badgeText = '🔒 Base';
-            if (id === tunerTargetId) badgeText = '🔧 Alvo';
-
-            btn.innerHTML =
-              '<span class="cravo-key__name">' + id + '</span>' +
-              '<span class="cravo-key__hz">' + kObj.freq.toFixed(1).replace('.', ',') + ' Hz</span>' +
-              '<span class="cravo-key__badge">' + badgeText + '</span>';
-
-            btn.addEventListener('click', function (ev) {
-              if (ev.shiftKey) {
-                tunerBaseId = id;
-              } else {
-                tunerTargetId = id;
-              }
-              populateTunerSelectors();
-              updateSliderRangeForTarget();
-              syncAudioVoices();
-              renderTunerUI();
-            });
-
-            grid.appendChild(btn);
+            btn.className = 'piano-key-white';
+            btn.setAttribute('data-key-id', id);
+            bindKeyInteractions(btn, id);
+            pianoKeyboardEl.appendChild(btn);
+            whiteKeyIndex++;
           });
 
-          rowWrap.appendChild(grid);
-          tunerKeyboardContainer.appendChild(rowWrap);
+          // 2. Create the 5 black keys of this octave positioned accurately over the white key boundaries
+          // In each octave of 7 white keys:
+          // Dó# is between white key 0 (Dó) and 1 (Ré) -> offset 1
+          // Ré# is between white key 1 (Ré) and 2 (Mi) -> offset 2
+          // Fá# is between white key 3 (Fá) and 4 (Sol) -> offset 4
+          // Sol# is between white key 4 (Sol) and 5 (Lá) -> offset 5
+          // Lá# is between white key 5 (Lá) and 6 (Si) -> offset 6
+          var blackSpecs = [
+            { nIdx: 1, boundaryOffset: 1 },
+            { nIdx: 3, boundaryOffset: 2 },
+            { nIdx: 6, boundaryOffset: 4 },
+            { nIdx: 8, boundaryOffset: 5 },
+            { nIdx: 10, boundaryOffset: 6 }
+          ];
+
+          blackSpecs.forEach(function (spec) {
+            var id = noteNamesPT[spec.nIdx] + oct;
+            var globalBoundary = octPos * 7 + spec.boundaryOffset;
+            var leftPercent = (globalBoundary / totalWhiteKeys) * 100;
+
+            var bBtn = document.createElement('button');
+            bBtn.type = 'button';
+            bBtn.className = 'piano-key-black';
+            bBtn.style.left = leftPercent.toFixed(4) + '%';
+            bBtn.setAttribute('data-key-id', id);
+            bindKeyInteractions(bBtn, id);
+            pianoKeyboardEl.appendChild(bBtn);
+          });
         });
       }
 
-      function setTargetFrequency(newFreq) {
-        var targetKey = cravoKeys[tunerTargetId];
-        if (!targetKey) return;
-        var clamped = Math.max(50, Math.min(2400, newFreq));
-        targetKey.freq = clamped;
-        if (clamped < parseFloat(tunerPegSlider.min)) tunerPegSlider.min = (clamped * 0.8).toFixed(2);
-        if (clamped > parseFloat(tunerPegSlider.max)) tunerPegSlider.max = (clamped * 1.2).toFixed(2);
-        tunerPegSlider.value = clamped.toFixed(2);
-        if (targetVoice) {
-          targetVoice.setFreq(clamped);
-        }
-        renderTunerUI();
+      function bindKeyInteractions(btn, id) {
+        btn.addEventListener('click', function () {
+          if (clickTimers[id]) {
+            clearTimeout(clickTimers[id]);
+            delete clickTimers[id];
+            return;
+          }
+          clickTimers[id] = setTimeout(function () {
+            delete clickTimers[id];
+            toggleKeySound(id);
+          }, 210);
+        });
+
+        btn.addEventListener('dblclick', function (ev) {
+          ev.preventDefault();
+          if (clickTimers[id]) {
+            clearTimeout(clickTimers[id]);
+            delete clickTimers[id];
+          }
+          selectKeyForPeg(id);
+        });
       }
 
-      function drawTunerWaveScope() {
+      function updateKeyboardDOM() {
+        var blind = tunerBlindModeCheck.checked;
+        var buttons = pianoKeyboardEl.querySelectorAll('[data-key-id]');
+        buttons.forEach(function (btn) {
+          var id = btn.getAttribute('data-key-id');
+          var kObj = keysById[id];
+          if (!kObj) return;
+
+          btn.classList.toggle('is-reference-c4', kObj.isReferenceC4);
+          btn.classList.toggle('is-sounding', kObj.sounding);
+          btn.classList.toggle('is-selected-peg', id === selectedPegKeyId);
+          btn.classList.toggle('is-user-tuned', kObj.userMarkedTuned);
+
+          var statusHtml = '';
+          if (kObj.isReferenceC4) {
+            statusHtml = '<span class="key-status-dot key-status-dot--ref">' + (kObj.sounding ? '🔊 Fixa' : '★ Fixa') + '</span>';
+          } else if (kObj.sounding && id === selectedPegKeyId) {
+            statusHtml = '<span class="key-status-dot key-status-dot--peg">🔊+🔧</span>';
+          } else if (kObj.sounding) {
+            statusHtml = '<span class="key-status-dot key-status-dot--sound">🔊 Som</span>';
+          } else if (id === selectedPegKeyId) {
+            statusHtml = '<span class="key-status-dot key-status-dot--peg">🔧 Cravelha</span>';
+          } else if (kObj.userMarkedTuned) {
+            statusHtml = '<span class="key-status-dot key-status-dot--ref">✅</span>';
+          }
+
+          var hzText = (blind && !kObj.isReferenceC4)
+            ? '??? Hz'
+            : (kObj.freq.toFixed(1).replace('.', ',') + ' Hz');
+
+          btn.innerHTML =
+            statusHtml +
+            '<span class="key-note-label">' + id + '</span>' +
+            '<span class="key-hz-label">' + hzText + '</span>';
+        });
+      }
+
+      function renderBeatingMonitor() {
+        var soundingList = keyOrderIds
+          .filter(function (id) { return keysById[id].sounding; })
+          .map(function (id) { return keysById[id]; });
+
+        // Render sounding chips
+        soundingNotesContainer.innerHTML = '';
+        if (soundingList.length === 0) {
+          soundingNotesContainer.innerHTML = '<span style="font-family: var(--font-mono); font-size: 0.78rem; color: var(--ink-soft);">Nenhuma nota travada no momento (dê 1 clique simples nas teclas que deseja ouvir).</span>';
+        } else {
+          soundingList.forEach(function (kObj) {
+            var chip = document.createElement('button');
+            chip.type = 'button';
+            chip.className = 'sounding-chip';
+            chip.title = 'Clique para desligar o som de ' + kObj.id;
+            chip.innerHTML = '🔊 ' + kObj.id + ' ✕';
+            chip.addEventListener('click', function () {
+              toggleKeySound(kObj.id);
+            });
+            soundingNotesContainer.appendChild(chip);
+          });
+        }
+
+        beatingStatusBanner.className = 'status-banner';
+
+        if (soundingList.length < 2) {
+          beatingHeadline.style.color = '#fde047';
+          beatingHeadline.textContent = soundingList.length === 0
+            ? 'Nenhuma dupla de notas soando:'
+            : ('Apenas 1 nota soando (' + soundingList[0].id + '):');
+          beatingExplanation.innerHTML =
+            'Para afinar por quintas (ou oitavas), trave <strong>duas notas juntas</strong> com <strong>1 clique simples</strong> em cada tecla (por exemplo: <strong>Dó4</strong> e <strong>Sol4</strong>) e dê um <strong>duplo clique</strong> na nota que você vai ajustar com as setas!';
+          beatingRateBox.innerHTML = 'Batimento atual: <strong>Trave 2 notas para medir os batimentos</strong>';
+          return;
+        }
+
+        // Sort the two primary sounding notes by frequency (lowNote, highNote)
+        var pair = soundingList.slice(0, 2).sort(function (a, b) { return a.freq - b.freq; });
+        var lowNote = pair[0];
+        var highNote = pair[1];
+        var ratio = highNote.freq / lowNote.freq;
+        var centsInterval = 1200 * Math.log2(ratio);
+
+        // Check if they are near a Fifth (around 700-702 cents), a Fourth / inverted Fifth (around 498-500 cents), or an Octave (around 1200 cents)
+        var centsToPureFifth = centsInterval - 701.955; // Pure 3/2 = 701.955 cents
+        var centsToTemperedFifth = centsInterval - 700.0; // Tempered Fifth = 700.00 cents
+
+        var centsToPureFourth = centsInterval - 498.045; // Pure 4/3 = 498.045 cents
+        var centsToTemperedFourth = centsInterval - 500.0;
+
+        var centsToPureOctave = centsInterval - 1200.0; // Pure 2/1 = 1200.0 cents
+
+        if (Math.abs(centsToPureFifth) < 110) {
+          // Tuning a Fifth (3:2 -> 3 * fLow vs 2 * fHigh)
+          var beatHz = Math.abs(2 * highNote.freq - 3 * lowNote.freq);
+          var beatDesc = formatBeatingForLayperson(beatHz);
+
+          if (Math.abs(centsToPureFifth) <= 0.45) {
+            beatingStatusBanner.classList.add('is-pure');
+            beatingHeadline.style.color = '#6ee7b7';
+            beatingHeadline.textContent = '✨ QUINTA PURA PITAGÓRICA (3/2) ENCONTRADA! (' + lowNote.id + ' + ' + highNote.id + ')';
+            beatingExplanation.innerHTML =
+              'Parabéns! Você atingiu a razão exata de <strong>3/2 (701,96 cents)</strong> entre <strong>' + lowNote.id + '</strong> e <strong>' + highNote.id + '</strong>! Os harmônicos se encaixaram sem batimentos. Você já pode usar esta nota para afinar a próxima quinta!';
+            beatingRateBox.innerHTML = 'Batimento da Quinta (3:2): <strong>' + beatDesc + '</strong>';
+          } else if (Math.abs(centsToTemperedFifth) <= 0.75) {
+            beatingStatusBanner.classList.add('is-tempered');
+            beatingHeadline.style.color = '#7dd3fc';
+            beatingHeadline.textContent = '🎹 Atenção: Você está na Quinta do Sistema Temperado (Piano Moderno · 700 cents)!';
+            beatingExplanation.innerHTML =
+              'Esta quinta entre <strong>' + lowNote.id + '</strong> e <strong>' + highNote.id + '</strong> está afinada como em um piano moderno (encurtada em -1,96 cent). Repare que ela ainda tem um batimento lento!<br>' +
+              '🎯 <strong>O seu desafio aqui é encontrar a Quinta Pura (701,96 cents), totalmente lisa e SEM BATIMENTOS!</strong> Suba mais um pouquinho a nota aguda (ou desça a grave) com as setas!';
+            beatingRateBox.innerHTML = 'Batimento da Quinta: <strong>' + beatDesc + '</strong>';
+          } else {
+            beatingStatusBanner.classList.add('is-near');
+            beatingHeadline.style.color = '#fde047';
+            beatingHeadline.textContent = '👂 Afinando a Quinta (' + lowNote.id + ' + ' + highNote.id + ') — Ouça os batimentos!';
+            beatingExplanation.innerHTML =
+              'Use as setas (<strong>← / ↓</strong> para descer ou <strong>→ / ↑</strong> para subir a nota <strong>' + selectedPegKeyId + '</strong>) e preste atenção na velocidade do <em>"uá-uá-uá"</em> até ele desacelerar e parar completamente na Quinta Pura!';
+            beatingRateBox.innerHTML = 'Batimento da Quinta (3:2): <strong>' + beatDesc + '</strong>';
+          }
+        } else if (Math.abs(centsToPureFourth) < 90) {
+          // Tuning a Fourth (4:3 -> 4 * fLow vs 3 * fHigh, which is a Fifth + Octave down in the harpsichord zig-zag!)
+          var beatFourthHz = Math.abs(3 * highNote.freq - 4 * lowNote.freq);
+          var beatFourthDesc = formatBeatingForLayperson(beatFourthHz);
+
+          if (Math.abs(centsToPureFourth) <= 0.45) {
+            beatingStatusBanner.classList.add('is-pure');
+            beatingHeadline.style.color = '#6ee7b7';
+            beatingHeadline.textContent = '✨ QUARTA PURA / QUINTA INVERTIDA (4/3) ENCONTRADA! (' + lowNote.id + ' + ' + highNote.id + ')';
+            beatingExplanation.innerHTML =
+              'Perfeito! A razão <strong>4/3 (498,04 cents)</strong> equivale a subir uma Quinta Pura e descer uma Oitava Pura. O som está 100% liso e sem batimentos!';
+            beatingRateBox.innerHTML = 'Batimento (4:3): <strong>' + beatFourthDesc + '</strong>';
+          } else if (Math.abs(centsToTemperedFourth) <= 0.75) {
+            beatingStatusBanner.classList.add('is-tempered');
+            beatingHeadline.style.color = '#7dd3fc';
+            beatingHeadline.textContent = '🎹 Atenção: Este intervalo está como no Sistema Temperado (500 cents)!';
+            beatingExplanation.innerHTML =
+              'No sistema temperado há um batimento lento. <strong>O desafio é encontrar o intervalo puro pitagórico (498,04 cents), sem batimentos!</strong>';
+            beatingRateBox.innerHTML = 'Batimento (4:3): <strong>' + beatFourthDesc + '</strong>';
+          } else {
+            beatingStatusBanner.classList.add('is-near');
+            beatingHeadline.style.color = '#fde047';
+            beatingHeadline.textContent = '👂 Afinando Quarta / Quinta Invertida (' + lowNote.id + ' + ' + highNote.id + ')';
+            beatingExplanation.innerHTML = 'Ajuste nas setas até zerar completamente os batimentos!';
+            beatingRateBox.innerHTML = 'Batimento (4:3): <strong>' + beatFourthDesc + '</strong>';
+          }
+        } else if (Math.abs(centsToPureOctave) < 110) {
+          // Tuning an Octave (2:1 -> 2 * fLow vs 1 * fHigh)
+          var beatOctHz = Math.abs(highNote.freq - 2 * lowNote.freq);
+          var beatOctDesc = formatBeatingForLayperson(beatOctHz);
+
+          if (Math.abs(centsToPureOctave) <= 0.45) {
+            beatingStatusBanner.classList.add('is-pure');
+            beatingHeadline.style.color = '#6ee7b7';
+            beatingHeadline.textContent = '✨ OITAVA PURA (2/1) ENCONTRADA! (' + lowNote.id + ' + ' + highNote.id + ')';
+            beatingExplanation.innerHTML =
+              'Excelente! A nota <strong>' + highNote.id + '</strong> está exatamente com o dobro da frequência de <strong>' + lowNote.id + '</strong> (razão 2:1, sem batimentos).';
+            beatingRateBox.innerHTML = 'Batimento da Oitava (2:1): <strong>' + beatOctDesc + '</strong>';
+          } else {
+            beatingStatusBanner.classList.add('is-near');
+            beatingHeadline.style.color = '#fde047';
+            beatingHeadline.textContent = '👂 Afinando Oitava (2/1) entre ' + lowNote.id + ' e ' + highNote.id;
+            beatingExplanation.innerHTML =
+              'Ajuste com as setas até que o batimento entre as duas oitavas desapareça totalmente!';
+            beatingRateBox.innerHTML = 'Batimento da Oitava (2:1): <strong>' + beatOctDesc + '</strong>';
+          }
+        } else {
+          beatingHeadline.style.color = '#fde047';
+          beatingHeadline.textContent = 'Dupla soando: ' + lowNote.id + ' + ' + highNote.id;
+          beatingExplanation.innerHTML =
+            'Continue subindo ou descendo a afinação nas setas até chegar perto da <strong>Quinta Pura (razão 1,500×)</strong> ou da <strong>Oitava Pura (razão 2,000×)</strong>.';
+          beatingRateBox.innerHTML = 'Razão atual (' + highNote.id + ' ÷ ' + lowNote.id + '): <strong>' + ratio.toFixed(4).replace('.', ',') + '×</strong>';
+        }
+      }
+
+      function renderPegPanel() {
+        var kObj = keysById[selectedPegKeyId];
+        if (!kObj) return;
+        var blind = tunerBlindModeCheck.checked;
+
+        pegNoteNameEl.textContent = kObj.id + (kObj.isReferenceC4 ? ' (Referência Fixa Dó4)' : '');
+        pegNoteInlineEl.textContent = kObj.id;
+        markKeyBtnLabelEl.textContent = kObj.id;
+
+        if (kObj.isReferenceC4) {
+          pegFreqReadoutEl.textContent = '261,63 Hz (Fixa)';
+        } else {
+          pegFreqReadoutEl.textContent = blind
+            ? '??? Hz (Modo Ouvido)'
+            : (kObj.freq.toFixed(2).replace('.', ',') + ' Hz');
+        }
+      }
+
+      function renderAll() {
+        updateKeyboardDOM();
+        renderPegPanel();
+        renderBeatingMonitor();
+      }
+
+      // Live Sine Wave Oscilloscope
+      function drawWaveScope() {
         var rect = tunerWaveCanvas.getBoundingClientRect();
         var dpr = Math.min(window.devicePixelRatio || 1, 2);
         var w = Math.max(10, Math.round(rect.width * dpr));
@@ -1008,163 +1290,142 @@
         var ch = rect.height;
         ctx.clearRect(0, 0, cw, ch);
 
-        var baseKey = cravoKeys[tunerBaseId];
-        var targetKey = cravoKeys[tunerTargetId];
-        if (!baseKey || !targetKey) return;
+        var soundingList = keyOrderIds
+          .filter(function (id) { return keysById[id].sounding; })
+          .map(function (id) { return keysById[id]; });
 
         var cy = ch / 2;
-        var ratio = targetKey.freq / baseKey.freq;
-        var beatEnvSpeed = Math.abs(2 * targetKey.freq - 3 * baseKey.freq) * 0.12;
-
-        ctx.strokeStyle = (isBaseLocked || isTargetSounding) ? '#eab308' : 'rgba(184, 172, 160, 0.35)';
+        ctx.strokeStyle = soundingList.length > 0 ? '#eab308' : 'rgba(184, 172, 160, 0.25)';
         ctx.lineWidth = 1.8;
         ctx.beginPath();
+
         for (var x = 0; x <= cw; x += 2) {
-          var t = (x / cw) * Math.PI * 10;
-          var w1 = Math.sin(t - animPhase * 1.5);
-          var w2 = Math.sin(t * ratio - animPhase * 1.5 * ratio + Math.sin(animPhase * beatEnvSpeed));
-          var y = cy + ((w1 + w2) * 0.5) * (ch * 0.36);
+          var t = (x / cw) * 0.035;
+          var sum = 0;
+          if (soundingList.length === 0) {
+            sum = Math.sin((x / cw) * Math.PI * 6) * 0.2;
+          } else {
+            for (var i = 0; i < soundingList.length; i++) {
+              var f = soundingList[i].freq;
+              sum += Math.sin(2 * Math.PI * f * t + animPhase * (i + 1) * 0.35);
+            }
+            sum /= Math.max(1, soundingList.length);
+          }
+          var y = cy + sum * (ch * 0.38);
           if (x === 0) ctx.moveTo(x, y);
           else ctx.lineTo(x, y);
         }
         ctx.stroke();
 
-        animPhase += 0.04;
-        requestAnimationFrame(drawTunerWaveScope);
+        animPhase += 0.045;
+        requestAnimationFrame(drawWaveScope);
       }
 
-      tunerBaseSelect.addEventListener('change', function () {
-        tunerBaseId = tunerBaseSelect.value;
-        updateSliderRangeForTarget();
-        syncAudioVoices();
-        renderTunerUI();
+      // Keyboard Arrow Controls:
+      // Left Arrow (←) or Down Arrow (↓) = LOWERS pitch (desce a afinação)
+      // Right Arrow (→) or Up Arrow (↑) = RAISES pitch (sobe a afinação)
+      window.addEventListener('keydown', function (ev) {
+        if (ev.target && (ev.target.tagName === 'INPUT' && ev.target.type !== 'range')) return;
+
+        var step = 0;
+        var isDownDir = false;
+        var isUpDir = false;
+
+        if (ev.key === 'ArrowLeft') {
+          step = ev.shiftKey ? -0.03 : -0.15;
+          isDownDir = true;
+        } else if (ev.key === 'ArrowDown') {
+          step = ev.shiftKey ? -0.03 : -0.50;
+          isDownDir = true;
+        } else if (ev.key === 'ArrowRight') {
+          step = ev.shiftKey ? 0.03 : 0.15;
+          isUpDir = true;
+        } else if (ev.key === 'ArrowUp') {
+          step = ev.shiftKey ? 0.03 : 0.50;
+          isUpDir = true;
+        }
+
+        if (step !== 0) {
+          ev.preventDefault();
+          var kObj = keysById[selectedPegKeyId];
+          if (kObj && !kObj.isReferenceC4) {
+            adjustSelectedKeyFrequency(kObj.freq + step);
+          }
+          if (isDownDir) {
+            arrowDownCard.classList.add('is-pressed');
+            setTimeout(function () { arrowDownCard.classList.remove('is-pressed'); }, 140);
+          }
+          if (isUpDir) {
+            arrowUpCard.classList.add('is-pressed');
+            setTimeout(function () { arrowUpCard.classList.remove('is-pressed'); }, 140);
+          }
+        }
       });
 
-      tunerTargetSelect.addEventListener('change', function () {
-        tunerTargetId = tunerTargetSelect.value;
-        updateSliderRangeForTarget();
-        syncAudioVoices();
-        renderTunerUI();
+      // Clicking the visual arrow cards also lowers/raises the pitch
+      arrowDownCard.addEventListener('click', function () {
+        var kObj = keysById[selectedPegKeyId];
+        if (kObj && !kObj.isReferenceC4) {
+          adjustSelectedKeyFrequency(kObj.freq - 0.20);
+        }
       });
 
-      tunerLockBaseBtn.addEventListener('click', function () {
-        isBaseLocked = !isBaseLocked;
-        syncAudioVoices();
-        renderTunerUI();
-      });
-
-      tunerTargetSoundBtn.addEventListener('click', function () {
-        isTargetSounding = !isTargetSounding;
-        syncAudioVoices();
-        renderTunerUI();
-      });
-
-      tunerPlayBothQuickBtn.addEventListener('click', function () {
-        isBaseLocked = true;
-        isTargetSounding = true;
-        syncAudioVoices();
-        renderTunerUI();
-      });
-
-      tunerSilenceAllBtn.addEventListener('click', function () {
-        isBaseLocked = false;
-        isTargetSounding = false;
-        syncAudioVoices();
-        renderTunerUI();
+      arrowUpCard.addEventListener('click', function () {
+        var kObj = keysById[selectedPegKeyId];
+        if (kObj && !kObj.isReferenceC4) {
+          adjustSelectedKeyFrequency(kObj.freq + 0.20);
+        }
       });
 
       tunerPegSlider.addEventListener('input', function () {
-        setTargetFrequency(parseFloat(tunerPegSlider.value));
+        adjustSelectedKeyFrequency(parseFloat(tunerPegSlider.value));
       });
 
       document.querySelectorAll('[data-nudge]').forEach(function (btn) {
         btn.addEventListener('click', function () {
           var delta = parseFloat(btn.getAttribute('data-nudge')) || 0;
-          var targetKey = cravoKeys[tunerTargetId];
-          if (targetKey) {
-            setTargetFrequency(targetKey.freq + delta);
+          var kObj = keysById[selectedPegKeyId];
+          if (kObj && !kObj.isReferenceC4) {
+            adjustSelectedKeyFrequency(kObj.freq + delta);
           }
         });
       });
 
-      tunerMarkTunedBtn.addEventListener('click', function () {
-        var targetKey = cravoKeys[tunerTargetId];
-        if (targetKey) {
-          targetKey.tuned = true;
-          populateTunerSelectors();
-          renderTunerUI();
+      markKeyTunedBtn.addEventListener('click', function () {
+        var kObj = keysById[selectedPegKeyId];
+        if (kObj && !kObj.isReferenceC4) {
+          kObj.userMarkedTuned = !kObj.userMarkedTuned;
+          renderAll();
         }
       });
 
-      tunerSpreadOctavesBtn.addEventListener('click', function () {
-        var targetKey = cravoKeys[tunerTargetId];
-        if (!targetKey) return;
-        targetKey.tuned = true;
-        tunerOctaves.forEach(function (oct) {
-          var siblingId = targetKey.noteName + oct;
-          if (cravoKeys[siblingId]) {
-            var octDiff = oct - targetKey.octave;
-            cravoKeys[siblingId].freq = targetKey.freq * Math.pow(2, octDiff);
-            cravoKeys[siblingId].tuned = true;
-          }
-        });
-        populateTunerSelectors();
-        renderTunerUI();
-        tunerStatusBanner.className = 'status-banner is-pure';
-        tunerStatusText.innerHTML = '📋 <strong>Oitavas Espalhadas!</strong> Todas as teclas <strong>' + targetKey.noteName + '3, ' + targetKey.noteName + '4 e ' + targetKey.noteName + '5</strong> foram afinadas em oitavas 2:1 puras!';
-      });
-
-      tunerPromoteTargetBtn.addEventListener('click', function () {
-        var currentTarget = cravoKeys[tunerTargetId];
-        if (!currentTarget) return;
-        currentTarget.tuned = true;
-        tunerBaseId = currentTarget.id;
-        var nextNoteIndex = fifthNextIndexMap[currentTarget.noteIndex];
-        var nextNoteName = noteNamesPT[nextNoteIndex];
-        tunerTargetId = nextNoteName + currentTarget.octave;
-        populateTunerSelectors();
-        updateSliderRangeForTarget();
-        syncAudioVoices();
-        renderTunerUI();
-      });
-
-      tunerSnapNearFifthBtn.addEventListener('click', function () {
-        var baseKey = cravoKeys[tunerBaseId];
-        if (!baseKey) return;
-        setTargetFrequency(baseKey.freq * 1.5 - 2.2);
-        isBaseLocked = true;
-        isTargetSounding = true;
-        syncAudioVoices();
-        renderTunerUI();
+      tunerBlindModeCheck.addEventListener('change', function () {
+        renderAll();
       });
 
       tunerHarmonicsCheck.addEventListener('change', function () {
         var en = tunerHarmonicsCheck.checked;
-        if (baseVoice) baseVoice.setHarmonics(en);
-        if (targetVoice) targetVoice.setHarmonics(en);
+        Object.keys(activeVoices).forEach(function (id) {
+          activeVoices[id].setHarmonics(en);
+        });
       });
 
-      tunerBlindModeCheck.addEventListener('change', function () {
-        renderTunerUI();
-      });
+      tunerSilenceAllBtn.addEventListener('click', silenceAllKeys);
 
       tunerResetAllBtn.addEventListener('click', function () {
-        isBaseLocked = false;
-        isTargetSounding = false;
-        syncAudioVoices();
-        initCravoState();
-        tunerBaseId = 'Dó4';
-        tunerTargetId = 'Sol4';
-        populateTunerSelectors();
-        updateSliderRangeForTarget();
-        renderTunerUI();
+        silenceAllKeys();
+        initKeysWithRandomDetuning();
+        selectedPegKeyId = 'Sol4';
+        updateSliderForSelectedKey();
+        renderAll();
       });
 
-      initCravoState();
-      populateTunerSelectors();
-      updateSliderRangeForTarget();
-      renderTunerUI();
-      requestAnimationFrame(drawTunerWaveScope);
+      // Boot
+      initKeysWithRandomDetuning();
+      buildKeyboardDOM();
+      updateSliderForSelectedKey();
+      renderAll();
+      requestAnimationFrame(drawWaveScope);
     })();
   </script>
 </body>
