@@ -253,7 +253,10 @@
     .hero-copy-plate {
       position: absolute;
       left: clamp(1.25rem, 3.2vw, 2.75rem);
+      right: auto !important;
       top: clamp(4.2rem, 11vh, 6rem);
+      bottom: auto !important;
+      height: auto !important;
       z-index: 10;
       background: rgba(12, 10, 9, 0.93);
       backdrop-filter: blur(14px);
@@ -291,8 +294,10 @@
 
     .hero-telemetry-chip {
       position: absolute;
-      right: clamp(1.5rem, 3.5vw, 3rem);
+      left: auto !important;
+      right: clamp(1.5rem, 3.5vw, 3rem) !important;
       top: clamp(4.5rem, 16vh, 7.5rem);
+      bottom: auto !important;
       z-index: 10;
       background: rgba(18, 15, 13, 0.94);
       backdrop-filter: blur(10px);
@@ -300,14 +305,18 @@
       border-left: 3px solid var(--gold-fifth);
       padding: var(--sc-4) var(--sc-5);
       border-radius: var(--sc-r-md);
+      width: min(22rem, 28vw);
       max-width: min(22rem, 28vw);
       box-shadow: var(--sc-e2);
+      box-sizing: border-box;
     }
 
     .hero-exit-card {
       position: absolute;
-      right: clamp(1.5rem, 3.5vw, 3rem);
+      left: auto !important;
+      right: clamp(1.5rem, 3.5vw, 3rem) !important;
       bottom: clamp(2.5rem, 12vh, 6rem);
+      top: auto !important;
       z-index: 10;
       background: rgba(18, 15, 13, 0.94);
       backdrop-filter: blur(10px);
@@ -315,14 +324,17 @@
       border-left: 3px solid var(--wolf-rose);
       padding: var(--sc-4) var(--sc-5);
       border-radius: var(--sc-r-md);
+      width: min(24rem, 28vw);
       max-width: min(24rem, 28vw);
       box-shadow: var(--sc-e2);
+      box-sizing: border-box;
     }
 
     @media (min-width: 1100px) {
       .hero-telemetry-chip,
       .hero-exit-card {
-        right: clamp(4.5rem, 6vw, 6.5rem);
+        right: clamp(4.5rem, 6vw, 6.5rem) !important;
+        left: auto !important;
       }
     }
 
@@ -958,7 +970,7 @@
         <div class="sc-scrim sc-scrim--lead" aria-hidden="true"></div>
 
         <!-- Cue 1A: Opening Lead Headline (Greet form) -->
-        <div class="sc-copy sc-copy--lead hero-copy-plate" data-sc-cue="0 0.44 0 0.12">
+        <div class="hero-copy-plate" data-sc-cue="0 0.44 0 0.12">
           <div class="sc-label" style="color: var(--sc-accent); margin-bottom: 0.45rem;">Acústica Musical e Afinação ·
             UFSCar</div>
           <h1 class="sc-display">Simulação da Coma Pitagórica</h1>
@@ -971,7 +983,7 @@
         </div>
 
         <!-- Cue 1B: Mid-Act Telemetry Readout (À Direita do Círculo de Quintas) -->
-        <div class="sc-copy hero-telemetry-chip" data-sc-cue="0.08 0.99 0.08 0.01">
+        <div class="hero-telemetry-chip" data-sc-cue="0.08 0.99 0.08 0.01">
           <div class="sc-label" style="color: #fde047;">O Ciclo das Quintas em Movimento</div>
           <div
             style="font-family: var(--sc-font-mono); font-size: var(--sc-t-sm); color: var(--sc-ink); margin-top: 0.35rem;">
@@ -984,7 +996,7 @@
         </div>
 
         <!-- Cue 1C: Resolved Hero Exit Beat (À Direita do Círculo de Quintas) -->
-        <div class="sc-copy hero-exit-card" data-sc-cue="0.46 0.99 0.08 0.01">
+        <div class="hero-exit-card" data-sc-cue="0.46 0.99 0.08 0.01">
           <div
             style="font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); color: var(--wolf-rose); font-weight: 700;">
             O CÍRCULO NÃO FECHA: A COMA PITAGÓRICA
