@@ -654,7 +654,7 @@
       <label
         style="display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.74rem; cursor: pointer;">
         <input type="checkbox" id="tunerBlindModeCheck" style="accent-color: var(--jade); width: 15px; height: 15px;">
-        <span>🙈 Ocultar batimentos</span>
+        <span>🙈 Ocultar dicas</span>
       </label>
       <button type="button" id="tunerSilenceAllBtn" class="btn"
         style="border-color: rgba(251, 113, 133, 0.5); color: #fda4af;">
@@ -1568,14 +1568,14 @@
             statusHtml = '<span class="key-status-dot key-status-dot--ref">✅</span>';
           }
 
-          var hzText = (blind && !kObj.isReferenceC4)
-            ? '??? Hz'
-            : (kObj.freq.toFixed(2).replace('.', ',') + ' Hz');
+          var hzHtml = blind
+            ? ''
+            : ('<span class="key-hz-label">' + (kObj.isReferenceC4 ? '261,63' : kObj.freq.toFixed(2).replace('.', ',')) + ' Hz</span>');
 
           btn.innerHTML =
             statusHtml +
             '<span class="key-note-label">' + id + '</span>' +
-            '<span class="key-hz-label">' + hzText + '</span>';
+            hzHtml;
         });
       }
 
@@ -1605,6 +1605,19 @@
         beatingStatusBanner.className = 'status-banner';
         var blind = tunerBlindModeCheck ? tunerBlindModeCheck.checked : false;
 
+        if (blind) {
+          beatingHeadline.style.color = '#fde047';
+          beatingHeadline.textContent = '👂 Modo Sem Dicas Ativo (Afine pelo Ouvido)';
+          var notesStr = soundingList.length > 0
+            ? soundingList.map(function (k) { return k.id; }).join(' + ')
+            : 'Nenhuma nota travada';
+          beatingExplanation.innerHTML =
+            'Notas soando: <strong>' + notesStr + '</strong>.<br>' +
+            'Todas as dicas de afinação, batimentos numéricos e frequências estão ocultadas. Concentre-se nas ondas sonoras e elimine o atrito sonoro apenas com o seu ouvido!';
+          beatingRateBox.style.display = 'none';
+          return;
+        }
+
         if (soundingList.length < 2) {
           beatingHeadline.style.color = '#fde047';
           beatingHeadline.textContent = soundingList.length === 0
@@ -1612,12 +1625,8 @@
             : ('Apenas 1 nota soando (' + soundingList[0].id + '):');
           beatingExplanation.innerHTML =
             'Para afinar por quintas (ou oitavas), trave <strong>duas notas juntas</strong> com <strong>1 clique simples</strong> em cada tecla (por exemplo: <strong>Dó4</strong> e <strong>Sol4</strong>) e dê um <strong>duplo clique</strong> na nota que você vai ajustar com as setas!';
-          if (blind) {
-            beatingRateBox.style.display = 'none';
-          } else {
-            beatingRateBox.style.display = 'block';
-            beatingRateBox.innerHTML = 'Batimento atual: <strong>Trave 2 notas para medir os batimentos</strong>';
-          }
+          beatingRateBox.style.display = 'block';
+          beatingRateBox.innerHTML = 'Batimento atual: <strong>Trave 2 notas para medir os batimentos</strong>';
           return;
         }
 
@@ -1782,30 +1791,36 @@
         pegNoteInlineEl.textContent = kObj.id;
         markKeyBtnLabelEl.textContent = kObj.id;
 
-        if (kObj.isReferenceC4) {
+        if (blind) {
+          pegFreqReadoutEl.textContent = '--- (Oculto)';
+        } else if (kObj.isReferenceC4) {
           pegFreqReadoutEl.textContent = '261,63 Hz (Fixa)';
         } else {
-          pegFreqReadoutEl.textContent = blind
-            ? '??? Hz (Modo Ouvido)'
-            : (kObj.freq.toFixed(2).replace('.', ',') + ' Hz');
+          pegFreqReadoutEl.textContent = kObj.freq.toFixed(2).replace('.', ',') + ' Hz';
         }
 
         var badgeEl = document.getElementById('pegPrecisionBadge');
-        if (badgeEl && !kObj.isReferenceC4) {
-          var analysis = getNearestTargetAnalysis(kObj);
-          if (analysis.isNearZone) {
-            badgeEl.style.background = 'rgba(52, 211, 153, 0.16)';
-            badgeEl.style.borderColor = '#34d399';
-            badgeEl.style.color = '#a7f3d0';
-            badgeEl.innerHTML = blind
-              ? '🔬 <strong>Quase afinado! Precisão Fina Ativa:</strong> As setas agora mudam de <strong>0,01 Hz em 0,01 Hz</strong> para você eliminar os batimentos de ouvido!'
-              : '🔬 <strong>Quase afinado! Precisão de Centésimos Ativa:</strong> As setas agora mudam de <strong>0,01 Hz em 0,01 Hz</strong> para você zerar os batimentos (0,00 batimentos/s)!';
+        if (badgeEl) {
+          if (blind) {
+            badgeEl.style.display = 'none';
+          } else if (!kObj.isReferenceC4) {
+            badgeEl.style.display = 'block';
+            var analysis = getNearestTargetAnalysis(kObj);
+            if (analysis.isNearZone) {
+              badgeEl.style.background = 'rgba(52, 211, 153, 0.16)';
+              badgeEl.style.borderColor = '#34d399';
+              badgeEl.style.color = '#a7f3d0';
+              badgeEl.innerHTML =
+                '🔬 <strong>Quase afinado! Precisão de Centésimos Ativa:</strong> As setas agora mudam de <strong>0,01 Hz em 0,01 Hz</strong> para você zerar os batimentos (0,00 batimentos/s)!';
+            } else {
+              badgeEl.style.background = 'rgba(234, 179, 8, 0.12)';
+              badgeEl.style.borderColor = 'rgba(234, 179, 8, 0.35)';
+              badgeEl.style.color = '#fde047';
+              badgeEl.innerHTML =
+                '⚡ <strong>Modo Rápido (Longe da afinação):</strong> As setas mudam de <strong>1,00 Hz em 1,00 Hz</strong>. Quando estiver próximo da afinação, mudarão sozinhas para <strong>0,01 Hz (centésimos de Hz)</strong>!';
+            }
           } else {
-            badgeEl.style.background = 'rgba(234, 179, 8, 0.12)';
-            badgeEl.style.borderColor = 'rgba(234, 179, 8, 0.35)';
-            badgeEl.style.color = '#fde047';
-            badgeEl.innerHTML =
-              '⚡ <strong>Modo Rápido (Longe da afinação):</strong> As setas mudam de <strong>1,00 Hz em 1,00 Hz</strong>. Quando estiver próximo da afinação, mudarão sozinhas para <strong>0,01 Hz (centésimos de Hz)</strong>!';
+            badgeEl.style.display = 'none';
           }
         }
       }
