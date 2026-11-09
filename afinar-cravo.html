@@ -4,7 +4,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Oficina Prática: Afinador de Cravo (3 Oitavas · Onda Senoidal) · UFSCar</title>
+  <title>Oficina Prática: Afinador de Teclado (3 Oitavas · Onda Senoidal) · UFSCar</title>
   <meta name="description"
     content="Sub-aplicativo interativo para simular o trabalho de afinar um cravo de 3 oitavas de ouvido por quintas puras com síntese senoidal. Desenvolvido pelo Prof. Glauber Santiago (UFSCar).">
   <link rel="icon"
@@ -669,8 +669,8 @@
   <main class="wrap">
 
     <div>
-      <span class="badge">Sub-Aplicativo Prático · Simulador do Afinador de Cravo (Onda Senoidal · 3 Oitavas)</span>
-      <h1>Oficina Prática: Afine você mesmo um "Cravo" de 3 Oitavas</h1>
+      <span class="badge">Sub-Aplicativo Prático · Simulador do Afinador de Teclado</span>
+      <h1>Oficina Prática: Afine você mesmo um teclado de 3 Oitavas</h1>
     </div>
 
     <!-- Clear 3-Step Rules Strip -->
@@ -680,7 +680,7 @@
           style="color: #6ee7b7; font-family: var(--font-mono); font-size: 0.76rem; display: block; margin-bottom: 0.2rem;">
           1. UM CLIQUE = TRAVA / DESLIGA O SOM
         </strong>
-        Para travar o som de uma nota, basta dar <strong>1 clique simples</strong> na tecla do cravo. Para desligar o
+        Para travar o som de uma nota, basta dar <strong>1 clique simples</strong> na tecla do teclado. Para desligar o
         som dela, dê <strong>outro clique simples</strong>. Apenas o <strong>Dó4 (261,63 Hz)</strong> já vem afinado;
         todas as outras 35 teclas estão desafinadas aleatoriamente em até 1 semitom!
       </div>
@@ -774,7 +774,7 @@
       <div id="presetSystemDescription"
         style="margin-top: 0.6rem; padding-top: 0.5rem; border-top: 1px solid rgba(250, 246, 240, 0.1); font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-soft);">
         💡 <strong>Modo atual: Desafio Manual (Padrão).</strong> Apenas o <strong>Dó4 (261,63 Hz)</strong> vem afinado e
-        as outras 35 teclas estão desafinadas aleatoriamente. Se quiser ouvir o cravo inteiro afinado automaticamente em
+        as outras 35 teclas estão desafinadas aleatoriamente. Se quiser ouvir o teclado inteiro afinado automaticamente em
         qualquer um dos 10 sistemas históricos, selecione acima!
       </div>
     </section>
@@ -1037,7 +1037,7 @@
 
     <!-- Notas do Aplicativo: Observação Pedagógica e Nota Histórica -->
     <div class="app-notes-section" style="margin-top: 2rem; display: flex; flex-direction: column; gap: 0.9rem;">
-      <div style="background: rgba(23, 19, 17, 0.7); border: 1px solid var(--hairline-strong); border-left: 4px solid var(--gold); border-radius: 8px; padding: 1.1rem 1.35rem;">
+      <div id="obs-pedagogica" style="background: rgba(23, 19, 17, 0.7); border: 1px solid var(--hairline-strong); border-left: 4px solid var(--gold); border-radius: 8px; padding: 1.1rem 1.35rem;">
         <div style="font-family: var(--font-mono); font-size: 0.76rem; font-weight: 700; color: #fde047; text-transform: uppercase; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.45rem;">
           <span>🎓 Observação Pedagógica</span>
         </div>
@@ -1046,7 +1046,7 @@
         </p>
       </div>
 
-      <div style="background: rgba(23, 19, 17, 0.7); border: 1px solid var(--hairline-strong); border-left: 4px solid #38bdf8; border-radius: 8px; padding: 1.1rem 1.35rem;">
+      <div id="nota-historica" style="background: rgba(23, 19, 17, 0.7); border: 1px solid var(--hairline-strong); border-left: 4px solid #38bdf8; border-radius: 8px; padding: 1.1rem 1.35rem;">
         <div style="font-family: var(--font-mono); font-size: 0.76rem; font-weight: 700; color: #7dd3fc; text-transform: uppercase; margin-bottom: 0.45rem; display: flex; align-items: center; gap: 0.45rem;">
           <span>📜 Nota Histórica</span>
         </div>
@@ -1062,7 +1062,7 @@
     </div>
 
     <!-- Institutional Footer (Créditos) -->
-    <footer class="site-footer">
+    <footer id="creditos" class="site-footer">
       <div>
         Desenvolvido pelo professor Glauber Santiago — DAC/UFSCar ·
         <a href="https://aprenda-musica-comigo.web.app/" target="_blank"
@@ -2561,7 +2561,7 @@
           presetRootNoteSelect.style.opacity = '0.5';
           if (presetSystemDescription) {
             presetSystemDescription.innerHTML =
-              '💡 <strong>Modo atual: Desafio Manual (Padrão).</strong> Apenas o <strong>Dó4 (261,63 Hz)</strong> vem afinado e as outras 35 teclas estão desafinadas aleatoriamente. Se quiser ouvir o cravo inteiro afinado automaticamente em qualquer um dos 10 sistemas históricos, selecione acima!';
+              '💡 <strong>Modo atual: Desafio Manual (Padrão).</strong> Apenas o <strong>Dó4 (261,63 Hz)</strong> vem afinado e as outras 35 teclas estão desafinadas aleatoriamente. Se quiser ouvir o teclado inteiro afinado automaticamente em qualquer um dos 10 sistemas históricos, selecione acima!';
           }
           return;
         }
