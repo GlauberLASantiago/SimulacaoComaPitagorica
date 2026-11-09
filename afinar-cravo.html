@@ -1484,12 +1484,13 @@
           if (clickTimers[id]) {
             clearTimeout(clickTimers[id]);
             delete clickTimers[id];
+            selectKeyForPeg(id);
             return;
           }
           clickTimers[id] = setTimeout(function () {
             delete clickTimers[id];
             toggleKeySound(id);
-          }, 210);
+          }, 240);
         });
 
         btn.addEventListener('dblclick', function (ev) {
