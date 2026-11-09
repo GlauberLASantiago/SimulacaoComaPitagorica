@@ -130,12 +130,14 @@
       z-index: 50;
       display: none;
       flex-direction: column;
-      gap: 0.45rem;
-      background: rgba(23, 19, 17, 0.86);
+      gap: 0.35rem;
+      max-height: calc(100vh - 2.5rem);
+      overflow-y: auto;
+      background: rgba(23, 19, 17, 0.88);
       backdrop-filter: blur(10px);
       border: 1px solid var(--sc-hairline-strong);
       border-radius: var(--sc-r-md);
-      padding: 0.55rem 0.45rem;
+      padding: 0.5rem 0.45rem;
       box-shadow: var(--sc-e2);
     }
 
@@ -145,11 +147,11 @@
       }
 
       .sc-wrap {
-        padding-right: 11.5rem;
+        padding-right: 12.5rem;
       }
 
       .spiral-cues-deck {
-        padding-right: 12rem;
+        padding-right: 12.5rem;
       }
     }
 
@@ -159,10 +161,11 @@
       color: var(--sc-ink-soft);
       font-family: var(--sc-font-mono);
       font-size: 0.66rem;
-      padding: 0.3rem 0.5rem;
+      padding: 0.28rem 0.5rem;
       border-radius: 4px;
       cursor: pointer;
       text-align: right;
+      white-space: nowrap;
       transition: color var(--sc-d-fast) var(--sc-ease-out), background-color var(--sc-d-fast) var(--sc-ease-out);
     }
 
@@ -171,6 +174,18 @@
       color: var(--sc-ink);
       background: rgba(234, 179, 8, 0.14);
       border-color: rgba(234, 179, 8, 0.35);
+    }
+
+    #act-hero,
+    #act-guide,
+    #act-spiral,
+    #act-wolf,
+    #simulador,
+    #atividade-cravo,
+    #obs-pedagogica,
+    #nota-historica,
+    #creditos {
+      scroll-margin-top: 4.5rem;
     }
 
     /* =========================================================================
@@ -832,6 +847,10 @@
     <button type="button" class="chapter-dial__btn" data-jump="#act-spiral">3. Espiral de 12 Quintas</button>
     <button type="button" class="chapter-dial__btn" data-jump="#act-wolf">4. Quinta do Lobo</button>
     <button type="button" class="chapter-dial__btn" data-jump="#simulador">5. Simulador Completo</button>
+    <button type="button" class="chapter-dial__btn" data-jump="#atividade-cravo">6. Oficina do Cravo</button>
+    <button type="button" class="chapter-dial__btn" data-jump="#obs-pedagogica">7. Observação Pedagógica</button>
+    <button type="button" class="chapter-dial__btn" data-jump="#nota-historica">8. Nota Histórica</button>
+    <button type="button" class="chapter-dial__btn" data-jump="#creditos">9. Créditos</button>
   </nav>
 
   <main id="top">
@@ -1567,7 +1586,7 @@
 
         <!-- Notas do Aplicativo: Observação Pedagógica e Nota Histórica -->
         <div class="app-notes-section" style="margin-top: var(--sc-7); display: flex; flex-direction: column; gap: 0.9rem;">
-          <div style="background: rgba(23, 19, 17, 0.7); border: 1px solid var(--sc-hairline-strong); border-left: 4px solid var(--gold-fifth); border-radius: var(--sc-r-md); padding: 1.1rem 1.35rem; box-shadow: var(--sc-e1);">
+          <div id="obs-pedagogica" style="background: rgba(23, 19, 17, 0.7); border: 1px solid var(--sc-hairline-strong); border-left: 4px solid var(--gold-fifth); border-radius: var(--sc-r-md); padding: 1.1rem 1.35rem; box-shadow: var(--sc-e1);">
             <div style="font-family: var(--sc-font-mono); font-size: 0.76rem; font-weight: 700; color: #fde047; text-transform: uppercase; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.45rem;">
               <span>🎓 Observação Pedagógica</span>
             </div>
@@ -1576,7 +1595,7 @@
             </p>
           </div>
 
-          <div style="background: rgba(23, 19, 17, 0.7); border: 1px solid var(--sc-hairline-strong); border-left: 4px solid #38bdf8; border-radius: var(--sc-r-md); padding: 1.1rem 1.35rem; box-shadow: var(--sc-e1);">
+          <div id="nota-historica" style="background: rgba(23, 19, 17, 0.7); border: 1px solid var(--sc-hairline-strong); border-left: 4px solid #38bdf8; border-radius: var(--sc-r-md); padding: 1.1rem 1.35rem; box-shadow: var(--sc-e1);">
             <div style="font-family: var(--sc-font-mono); font-size: 0.76rem; font-weight: 700; color: #7dd3fc; text-transform: uppercase; margin-bottom: 0.45rem; display: flex; align-items: center; gap: 0.45rem;">
               <span>📜 Nota Histórica</span>
             </div>
@@ -1592,7 +1611,7 @@
         </div>
 
         <!-- Institutional Footer (Créditos) -->
-        <footer class="site-footer">
+        <footer id="creditos" class="site-footer">
           <div>
             Desenvolvido pelo professor Glauber Santiago — DAC/UFSCar ·
             <a href="https://aprenda-musica-comigo.web.app/" target="_blank"
@@ -2106,14 +2125,27 @@
         }
         drawPythagoreanSpiral(spiralCanvas, Math.max(0.5, raceStepFloat), true);
 
-        // Update active chapter in right-edge dial
-        var maxScroll = Math.max(1, document.body.scrollHeight - window.innerHeight);
-        var sFrac = window.scrollY / maxScroll;
+        // Update active chapter in right-edge dial based on visible section
+        var scrollY = window.scrollY || window.pageYOffset;
+        var viewThreshold = scrollY + window.innerHeight * 0.38;
+        var isNearBottom = (window.innerHeight + scrollY >= document.documentElement.scrollHeight - 70);
         var activeChapter = 0;
-        if (sFrac > 0.78) activeChapter = 4;
-        else if (sFrac > 0.62) activeChapter = 3;
-        else if (sFrac > 0.36) activeChapter = 2;
-        else if (sFrac > 0.14) activeChapter = 1;
+
+        if (isNearBottom) {
+          activeChapter = dialButtons.length - 1;
+        } else {
+          for (var i = dialButtons.length - 1; i >= 0; i--) {
+            var jumpSel = dialButtons[i].getAttribute('data-jump');
+            var targetEl = jumpSel ? document.querySelector(jumpSel) : null;
+            if (targetEl) {
+              var elTop = targetEl.getBoundingClientRect().top + scrollY;
+              if (elTop <= viewThreshold) {
+                activeChapter = i;
+                break;
+              }
+            }
+          }
+        }
         dialButtons.forEach(function (b, idx) {
           b.classList.toggle('is-active', idx === activeChapter);
         });
