@@ -649,15 +649,19 @@
       transition: background-color var(--sc-d-fast) var(--sc-ease-out), border-color var(--sc-d-fast) var(--sc-ease-out);
     }
 
-    .audition-btn:hover {
+    .audition-btn:hover,
+    .audition-btn.is-playing {
       background: #332721;
       border-color: var(--gold-fifth);
       color: #fde047;
+      box-shadow: 0 0 16px rgba(234, 179, 8, 0.4);
     }
 
-    .audition-btn--wolf:hover {
+    .audition-btn--wolf:hover,
+    .audition-btn--wolf.is-playing {
       border-color: var(--wolf-rose);
       color: #fda4af;
+      box-shadow: 0 0 16px rgba(251, 113, 133, 0.45);
     }
 
     /* =========================================================================
@@ -899,12 +903,11 @@
           <div class="sc-label" style="color: var(--sc-accent); margin-bottom: 0.45rem;">Acústica Musical e Afinação ·
             UFSCar</div>
           <h1 class="sc-display sc-display--xl" data-sc-kinetic="lines">Simulação da Coma Pitagórica</h1>
-          <p>Por que é matematicamente impossível afinar um piano com intervalos 100% puros? Descubra visualmente e no
-            ouvido o "erro da natureza" que intrigou Pitágoras, criou a temida <strong>Quinta do Lobo</strong> e deu
-            origem à afinação moderna.</p>
-          <div class="note-callout" style="margin-top: 0.65rem;">
-            <strong>🎵 Explicação simples para músicos e leigos:</strong> Role a página! Primeiro vamos entender como
-            funciona uma corda esticada (sem matemática difícil) antes de comparar as 7 Oitavas e as 12 Quintas.
+          <p style="font-size: 1.02rem; line-height: 1.58; color: var(--sc-ink); margin-top: 0.5rem;">
+            Aprenda a compreender as relações matemáticas entre os intervalos musicais, identificar diferenças de afinação pelo ouvido, entender a coma pitagórica, a quinta do lobo e o temperamento igual, além de experimentar, na prática, como afinar um instrumento por meio de simulações sonoras e interativas!
+          </p>
+          <div class="note-callout" style="margin-top: 0.75rem;">
+            <strong>🎵 Como explorar:</strong> Role a página para iniciar a jornada visual e sonora! Descubra primeiro como funciona uma corda esticada (monocórdio), veja a espiral se afastar do círculo perfeito e teste seu ouvido na bancada e na oficina prática de afinação.
           </div>
         </div>
 
@@ -913,11 +916,11 @@
           <div class="sc-label" style="color: #fde047;">O Ciclo das Quintas em Movimento</div>
           <div
             style="font-family: var(--sc-font-mono); font-size: var(--sc-t-sm); color: var(--sc-ink); margin-top: 0.35rem;">
-            Passo Atual: <strong id="hero-live-step" style="color: var(--sc-accent);">Dó (Ponto de Partida)</strong>
+            Passo Atual: <strong id="hero-live-step" style="color: var(--sc-accent);">Dó (Ponto de Partida · 0 Cents)</strong>
           </div>
           <div id="hero-live-ratio"
             style="font-family: var(--sc-font-mono); font-size: var(--sc-t-xs); color: var(--sc-ink-soft); margin-top: 0.2rem;">
-            12 Quintas Puras ultrapassam 7 Oitavas em +23,46 cents
+            Ponto de partida alinhado com o círculo (0 Cents de desvio)
           </div>
         </div>
 
@@ -1717,9 +1720,18 @@
         return polySynth;
       }
 
+      var wolfAuditionTimeout = null;
+
       function stopAllActiveNotes() {
         var synth = getSynth();
         if (synth) synth.releaseAll();
+        if (wolfAuditionTimeout) {
+          clearTimeout(wolfAuditionTimeout);
+          wolfAuditionTimeout = null;
+        }
+        document.querySelectorAll('.audition-btn.is-playing').forEach(function (btn) {
+          btn.classList.remove('is-playing');
+        });
         document.querySelectorAll('.btn-play-note.is-playing').forEach(function (btn) {
           btn.textContent = 'Tocar';
           btn.classList.remove('is-playing');
@@ -1923,9 +1935,17 @@
             // Wolf fifth is 1 pure fifth minus the Pythagorean comma: (3/2) / (3^12 / 2^19) = 2^18 / 3^11 = 1.47981 (678.49 cents)
             fifth = root * (Math.pow(2, 18) / Math.pow(3, 11)); // 387.16 Hz
           }
-          synth.triggerAttackRelease(root, '0.45', now);
-          synth.triggerAttackRelease(fifth, '0.45', now + 0.5);
-          synth.triggerAttackRelease([root, fifth], '2.2', now + 1.05);
+
+          btn.classList.add('is-playing');
+
+          synth.triggerAttackRelease(root, '0.5', now);
+          synth.triggerAttackRelease(fifth, '0.5', now + 0.55);
+          synth.triggerAttackRelease([root, fifth], '6.0', now + 1.15);
+
+          wolfAuditionTimeout = setTimeout(function () {
+            btn.classList.remove('is-playing');
+            wolfAuditionTimeout = null;
+          }, 7400);
         });
       });
 
@@ -2099,15 +2119,23 @@
         var heroP = parseFloat(heroSection.style.getPropertyValue('--sc-p')) || 0;
         var spiralP = parseFloat(spiralSection.style.getPropertyValue('--sc-p')) || 0;
 
-        // 1. Hero Spiral Animation (winds from 3 fifths to 12 fifths on scroll)
-        var heroStepFloat = 3 + heroP * 9;
-        var heroStepInt = Math.min(12, Math.round(heroStepFloat));
+        // 1. Hero Spiral Animation (winds from 0 fifths / Dó up to 12 fifths on scroll)
+        var heroStepFloat = heroP * 12;
+        var heroStepInt = Math.min(12, Math.max(0, Math.round(heroStepFloat)));
         if (heroLiveStep) {
-          heroLiveStep.textContent = 'Quinta #' + heroStepInt + ' (' + circleFifthLabels[heroStepInt] + ')';
+          if (heroStepInt === 0) {
+            heroLiveStep.textContent = 'Dó (Ponto de Partida · 0 Cents)';
+          } else {
+            heroLiveStep.textContent = 'Quinta #' + heroStepInt + ' (' + circleFifthLabels[heroStepInt] + ')';
+          }
         }
         if (heroLiveRatio) {
-          var hCents = (heroStepInt * 1.955).toFixed(2).replace('.', ',');
-          heroLiveRatio.textContent = 'Desvio acumulado: +' + hCents + ' cents sobre o círculo';
+          if (heroStepInt === 0) {
+            heroLiveRatio.textContent = 'Ponto de partida alinhado com o círculo (0 Cents de desvio)';
+          } else {
+            var hCents = (heroStepInt * 1.955).toFixed(2).replace('.', ',');
+            heroLiveRatio.textContent = 'Desvio acumulado: +' + hCents + ' cents sobre o círculo';
+          }
         }
         if (heroVerifyStage) {
           heroVerifyStage.setAttribute('data-sc-verify-state', 'hero:step' + heroStepInt);
