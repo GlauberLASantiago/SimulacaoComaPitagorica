@@ -253,8 +253,7 @@
     .hero-copy-plate {
       position: absolute;
       left: clamp(1.25rem, 3.2vw, 2.75rem);
-      top: 50%;
-      transform: translateY(-50%);
+      top: clamp(4.2rem, 11vh, 6rem);
       z-index: 10;
       background: rgba(12, 10, 9, 0.93);
       backdrop-filter: blur(14px);
@@ -264,8 +263,6 @@
       box-shadow: var(--sc-e2), var(--sc-edge);
       width: min(34rem, calc(100vw - 2.5rem));
       max-width: min(33rem, 36vw);
-      max-height: calc(100vh - 5.5rem);
-      overflow-y: auto;
       box-sizing: border-box;
     }
 
