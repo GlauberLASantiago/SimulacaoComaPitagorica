@@ -1,14 +1,19 @@
 <!doctype html>
 <html lang="pt-BR">
+
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Oficina Prática: Afinador de Cravo (3 Oitavas · Onda Senoidal) · UFSCar</title>
-  <meta name="description" content="Sub-aplicativo interativo para simular o trabalho de afinar um cravo de 3 oitavas de ouvido por quintas puras com síntese senoidal. Desenvolvido pelo Prof. Glauber Santiago (UFSCar).">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230c0a09'/><circle cx='16' cy='16' r='10' fill='none' stroke='%23eab308' stroke-width='2' stroke-dasharray='48 6'/><circle cx='16' cy='6' r='2.8' fill='%2334d399'/></svg>">
+  <meta name="description"
+    content="Sub-aplicativo interativo para simular o trabalho de afinar um cravo de 3 oitavas de ouvido por quintas puras com síntese senoidal. Desenvolvido pelo Prof. Glauber Santiago (UFSCar).">
+  <link rel="icon"
+    href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='8' fill='%230c0a09'/><circle cx='16' cy='16' r='10' fill='none' stroke='%23eab308' stroke-width='2' stroke-dasharray='48 6'/><circle cx='16' cy='6' r='2.8' fill='%2334d399'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700&family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,700&family=Plus+Jakarta+Sans:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
   <style>
     :root {
       --canvas: #0c0a09;
@@ -235,10 +240,15 @@
       background: linear-gradient(180deg, #38302c 0%, #1d1815 80%, #0c0a09 100%);
     }
 
-    /* Fixed Reference Key: Dó4 */
-    .piano-key-white.is-reference-c4 {
-      background: linear-gradient(180deg, #d1fae5 0%, #a7f3d0 82%, #6ee7b7 100%);
-      border-bottom-color: #059669;
+    /* Fixed Reference Key: Dó4 (mesma cor marfim clássica das outras teclas brancas) */
+    .piano-key-white.is-reference-c4:not(.is-sounding) {
+      background: linear-gradient(180deg, #f7f2e7 0%, #efe6d5 82%, #ded2bc 100%) !important;
+      border-bottom: 7px solid #b8a990 !important;
+      color: #1c1613 !important;
+    }
+
+    .piano-key-white.is-reference-c4:not(.is-sounding):hover {
+      background: linear-gradient(180deg, #fffdf9 0%, #f5ebd9 85%, #e5d8c1 100%) !important;
     }
 
     /* Key Currently Sounding (Locked On via Single Click) */
@@ -320,8 +330,9 @@
     }
 
     .key-status-dot--ref {
-      background: #065f46;
-      color: #ecfdf5;
+      background: #e2d7c3;
+      color: #5c4033;
+      border: 1px solid #b8a990;
     }
 
     /* =========================================================================
@@ -366,6 +377,16 @@
       gap: 0.85rem;
     }
 
+    @media (max-width: 540px) {
+      .arrow-guide-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .topbar {
+        position: relative;
+      }
+    }
+
     .arrow-card {
       background: #100d0b;
       border: 1.5px solid var(--hairline-strong);
@@ -381,13 +402,15 @@
       user-select: none;
     }
 
-    .arrow-card--down:hover, .arrow-card--down.is-pressed {
+    .arrow-card--down:hover,
+    .arrow-card--down.is-pressed {
       border-color: var(--wolf);
       background: rgba(251, 113, 133, 0.12);
       transform: translateY(1px);
     }
 
-    .arrow-card--up:hover, .arrow-card--up.is-pressed {
+    .arrow-card--up:hover,
+    .arrow-card--up.is-pressed {
       border-color: var(--jade);
       background: rgba(52, 211, 153, 0.12);
       transform: translateY(-1px);
@@ -614,22 +637,27 @@
     }
   </style>
 </head>
+
 <body>
 
   <header class="topbar">
     <a href="index.html" class="back-link">← Voltar para a Simulação da Coma Pitagórica</a>
     <div style="display: flex; align-items: center; gap: 0.6rem; flex-wrap: wrap;">
-      <button type="button" id="tunerTestModeBtn" class="btn" style="border-color: rgba(56, 189, 248, 0.65); color: #7dd3fc; font-weight: 700;">
+      <button type="button" id="tunerTestModeBtn" class="btn"
+        style="border-color: rgba(56, 189, 248, 0.65); color: #7dd3fc; font-weight: 700;">
         🎹 Ativar Modo Testar (Tocar sem Travar)
       </button>
-      <button type="button" id="tunerPlayDemoBtn" class="btn" style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.24), rgba(52, 211, 153, 0.2)); border-color: var(--gold); color: #fde047; font-weight: 700;">
+      <button type="button" id="tunerPlayDemoBtn" class="btn"
+        style="background: linear-gradient(135deg, rgba(234, 179, 8, 0.24), rgba(52, 211, 153, 0.2)); border-color: var(--gold); color: #fde047; font-weight: 700;">
         🎵 Tocar Demonstração
       </button>
-      <label style="display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.74rem; cursor: pointer;">
+      <label
+        style="display: inline-flex; align-items: center; gap: 0.4rem; font-family: var(--font-mono); font-size: 0.74rem; cursor: pointer;">
         <input type="checkbox" id="tunerBlindModeCheck" style="accent-color: var(--jade); width: 15px; height: 15px;">
-        <span>🙈 Ocultar Frequências</span>
+        <span>🙈 Ocultar batimentos</span>
       </label>
-      <button type="button" id="tunerSilenceAllBtn" class="btn" style="border-color: rgba(251, 113, 133, 0.5); color: #fda4af;">
+      <button type="button" id="tunerSilenceAllBtn" class="btn"
+        style="border-color: rgba(251, 113, 133, 0.5); color: #fda4af;">
         ⏹ Desligar Notas
       </button>
       <button type="button" id="tunerResetAllBtn" class="btn">
@@ -648,25 +676,33 @@
     <!-- Clear 3-Step Rules Strip -->
     <div class="rules-strip">
       <div class="rule-pill-card rule-pill-card--jade">
-        <strong style="color: #6ee7b7; font-family: var(--font-mono); font-size: 0.76rem; display: block; margin-bottom: 0.2rem;">
+        <strong
+          style="color: #6ee7b7; font-family: var(--font-mono); font-size: 0.76rem; display: block; margin-bottom: 0.2rem;">
           1. UM CLIQUE = TRAVA / DESLIGA O SOM
         </strong>
-        Para travar o som de uma nota, basta dar <strong>1 clique simples</strong> na tecla do cravo. Para desligar o som dela, dê <strong>outro clique simples</strong>. Apenas o <strong>Dó4 (261,63 Hz)</strong> já vem afinado; todas as outras 35 teclas estão desafinadas aleatoriamente em até 1 semitom!
+        Para travar o som de uma nota, basta dar <strong>1 clique simples</strong> na tecla do cravo. Para desligar o
+        som dela, dê <strong>outro clique simples</strong>. Apenas o <strong>Dó4 (261,63 Hz)</strong> já vem afinado;
+        todas as outras 35 teclas estão desafinadas aleatoriamente em até 1 semitom!
       </div>
 
       <div class="rule-pill-card">
-        <strong style="color: #fde047; font-family: var(--font-mono); font-size: 0.76rem; display: block; margin-bottom: 0.2rem;">
+        <strong
+          style="color: #fde047; font-family: var(--font-mono); font-size: 0.76rem; display: block; margin-bottom: 0.2rem;">
           2. DUPLO CLIQUE = ESCOLHE A NOTA PARA AFINAR
         </strong>
-        Dê um <strong>clique duplo (2 cliques rápidos)</strong> na tecla que você quer afinar (por exemplo, <strong>Sol4</strong>). Cada tecla é afinada individualmente (afinar uma nota altera apenas aquela tecla, e não a oitava dela).
+        Dê um <strong>clique duplo (2 cliques rápidos)</strong> na tecla que você quer afinar (por exemplo,
+        <strong>Sol4</strong>). Cada tecla é afinada individualmente (afinar uma nota altera apenas aquela tecla, e não
+        a oitava dela).
       </div>
 
       <div class="rule-pill-card rule-pill-card--sky">
-        <strong style="color: #7dd3fc; font-family: var(--font-mono); font-size: 0.76rem; display: block; margin-bottom: 0.2rem;">
+        <strong
+          style="color: #7dd3fc; font-family: var(--font-mono); font-size: 0.76rem; display: block; margin-bottom: 0.2rem;">
           3. SETAS DO TECLADO = SOBE OU DESCE A AFINAÇÃO
         </strong>
         Use as setas do teclado do computador (ou os botões na tela):<br>
-        • <strong>Seta ⬅️ Esquerda</strong> ou <strong>⬇️ Baixo</strong> = <strong>DESCE</strong> a afinação (mais grave).<br>
+        • <strong>Seta ⬅️ Esquerda</strong> ou <strong>⬇️ Baixo</strong> = <strong>DESCE</strong> a afinação (mais
+        grave).<br>
         • <strong>Seta ➡️ Direita</strong> ou <strong>⬆️ Cima</strong> = <strong>SOBE</strong> a afinação (mais agudo).
       </div>
     </div>
@@ -674,14 +710,19 @@
     <!-- =======================================================================
          AUTOMATIC TUNING SYSTEM PRESET SELECTOR (10 SYSTEMS + ROOT NOTE)
          ======================================================================= -->
-    <section style="background: linear-gradient(135deg, #1b1511 0%, #111815 100%); border: 1px solid rgba(234, 179, 8, 0.45); border-radius: 12px; padding: 0.9rem 1.15rem; margin-bottom: 1.2rem; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35); max-width: 100%; overflow: hidden;" aria-label="Seletor de Sistema de Afinação Automática">
-      <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.85rem; min-width: 0; max-width: 100%;">
+    <section
+      style="background: linear-gradient(135deg, #1b1511 0%, #111815 100%); border: 1px solid rgba(234, 179, 8, 0.45); border-radius: 12px; padding: 0.9rem 1.15rem; margin-bottom: 1.2rem; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35); max-width: 100%; overflow: hidden;"
+      aria-label="Seletor de Sistema de Afinação Automática">
+      <div
+        style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.85rem; min-width: 0; max-width: 100%;">
         <div style="display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; max-width: 100%;">
-          <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #6ee7b7; font-weight: 700; text-transform: uppercase;">
+          <span
+            style="font-family: var(--font-mono); font-size: 0.72rem; color: #6ee7b7; font-weight: 700; text-transform: uppercase;">
             🎛️ Afinação Automática do Teclado (Opcional · Para Comparar Sistemas e Ouvir na Demonstração)
           </span>
           <span style="font-size: 0.82rem; color: var(--ink-soft);">
-            Escolha um dos <strong>10 sistemas de afinação</strong> (e a <strong>Nota Padrão de Referência</strong> nos sistemas históricos) para afinar automaticamente todas as 36 teclas:
+            Escolha um dos <strong>10 sistemas de afinação</strong> (e a <strong>Nota Padrão de Referência</strong> nos
+            sistemas históricos) para afinar automaticamente todas as 36 teclas:
           </span>
         </div>
 
@@ -694,7 +735,8 @@
               <option value="pythagorean_historic">2. Pitagórico Histórico (Quintas 3:2 · Lobo em Sol#–Mib)</option>
               <option value="pythagorean_up">3. Pitagórico Linear (11 Quintas Subindo · Lobo em Fá–Dó)</option>
               <option value="just_intonation">4. Entonação Justa Pura (Ptolomeu · 5-Limites · Terças 5:4 Puras)</option>
-              <option value="meantone_quarter">5. Mesotônico de 1/4 de Coma (Pietro Aaron, 1523 · 8 Terças Puras)</option>
+              <option value="meantone_quarter">5. Mesotônico de 1/4 de Coma (Pietro Aaron, 1523 · 8 Terças Puras)
+              </option>
               <option value="meantone_sixth">6. Mesotônico de 1/6 de Coma (Gottfried Silbermann · Barroco)</option>
               <option value="werckmeister_iii">7. Bom Temperamento: Werckmeister III (1691 · Época de Bach)</option>
               <option value="kirnberger_iii">8. Bom Temperamento: Kirnberger III (1779 · Aluno de Bach)</option>
@@ -706,7 +748,8 @@
 
           <label id="presetRootNoteWrapper" class="preset-field" style="color: #7dd3fc;">
             <span>NOTA PADRÃO (TÔNICA BASE):</span>
-            <select id="presetRootNoteSelect" class="preset-select" disabled style="border-color: rgba(56, 189, 248, 0.55);">
+            <select id="presetRootNoteSelect" class="preset-select" disabled
+              style="border-color: rgba(56, 189, 248, 0.55);">
               <option value="0">Dó (C)</option>
               <option value="1">Dó# / Ré♭ (C# / Db)</option>
               <option value="2">Ré (D)</option>
@@ -728,76 +771,97 @@
         </div>
       </div>
 
-      <div id="presetSystemDescription" style="margin-top: 0.6rem; padding-top: 0.5rem; border-top: 1px solid rgba(250, 246, 240, 0.1); font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-soft);">
-        💡 <strong>Modo atual: Desafio Manual (Padrão).</strong> Apenas o <strong>Dó4 (261,63 Hz)</strong> vem afinado e as outras 35 teclas estão desafinadas aleatoriamente. Se quiser ouvir o cravo inteiro afinado automaticamente em qualquer um dos 10 sistemas históricos, selecione acima!
+      <div id="presetSystemDescription"
+        style="margin-top: 0.6rem; padding-top: 0.5rem; border-top: 1px solid rgba(250, 246, 240, 0.1); font-family: var(--font-mono); font-size: 0.74rem; color: var(--ink-soft);">
+        💡 <strong>Modo atual: Desafio Manual (Padrão).</strong> Apenas o <strong>Dó4 (261,63 Hz)</strong> vem afinado e
+        as outras 35 teclas estão desafinadas aleatoriamente. Se quiser ouvir o cravo inteiro afinado automaticamente em
+        qualquer um dos 10 sistemas históricos, selecione acima!
       </div>
     </section>
 
     <!-- =======================================================================
          CUSTOM TUNINGS (SALVAR E ABRIR AFINAÇÃO PERSONALIZADA)
          ======================================================================= -->
-    <section style="background: linear-gradient(135deg, #15181a 0%, #0d1216 100%); border: 1px solid rgba(56, 189, 248, 0.45); border-radius: 12px; padding: 0.9rem 1.15rem; margin-bottom: 1.2rem; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35); max-width: 100%; box-sizing: border-box;" aria-label="Salvar e Abrir Afinações Personalizadas">
+    <section
+      style="background: linear-gradient(135deg, #15181a 0%, #0d1216 100%); border: 1px solid rgba(56, 189, 248, 0.45); border-radius: 12px; padding: 0.9rem 1.15rem; margin-bottom: 1.2rem; box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35); max-width: 100%; box-sizing: border-box;"
+      aria-label="Salvar e Abrir Afinações Personalizadas">
       <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
         <div style="display: flex; flex-direction: column; gap: 0.15rem; min-width: 0; max-width: 100%;">
-          <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #7dd3fc; font-weight: 700; text-transform: uppercase;">
+          <span
+            style="font-family: var(--font-mono); font-size: 0.72rem; color: #7dd3fc; font-weight: 700; text-transform: uppercase;">
             💾 Afinações Personalizadas (Salvar &amp; Abrir)
           </span>
           <span style="font-size: 0.82rem; color: var(--ink-soft);">
-            Guarde o estado atual das 36 cordas no seu navegador ou exporte como arquivo <code>.json</code> para carregar em qualquer dispositivo:
+            Guarde o estado atual das 36 cordas no seu navegador ou exporte como arquivo <code>.json</code> para
+            carregar em qualquer dispositivo:
           </span>
         </div>
       </div>
 
       <!-- Action Panels: 1) Salvar Atual | 2) Abrir Salva / Arquivo -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 0.85rem; margin-top: 0.85rem; width: 100%; max-width: 100%; box-sizing: border-box;">
+      <div
+        style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 0.85rem; margin-top: 0.85rem; width: 100%; max-width: 100%; box-sizing: border-box;">
         <!-- Left: Salvar -->
-        <div style="background: rgba(16, 13, 11, 0.65); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; padding: 0.75rem 0.9rem; display: flex; flex-direction: column; gap: 0.55rem; min-width: 0; max-width: 100%; box-sizing: border-box;">
+        <div
+          style="background: rgba(16, 13, 11, 0.65); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; padding: 0.75rem 0.9rem; display: flex; flex-direction: column; gap: 0.55rem; min-width: 0; max-width: 100%; box-sizing: border-box;">
           <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #fde047; font-weight: 700;">
             1. SALVAR AFINAÇÃO ATUAL:
           </span>
           <div style="width: 100%; min-width: 0; box-sizing: border-box;">
-            <input type="text" id="customTuningNameInput" placeholder="Nome (ex: Meu Temperamento Dó)" maxlength="40" style="width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; background: #0c0908; color: var(--ink); border: 1px solid rgba(250, 246, 240, 0.25); border-radius: 6px; padding: 0.45rem 0.65rem; font-family: var(--font-mono); font-size: 0.76rem;">
+            <input type="text" id="customTuningNameInput" placeholder="Nome (ex: Meu Temperamento Dó)" maxlength="40"
+              style="width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; background: #0c0908; color: var(--ink); border: 1px solid rgba(250, 246, 240, 0.25); border-radius: 6px; padding: 0.45rem 0.65rem; font-family: var(--font-mono); font-size: 0.76rem;">
           </div>
           <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; width: 100%; box-sizing: border-box;">
-            <button type="button" id="saveToStorageBtn" class="btn" style="flex: 1 1 120px; background: rgba(56, 189, 248, 0.18); border-color: var(--sky); color: #bae6fd; font-weight: 700;">
+            <button type="button" id="saveToStorageBtn" class="btn"
+              style="flex: 1 1 120px; background: rgba(56, 189, 248, 0.18); border-color: var(--sky); color: #bae6fd; font-weight: 700;">
               💾 Salvar no Navegador
             </button>
-            <button type="button" id="exportJsonBtn" class="btn" style="flex: 1 1 110px; background: rgba(234, 179, 8, 0.16); border-color: var(--gold); color: #fef08a; font-weight: 700;">
+            <button type="button" id="exportJsonBtn" class="btn"
+              style="flex: 1 1 110px; background: rgba(234, 179, 8, 0.16); border-color: var(--gold); color: #fef08a; font-weight: 700;">
               ⬇️ Baixar (.json)
             </button>
           </div>
         </div>
 
         <!-- Right: Abrir -->
-        <div style="background: rgba(16, 13, 11, 0.65); border: 1px solid rgba(52, 211, 153, 0.25); border-radius: 8px; padding: 0.75rem 0.9rem; display: flex; flex-direction: column; gap: 0.55rem; min-width: 0; max-width: 100%; box-sizing: border-box; overflow: hidden;">
+        <div
+          style="background: rgba(16, 13, 11, 0.65); border: 1px solid rgba(52, 211, 153, 0.25); border-radius: 8px; padding: 0.75rem 0.9rem; display: flex; flex-direction: column; gap: 0.55rem; min-width: 0; max-width: 100%; box-sizing: border-box; overflow: hidden;">
           <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #6ee7b7; font-weight: 700;">
             2. ABRIR AFINAÇÃO:
           </span>
           <!-- Select on its own full-width line -->
           <div style="width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box;">
-            <select id="savedTuningsSelect" class="preset-select" style="width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; border-color: rgba(52, 211, 153, 0.45);">
+            <select id="savedTuningsSelect" class="preset-select"
+              style="width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; border-color: rgba(52, 211, 153, 0.45);">
               <option value="">-- Nenhuma afinação salva no navegador --</option>
             </select>
           </div>
           <!-- Action buttons for selected tuning -->
           <div style="display: flex; gap: 0.45rem; width: 100%; max-width: 100%; box-sizing: border-box;">
-            <button type="button" id="loadFromStorageBtn" class="btn" style="flex: 1 1 auto; min-width: 0; background: rgba(52, 211, 153, 0.2); border-color: var(--jade); color: #a7f3d0; font-weight: 700;" disabled>
+            <button type="button" id="loadFromStorageBtn" class="btn"
+              style="flex: 1 1 auto; min-width: 0; background: rgba(52, 211, 153, 0.2); border-color: var(--jade); color: #a7f3d0; font-weight: 700;"
+              disabled>
               📂 Carregar Afinação
             </button>
-            <button type="button" id="deleteFromStorageBtn" class="btn" style="flex: 0 0 auto; border-color: rgba(251, 113, 133, 0.45); color: #fda4af;" title="Excluir afinação selecionada do navegador" disabled>
+            <button type="button" id="deleteFromStorageBtn" class="btn"
+              style="flex: 0 0 auto; border-color: rgba(251, 113, 133, 0.45); color: #fda4af;"
+              title="Excluir afinação selecionada do navegador" disabled>
               🗑️ Excluir
             </button>
           </div>
           <div style="width: 100%; max-width: 100%; box-sizing: border-box;">
             <input type="file" id="customTuningFileInput" accept=".json,application/json" style="display: none;">
-            <button type="button" id="importJsonBtn" class="btn" style="width: 100%; max-width: 100%; border-color: rgba(52, 211, 153, 0.45); color: #6ee7b7; font-weight: 700; box-sizing: border-box;">
+            <button type="button" id="importJsonBtn" class="btn"
+              style="width: 100%; max-width: 100%; border-color: rgba(52, 211, 153, 0.45); color: #6ee7b7; font-weight: 700; box-sizing: border-box;">
               📁 Abrir Arquivo (.json) do Computador / Celular
             </button>
           </div>
         </div>
       </div>
 
-      <div id="customTuningFeedback" style="display: none; margin-top: 0.65rem; padding: 0.55rem 0.85rem; border-radius: 6px; font-family: var(--font-mono); font-size: 0.74rem;"></div>
+      <div id="customTuningFeedback"
+        style="display: none; margin-top: 0.65rem; padding: 0.55rem 0.85rem; border-radius: 6px; font-family: var(--font-mono); font-size: 0.74rem;">
+      </div>
     </section>
 
     <!-- =======================================================================
@@ -806,18 +870,22 @@
     <section class="harpsichord-case" aria-label="Teclado do Cravo de 3 Oitavas">
       <div class="harpsichord-header">
         <div>
-          <span id="keyboardModeBannerText" style="font-family: var(--font-mono); font-size: 0.75rem; color: #fde047; font-weight: 700;">
+          <span id="keyboardModeBannerText"
+            style="font-family: var(--font-mono); font-size: 0.75rem; color: #fde047; font-weight: 700;">
             🎹 MODO AFINAR ATIVO · 1 Clique = Trava/Desliga Som · Duplo Clique = Seleciona para Afinar
           </span>
         </div>
-        <div style="display: flex; gap: 0.9rem; font-family: var(--font-mono); font-size: 0.7rem; flex-wrap: wrap; align-items: center;">
+        <div
+          style="display: flex; gap: 0.9rem; font-family: var(--font-mono); font-size: 0.7rem; flex-wrap: wrap; align-items: center;">
           <span style="color: #6ee7b7;">● Verde = Nota Soando</span>
           <span style="color: #fde047;">● Contorno Dourado = Cravelha (Duplo Clique)</span>
-          <span style="color: #a7f3d0;">★ Dó4 = Fixa (261,63 Hz)</span>
+          <span style="color: #fde047;">★ Dó4 = Fixa (261,63 Hz)</span>
+          <span style="color: #7dd3fc;">↔️ Deslize para ver as 3 oitavas</span>
         </div>
       </div>
 
-      <div id="demoStatusBanner" style="display: none; margin-bottom: 0.65rem; padding: 0.55rem 0.9rem; border-radius: 6px; background: rgba(234, 179, 8, 0.16); border: 1px solid var(--gold); font-family: var(--font-mono); font-size: 0.8rem; color: #fef08a; font-weight: 700;">
+      <div id="demoStatusBanner"
+        style="display: none; margin-bottom: 0.65rem; padding: 0.55rem 0.9rem; border-radius: 6px; background: rgba(234, 179, 8, 0.16); border: 1px solid var(--gold); font-family: var(--font-mono); font-size: 0.8rem; color: #fef08a; font-weight: 700;">
         🎵 Preparando demonstração...
       </div>
 
@@ -835,60 +903,72 @@
 
       <!-- LEFT PANEL: Cravelha da Nota Selecionada com Duplo Clique -->
       <div class="panel panel--peg">
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; flex-wrap: wrap;">
+        <div
+          style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; flex-wrap: wrap;">
           <div>
-            <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #fde047; font-weight: 700; text-transform: uppercase;">
+            <span
+              style="font-family: var(--font-mono); font-size: 0.72rem; color: #fde047; font-weight: 700; text-transform: uppercase;">
               🔧 Cravelha de Afinação (Selecione qualquer tecla com Duplo Clique)
             </span>
             <h2 style="font-family: var(--font-display); font-size: 1.55rem; margin: 0.15rem 0 0 0;">
               Nota Selecionada para Alterar: <span id="pegNoteName" style="color: #fde047;">Sol4</span>
             </h2>
           </div>
-          <button type="button" id="markKeyTunedBtn" class="btn" style="border-color: rgba(52, 211, 153, 0.5); color: #6ee7b7;">
+          <button type="button" id="markKeyTunedBtn" class="btn"
+            style="border-color: rgba(52, 211, 153, 0.5); color: #6ee7b7;">
             ✅ Marcar <span id="markKeyBtnLabel">Sol4</span> como Afinada
           </button>
         </div>
 
         <!-- Prominent Visual Indication of Left/Down vs Right/Up Arrows -->
         <div class="arrow-guide-grid">
-          <div id="arrowDownCard" class="arrow-card arrow-card--down" role="button" tabindex="0" aria-label="Descer a afinação">
+          <div id="arrowDownCard" class="arrow-card arrow-card--down" role="button" tabindex="0"
+            aria-label="Descer a afinação">
             <div class="kbd-row">
               <span class="kbd-cap" title="Seta para a Esquerda">⬅️</span>
               <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-soft);">ou</span>
               <span class="kbd-cap" title="Seta para Baixo">⬇️</span>
             </div>
-            <div style="font-family: var(--font-mono); font-size: 0.84rem; font-weight: 700; color: #fda4af; margin-top: 0.15rem;">
+            <div
+              style="font-family: var(--font-mono); font-size: 0.84rem; font-weight: 700; color: #fda4af; margin-top: 0.15rem;">
               DESCE A AFINAÇÃO (Mais Grave)
             </div>
             <div style="font-size: 0.74rem; color: var(--ink-soft);">
-              Aperte <strong>Seta p/ Esquerda (←)</strong> ou <strong>Seta p/ Baixo (↓)</strong> no teclado (ou clique aqui)
+              Aperte <strong>Seta p/ Esquerda (←)</strong> ou <strong>Seta p/ Baixo (↓)</strong> no teclado (ou clique
+              aqui)
             </div>
           </div>
 
-          <div id="arrowUpCard" class="arrow-card arrow-card--up" role="button" tabindex="0" aria-label="Subir a afinação">
+          <div id="arrowUpCard" class="arrow-card arrow-card--up" role="button" tabindex="0"
+            aria-label="Subir a afinação">
             <div class="kbd-row">
               <span class="kbd-cap" title="Seta para a Direita">➡️</span>
               <span style="font-family: var(--font-mono); font-size: 0.72rem; color: var(--ink-soft);">ou</span>
               <span class="kbd-cap" title="Seta para Cima">⬆️</span>
             </div>
-            <div style="font-family: var(--font-mono); font-size: 0.84rem; font-weight: 700; color: #6ee7b7; margin-top: 0.15rem;">
+            <div
+              style="font-family: var(--font-mono); font-size: 0.84rem; font-weight: 700; color: #6ee7b7; margin-top: 0.15rem;">
               SOBE A AFINAÇÃO (Mais Agudo)
             </div>
             <div style="font-size: 0.74rem; color: var(--ink-soft);">
-              Aperte <strong>Seta p/ Direita (→)</strong> ou <strong>Seta p/ Cima (↑)</strong> no teclado (ou clique aqui)
+              Aperte <strong>Seta p/ Direita (→)</strong> ou <strong>Seta p/ Cima (↑)</strong> no teclado (ou clique
+              aqui)
             </div>
           </div>
         </div>
 
         <!-- Slider + Fine/Coarse Step Buttons -->
         <div style="background: #120e0c; border: 1px solid var(--hairline); border-radius: 8px; padding: 0.8rem 1rem;">
-          <div style="display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 0.74rem; margin-bottom: 0.4rem; flex-wrap: wrap; gap: 0.5rem;">
+          <div
+            style="display: flex; justify-content: space-between; align-items: center; font-family: var(--font-mono); font-size: 0.74rem; margin-bottom: 0.4rem; flex-wrap: wrap; gap: 0.5rem;">
             <span style="color: #fda4af;">← / ↓ Desce Afinação</span>
-            <span>Frequência de <strong id="pegNoteInline">Sol4</strong>: <strong id="pegFreqReadout" style="color: #fde047; font-size: 0.95rem;">-- Hz</strong></span>
+            <span>Frequência de <strong id="pegNoteInline">Sol4</strong>: <strong id="pegFreqReadout"
+                style="color: #fde047; font-size: 0.95rem;">-- Hz</strong></span>
             <span style="color: #6ee7b7;">Sobe Afinação → / ↑</span>
           </div>
 
-          <input type="range" id="tunerPegSlider" class="peg-slider" min="100" max="600" step="0.01" value="380" aria-label="Controle deslizante de afinação da nota selecionada">
+          <input type="range" id="tunerPegSlider" class="peg-slider" min="100" max="600" step="0.01" value="380"
+            aria-label="Controle deslizante de afinação da nota selecionada">
 
           <div class="peg-nudge-grid" style="margin-top: 0.55rem;">
             <button type="button" class="peg-nudge-btn" data-nudge="-1">-1,00 Hz</button>
@@ -900,8 +980,11 @@
             <button type="button" class="peg-nudge-btn" data-nudge="0.1">+0,10 Hz</button>
             <button type="button" class="peg-nudge-btn" data-nudge="1">+1,00 Hz</button>
           </div>
-          <div id="pegPrecisionBadge" style="font-family: var(--font-mono); font-size: 0.73rem; color: #fde047; margin-top: 0.55rem; padding: 0.4rem 0.65rem; border-radius: 6px; background: rgba(234, 179, 8, 0.12); border: 1px solid rgba(234, 179, 8, 0.35); text-align: center;">
-            ⚡ <strong>Precisão Automática das Setas:</strong> Longe da afinação muda de <strong>1,00 Hz em 1,00 Hz</strong>; quando estiver <strong>quase afinado</strong>, muda automaticamente para <strong>centésimos de Hz (0,01 Hz)</strong>!
+          <div id="pegPrecisionBadge"
+            style="font-family: var(--font-mono); font-size: 0.73rem; color: #fde047; margin-top: 0.55rem; padding: 0.4rem 0.65rem; border-radius: 6px; background: rgba(234, 179, 8, 0.12); border: 1px solid rgba(234, 179, 8, 0.35); text-align: center;">
+            ⚡ <strong>Precisão Automática das Setas:</strong> Longe da afinação muda de <strong>1,00 Hz em 1,00
+              Hz</strong>; quando estiver <strong>quase afinado</strong>, muda automaticamente para <strong>centésimos
+              de Hz (0,01 Hz)</strong>!
           </div>
         </div>
       </div>
@@ -909,7 +992,8 @@
       <!-- RIGHT PANEL: Monitor de Notas Travadas e Diagnóstico de Batimentos -->
       <div class="panel panel--monitor">
         <div>
-          <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #6ee7b7; font-weight: 700; text-transform: uppercase;">
+          <span
+            style="font-family: var(--font-mono); font-size: 0.72rem; color: #6ee7b7; font-weight: 700; text-transform: uppercase;">
             🔊 Notas Soando Agora (Clique simples nas teclas para travar/desligar)
           </span>
           <div id="soundingNotesContainer" class="sounding-chips" style="margin-top: 0.45rem;"></div>
@@ -917,28 +1001,35 @@
 
         <!-- Acoustic Beating & Tempered vs Pure Fifth Detector -->
         <div id="beatingStatusBanner" class="status-banner">
-          <div id="beatingHeadline" style="font-weight: 700; font-size: 0.88rem; margin-bottom: 0.25rem; color: #fde047;">
+          <div id="beatingHeadline"
+            style="font-weight: 700; font-size: 0.88rem; margin-bottom: 0.25rem; color: #fde047;">
             Como começar sua afinação:
           </div>
           <div id="beatingExplanation">
-            1) Dê <strong>1 clique simples</strong> no <strong>Dó4</strong> (já afinado) e <strong>1 clique simples</strong> no <strong>Sol4</strong> para travar o som das duas notas juntas.<br>
-            2) Dê um <strong>duplo clique</strong> no <strong>Sol4</strong> e use as setas (<strong>← / ↓</strong> para descer ou <strong>→ / ↑</strong> para subir) até encontrar a <strong>Quinta Pura (sem batimentos)</strong>!
+            1) Dê <strong>1 clique simples</strong> no <strong>Dó4</strong> (já afinado) e <strong>1 clique
+              simples</strong> no <strong>Sol4</strong> para travar o som das duas notas juntas.<br>
+            2) Dê um <strong>duplo clique</strong> no <strong>Sol4</strong> e use as setas (<strong>← / ↓</strong> para
+            descer ou <strong>→ / ↑</strong> para subir) até encontrar a <strong>Quinta Pura (sem batimentos)</strong>!
           </div>
-          <div id="beatingRateBox" style="margin-top: 0.55rem; padding-top: 0.45rem; border-top: 1px solid rgba(250, 246, 240, 0.12); font-size: 0.8rem; color: var(--ink);">
+          <div id="beatingRateBox"
+            style="margin-top: 0.55rem; padding-top: 0.45rem; border-top: 1px solid rgba(250, 246, 240, 0.12); font-size: 0.8rem; color: var(--ink);">
             Batimento atual: <strong>--</strong>
           </div>
         </div>
 
         <!-- Sine Wave Interference Scope -->
         <div>
-          <div style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-soft); margin-bottom: 0.25rem;">
+          <div
+            style="display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: 0.68rem; color: var(--ink-soft); margin-bottom: 0.25rem;">
             <span>ONDAS SENOIDAIS SOMADAS EM TEMPO REAL</span>
             <label style="cursor: pointer;">
-              <input type="checkbox" id="tunerHarmonicsCheck" checked style="accent-color: var(--gold); vertical-align: middle;">
+              <input type="checkbox" id="tunerHarmonicsCheck" checked
+                style="accent-color: var(--gold); vertical-align: middle;">
               <span>Harmônicos senoidais 2f/3f ativos (para audição física do batimento)</span>
             </label>
           </div>
-          <canvas id="tuner-wave-canvas" style="width: 100%; height: 74px; background: #0a0807; border: 1px solid var(--hairline); border-radius: 6px; display: block;"></canvas>
+          <canvas id="tuner-wave-canvas"
+            style="width: 100%; height: 74px; background: #0a0807; border: 1px solid var(--hairline); border-radius: 6px; display: block;"></canvas>
         </div>
       </div>
 
@@ -947,17 +1038,22 @@
     <!-- Institutional Footer -->
     <footer class="site-footer">
       <div>
-        <strong>Observação Pedagógica:</strong> Esta simulação utiliza a Notação Científica Internacional de Altura (ISO 16), onde o Dó central do piano é chamado de <strong>Dó4</strong> (261,63 Hz).
+        <strong>Observação Pedagógica:</strong> Esta simulação utiliza a Notação Científica Internacional de Altura (ISO
+        16), onde o Dó central do piano é chamado de <strong>Dó4</strong> (261,63 Hz).
       </div>
       <div>
         Desenvolvido pelo professor Glauber Santiago — DAC/UFSCar ·
-        <a href="https://aprenda-musica-comigo.web.app/" target="_blank" rel="noopener noreferrer">aprenda-musica-comigo.web.app</a> •
-        <a href="https://servidores.ufscar.br/glauber/" target="_blank" rel="noopener noreferrer">servidores.ufscar.br/glauber/</a> •
+        <a href="https://aprenda-musica-comigo.web.app/" target="_blank"
+          rel="noopener noreferrer">aprenda-musica-comigo.web.app</a> •
+        <a href="https://servidores.ufscar.br/glauber/" target="_blank"
+          rel="noopener noreferrer">servidores.ufscar.br/glauber/</a> •
         <a href="https://glauberia.web.app/" target="_blank" rel="noopener noreferrer">https://glauberia.web.app/</a>
       </div>
       <div>
-        Apoio: Grupo de Estudos e Pesquisas sobre Inovação em Educação, Tecnologias e Linguagens (Grupo Horizonte-UFSCar) —
-        <a href="https://grupohorizonte.ufscar.br/" target="_blank" rel="noopener noreferrer">grupohorizonte.ufscar.br</a>
+        Apoio: Grupo de Estudos e Pesquisas sobre Inovação em Educação, Tecnologias e Linguagens (Grupo
+        Horizonte-UFSCar) —
+        <a href="https://grupohorizonte.ufscar.br/" target="_blank"
+          rel="noopener noreferrer">grupohorizonte.ufscar.br</a>
       </div>
     </footer>
 
@@ -1046,7 +1142,7 @@
               isReferenceC4: isReferenceC4,
               standardFreq: exactFreq,
               freq: startFreq,
-              userMarkedTuned: isReferenceC4,
+              userMarkedTuned: false,
               sounding: false
             };
             keyOrderIds.push(id);
@@ -1121,9 +1217,9 @@
                   osc2.stop();
                   osc3.stop();
                   masterGain.disconnect();
-                } catch (e) {}
+                } catch (e) { }
               }, 90);
-            } catch (e) {}
+            } catch (e) { }
           }
         };
       }
@@ -1506,6 +1602,7 @@
         }
 
         beatingStatusBanner.className = 'status-banner';
+        var blind = tunerBlindModeCheck ? tunerBlindModeCheck.checked : false;
 
         if (soundingList.length < 2) {
           beatingHeadline.style.color = '#fde047';
@@ -1514,7 +1611,12 @@
             : ('Apenas 1 nota soando (' + soundingList[0].id + '):');
           beatingExplanation.innerHTML =
             'Para afinar por quintas (ou oitavas), trave <strong>duas notas juntas</strong> com <strong>1 clique simples</strong> em cada tecla (por exemplo: <strong>Dó4</strong> e <strong>Sol4</strong>) e dê um <strong>duplo clique</strong> na nota que você vai ajustar com as setas!';
-          beatingRateBox.innerHTML = 'Batimento atual: <strong>Trave 2 notas para medir os batimentos</strong>';
+          if (blind) {
+            beatingRateBox.style.display = 'none';
+          } else {
+            beatingRateBox.style.display = 'block';
+            beatingRateBox.innerHTML = 'Batimento atual: <strong>Trave 2 notas para medir os batimentos</strong>';
+          }
           return;
         }
 
@@ -1543,24 +1645,43 @@
             beatingStatusBanner.classList.add('is-pure');
             beatingHeadline.style.color = '#6ee7b7';
             beatingHeadline.textContent = '✨ QUINTA PURA PITAGÓRICA (3/2) ENCONTRADA! (' + lowNote.id + ' + ' + highNote.id + ')';
-            beatingExplanation.innerHTML =
-              'Parabéns! Você atingiu a razão exata de <strong>3/2 (701,96 cents)</strong> entre <strong>' + lowNote.id + '</strong> e <strong>' + highNote.id + '</strong> com <strong>0,00 batimentos/s</strong>! Você já pode usar esta nota para afinar a próxima quinta!';
-            beatingRateBox.innerHTML = 'Batimento da Quinta (3:2): <strong>' + beatDesc + '</strong>';
+            beatingExplanation.innerHTML = blind
+              ? ('Parabéns! Você encontrou a <strong>Quinta Pura (3/2)</strong> entre <strong>' + lowNote.id + '</strong> e <strong>' + highNote.id + '</strong> pelo ouvido! O som está perfeitamente liso e límpido. Você já pode usar esta nota para afinar a próxima quinta!')
+              : ('Parabéns! Você atingiu a razão exata de <strong>3/2 (701,96 cents)</strong> entre <strong>' + lowNote.id + '</strong> e <strong>' + highNote.id + '</strong> com <strong>0,00 batimentos/s</strong>! Você já pode usar esta nota para afinar a próxima quinta!');
+            if (blind) {
+              beatingRateBox.style.display = 'none';
+            } else {
+              beatingRateBox.style.display = 'block';
+              beatingRateBox.innerHTML = 'Batimento da Quinta (3:2): <strong>' + beatDesc + '</strong>';
+            }
           } else if (Math.abs(centsToTemperedFifth) <= 0.65) {
             beatingStatusBanner.classList.add('is-tempered');
             beatingHeadline.style.color = '#7dd3fc';
-            beatingHeadline.textContent = '🎹 Atenção: Você está na Quinta do Sistema Temperado (Piano Moderno · 700 cents)!';
-            beatingExplanation.innerHTML =
-              'Esta quinta entre <strong>' + lowNote.id + '</strong> e <strong>' + highNote.id + '</strong> está afinada como em um piano moderno (encurtada em -1,96 cent). Repare que ela ainda tem um batimento lento!<br>' +
-              '🎯 <strong>O seu desafio aqui é encontrar a Quinta Pura (701,96 cents), totalmente lisa e com 0 de batimentos!</strong> As setas agora estão em <strong>precisão de centésimos de Hz (0,01 Hz)</strong>: suba mais um pouquinho a nota aguda (ou desça a grave)!';
-            beatingRateBox.innerHTML = 'Batimento da Quinta: <strong>' + beatDesc + '</strong>';
+            beatingHeadline.textContent = '🎹 Atenção: Você está na Quinta do Sistema Temperado (Piano Moderno)!';
+            beatingExplanation.innerHTML = blind
+              ? ('Esta quinta entre <strong>' + lowNote.id + '</strong> e <strong>' + highNote.id + '</strong> está como no temperamento igual moderno.<br>' +
+                '🎯 <strong>Seu desafio: encontre a Quinta Pura, totalmente lisa e sem ondulações sonoras!</strong> Use as setas para ajustar de ouvido.')
+              : ('Esta quinta entre <strong>' + lowNote.id + '</strong> e <strong>' + highNote.id + '</strong> está afinada como em um piano moderno (encurtada em -1,96 cent). Repare que ela ainda tem um batimento lento!<br>' +
+                '🎯 <strong>O seu desafio aqui é encontrar a Quinta Pura (701,96 cents), totalmente lisa e com 0 de batimentos!</strong> As setas agora estão em <strong>precisão de centésimos de Hz (0,01 Hz)</strong>: suba mais um pouquinho a nota aguda (ou desça a grave)!');
+            if (blind) {
+              beatingRateBox.style.display = 'none';
+            } else {
+              beatingRateBox.style.display = 'block';
+              beatingRateBox.innerHTML = 'Batimento da Quinta: <strong>' + beatDesc + '</strong>';
+            }
           } else {
             beatingStatusBanner.classList.add('is-near');
             beatingHeadline.style.color = '#fde047';
             beatingHeadline.textContent = '👂 Afinando a Quinta (' + lowNote.id + ' + ' + highNote.id + ') — Ouça os batimentos!';
-            beatingExplanation.innerHTML =
-              'Use as setas (<strong>← / ↓</strong> para descer ou <strong>→ / ↑</strong> para subir a nota <strong>' + selectedPegKeyId + '</strong>) e preste atenção na velocidade do <em>"uá-uá-uá"</em> até ele desacelerar e zerar na Quinta Pura!';
-            beatingRateBox.innerHTML = 'Batimento da Quinta (3:2): <strong>' + beatDesc + '</strong>';
+            beatingExplanation.innerHTML = blind
+              ? ('Use as setas (<strong>← / ↓</strong> para descer ou <strong>→ / ↑</strong> para subir a nota <strong>' + selectedPegKeyId + '</strong>) e preste atenção na velocidade da oscilação do som até ele se aquietar e ficar perfeitamente liso!')
+              : ('Use as setas (<strong>← / ↓</strong> para descer ou <strong>→ / ↑</strong> para subir a nota <strong>' + selectedPegKeyId + '</strong>) e preste atenção na velocidade do <em>"uá-uá-uá"</em> até ele desacelerar e zerar na Quinta Pura!');
+            if (blind) {
+              beatingRateBox.style.display = 'none';
+            } else {
+              beatingRateBox.style.display = 'block';
+              beatingRateBox.innerHTML = 'Batimento da Quinta (3:2): <strong>' + beatDesc + '</strong>';
+            }
           }
         } else if (Math.abs(centsToPureFourth) < 90) {
           // Tuning a Fourth (4:3 -> 4 * fLow vs 3 * fHigh, which is a Fifth + Octave down in the harpsichord zig-zag!)
@@ -1571,22 +1692,39 @@
             beatingStatusBanner.classList.add('is-pure');
             beatingHeadline.style.color = '#6ee7b7';
             beatingHeadline.textContent = '✨ QUARTA PURA / QUINTA INVERTIDA (4/3) ENCONTRADA! (' + lowNote.id + ' + ' + highNote.id + ')';
-            beatingExplanation.innerHTML =
-              'Perfeito! A razão <strong>4/3 (498,04 cents)</strong> equivale a subir uma Quinta Pura e descer uma Oitava Pura. O som está 100% liso com <strong>0,00 batimentos/s</strong>!';
-            beatingRateBox.innerHTML = 'Batimento (4:3): <strong>' + beatFourthDesc + '</strong>';
+            beatingExplanation.innerHTML = blind
+              ? ('Perfeito! Você encontrou a <strong>Quarta Pura (4/3)</strong> pelo ouvido! O som está 100% límpido e consonante.')
+              : ('Perfeito! A razão <strong>4/3 (498,04 cents)</strong> equivale a subir uma Quinta Pura e descer uma Oitava Pura. O som está 100% liso com <strong>0,00 batimentos/s</strong>!');
+            if (blind) {
+              beatingRateBox.style.display = 'none';
+            } else {
+              beatingRateBox.style.display = 'block';
+              beatingRateBox.innerHTML = 'Batimento (4:3): <strong>' + beatFourthDesc + '</strong>';
+            }
           } else if (Math.abs(centsToTemperedFourth) <= 0.65) {
             beatingStatusBanner.classList.add('is-tempered');
             beatingHeadline.style.color = '#7dd3fc';
-            beatingHeadline.textContent = '🎹 Atenção: Este intervalo está como no Sistema Temperado (500 cents)!';
-            beatingExplanation.innerHTML =
-              'No sistema temperado há um batimento lento. <strong>O desafio é encontrar o intervalo puro pitagórico (498,04 cents), com 0 de batimentos!</strong> As setas estão em precisão de <strong>0,01 Hz</strong>.';
-            beatingRateBox.innerHTML = 'Batimento (4:3): <strong>' + beatFourthDesc + '</strong>';
+            beatingHeadline.textContent = '🎹 Atenção: Este intervalo está como no Sistema Temperado!';
+            beatingExplanation.innerHTML = blind
+              ? ('No sistema temperado há um batimento leve. <strong>O desafio é encontrar o intervalo puro pitagórico, com o som completamente estável e liso!</strong>')
+              : ('No sistema temperado há um batimento lento. <strong>O desafio é encontrar o intervalo puro pitagórico (498,04 cents), com 0 de batimentos!</strong> As setas estão em precisão de <strong>0,01 Hz</strong>.');
+            if (blind) {
+              beatingRateBox.style.display = 'none';
+            } else {
+              beatingRateBox.style.display = 'block';
+              beatingRateBox.innerHTML = 'Batimento (4:3): <strong>' + beatFourthDesc + '</strong>';
+            }
           } else {
             beatingStatusBanner.classList.add('is-near');
             beatingHeadline.style.color = '#fde047';
             beatingHeadline.textContent = '👂 Afinando Quarta / Quinta Invertida (' + lowNote.id + ' + ' + highNote.id + ')';
             beatingExplanation.innerHTML = 'Ajuste nas setas até zerar completamente os batimentos!';
-            beatingRateBox.innerHTML = 'Batimento (4:3): <strong>' + beatFourthDesc + '</strong>';
+            if (blind) {
+              beatingRateBox.style.display = 'none';
+            } else {
+              beatingRateBox.style.display = 'block';
+              beatingRateBox.innerHTML = 'Batimento (4:3): <strong>' + beatFourthDesc + '</strong>';
+            }
           }
         } else if (Math.abs(centsToPureOctave) < 110) {
           // Tuning an Octave (2:1 -> 2 * fLow vs 1 * fHigh)
@@ -1597,23 +1735,40 @@
             beatingStatusBanner.classList.add('is-pure');
             beatingHeadline.style.color = '#6ee7b7';
             beatingHeadline.textContent = '✨ OITAVA PURA (2/1) ENCONTRADA! (' + lowNote.id + ' + ' + highNote.id + ')';
-            beatingExplanation.innerHTML =
-              'Excelente! A nota <strong>' + highNote.id + '</strong> está exatamente com o dobro da frequência de <strong>' + lowNote.id + '</strong> (razão 2:1, com <strong>0,00 batimentos/s</strong>).';
-            beatingRateBox.innerHTML = 'Batimento da Oitava (2:1): <strong>' + beatOctDesc + '</strong>';
+            beatingExplanation.innerHTML = blind
+              ? ('Excelente! A nota <strong>' + highNote.id + '</strong> está afinada na oitava pura de <strong>' + lowNote.id + '</strong> (som unificado e perfeitamente liso).')
+              : ('Excelente! A nota <strong>' + highNote.id + '</strong> está exatamente com o dobro da frequência de <strong>' + lowNote.id + '</strong> (razão 2:1, com <strong>0,00 batimentos/s</strong>).');
+            if (blind) {
+              beatingRateBox.style.display = 'none';
+            } else {
+              beatingRateBox.style.display = 'block';
+              beatingRateBox.innerHTML = 'Batimento da Oitava (2:1): <strong>' + beatOctDesc + '</strong>';
+            }
           } else {
             beatingStatusBanner.classList.add('is-near');
             beatingHeadline.style.color = '#fde047';
             beatingHeadline.textContent = '👂 Afinando Oitava (2/1) entre ' + lowNote.id + ' e ' + highNote.id;
             beatingExplanation.innerHTML =
               'Ajuste com as setas até que o batimento entre as duas oitavas chegue a 0,00!';
-            beatingRateBox.innerHTML = 'Batimento da Oitava (2:1): <strong>' + beatOctDesc + '</strong>';
+            if (blind) {
+              beatingRateBox.style.display = 'none';
+            } else {
+              beatingRateBox.style.display = 'block';
+              beatingRateBox.innerHTML = 'Batimento da Oitava (2:1): <strong>' + beatOctDesc + '</strong>';
+            }
           }
         } else {
           beatingHeadline.style.color = '#fde047';
           beatingHeadline.textContent = 'Dupla soando: ' + lowNote.id + ' + ' + highNote.id;
-          beatingExplanation.innerHTML =
-            'Continue subindo ou descendo a afinação nas setas até chegar perto da <strong>Quinta Pura (razão 1,500×)</strong> ou da <strong>Oitava Pura (razão 2,000×)</strong>.';
-          beatingRateBox.innerHTML = 'Razão atual (' + highNote.id + ' ÷ ' + lowNote.id + '): <strong>' + ratio.toFixed(4).replace('.', ',') + '×</strong>';
+          beatingExplanation.innerHTML = blind
+            ? 'Continue subindo ou descendo a afinação nas setas e ouça com atenção as ondas sonoras até encontrar a consonância pura.'
+            : 'Continue subindo ou descendo a afinação nas setas até chegar perto da <strong>Quinta Pura (razão 1,500×)</strong> ou da <strong>Oitava Pura (razão 2,000×)</strong>.';
+          if (blind) {
+            beatingRateBox.style.display = 'none';
+          } else {
+            beatingRateBox.style.display = 'block';
+            beatingRateBox.innerHTML = 'Razão atual (' + highNote.id + ' ÷ ' + lowNote.id + '): <strong>' + ratio.toFixed(4).replace('.', ',') + '×</strong>';
+          }
         }
       }
 
@@ -1641,8 +1796,9 @@
             badgeEl.style.background = 'rgba(52, 211, 153, 0.16)';
             badgeEl.style.borderColor = '#34d399';
             badgeEl.style.color = '#a7f3d0';
-            badgeEl.innerHTML =
-              '🔬 <strong>Quase afinado! Precisão de Centésimos Ativa:</strong> As setas agora mudam de <strong>0,01 Hz em 0,01 Hz</strong> para você zerar os batimentos (0,00 batimentos/s)!';
+            badgeEl.innerHTML = blind
+              ? '🔬 <strong>Quase afinado! Precisão Fina Ativa:</strong> As setas agora mudam de <strong>0,01 Hz em 0,01 Hz</strong> para você eliminar os batimentos de ouvido!'
+              : '🔬 <strong>Quase afinado! Precisão de Centésimos Ativa:</strong> As setas agora mudam de <strong>0,01 Hz em 0,01 Hz</strong> para você zerar os batimentos (0,00 batimentos/s)!';
           } else {
             badgeEl.style.background = 'rgba(234, 179, 8, 0.12)';
             badgeEl.style.borderColor = 'rgba(234, 179, 8, 0.35)';
@@ -2782,4 +2938,5 @@
     })();
   </script>
 </body>
+
 </html>
