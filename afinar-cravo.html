@@ -531,6 +531,7 @@
       width: 100%;
       max-width: 100%;
       min-width: 0;
+      box-sizing: border-box;
       background: #100d0b;
       color: var(--ink);
       border: 1px solid rgba(234, 179, 8, 0.55);
@@ -748,44 +749,48 @@
       </div>
 
       <!-- Action Panels: 1) Salvar Atual | 2) Abrir Salva / Arquivo -->
-      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.85rem; margin-top: 0.85rem;">
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 0.85rem; margin-top: 0.85rem; width: 100%; max-width: 100%; box-sizing: border-box;">
         <!-- Left: Salvar -->
-        <div style="background: rgba(16, 13, 11, 0.65); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; padding: 0.75rem 0.9rem; display: flex; flex-direction: column; gap: 0.55rem;">
+        <div style="background: rgba(16, 13, 11, 0.65); border: 1px solid rgba(56, 189, 248, 0.25); border-radius: 8px; padding: 0.75rem 0.9rem; display: flex; flex-direction: column; gap: 0.55rem; min-width: 0; max-width: 100%; box-sizing: border-box;">
           <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #fde047; font-weight: 700;">
             1. SALVAR AFINAÇÃO ATUAL:
           </span>
-          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <input type="text" id="customTuningNameInput" placeholder="Nome (ex: Meu Temperamento Dó)" maxlength="40" style="flex: 1 1 160px; min-width: 0; background: #0c0908; color: var(--ink); border: 1px solid rgba(250, 246, 240, 0.25); border-radius: 6px; padding: 0.45rem 0.65rem; font-family: var(--font-mono); font-size: 0.76rem;">
+          <div style="width: 100%; min-width: 0; box-sizing: border-box;">
+            <input type="text" id="customTuningNameInput" placeholder="Nome (ex: Meu Temperamento Dó)" maxlength="40" style="width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; background: #0c0908; color: var(--ink); border: 1px solid rgba(250, 246, 240, 0.25); border-radius: 6px; padding: 0.45rem 0.65rem; font-family: var(--font-mono); font-size: 0.76rem;">
           </div>
-          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-            <button type="button" id="saveToStorageBtn" class="btn" style="flex: 1 1 auto; background: rgba(56, 189, 248, 0.18); border-color: var(--sky); color: #bae6fd; font-weight: 700;">
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; width: 100%; box-sizing: border-box;">
+            <button type="button" id="saveToStorageBtn" class="btn" style="flex: 1 1 120px; background: rgba(56, 189, 248, 0.18); border-color: var(--sky); color: #bae6fd; font-weight: 700;">
               💾 Salvar no Navegador
             </button>
-            <button type="button" id="exportJsonBtn" class="btn" style="flex: 1 1 auto; background: rgba(234, 179, 8, 0.16); border-color: var(--gold); color: #fef08a; font-weight: 700;">
+            <button type="button" id="exportJsonBtn" class="btn" style="flex: 1 1 110px; background: rgba(234, 179, 8, 0.16); border-color: var(--gold); color: #fef08a; font-weight: 700;">
               ⬇️ Baixar (.json)
             </button>
           </div>
         </div>
 
         <!-- Right: Abrir -->
-        <div style="background: rgba(16, 13, 11, 0.65); border: 1px solid rgba(52, 211, 153, 0.25); border-radius: 8px; padding: 0.75rem 0.9rem; display: flex; flex-direction: column; gap: 0.55rem;">
+        <div style="background: rgba(16, 13, 11, 0.65); border: 1px solid rgba(52, 211, 153, 0.25); border-radius: 8px; padding: 0.75rem 0.9rem; display: flex; flex-direction: column; gap: 0.55rem; min-width: 0; max-width: 100%; box-sizing: border-box; overflow: hidden;">
           <span style="font-family: var(--font-mono); font-size: 0.72rem; color: #6ee7b7; font-weight: 700;">
             2. ABRIR AFINAÇÃO:
           </span>
-          <div style="display: flex; gap: 0.45rem; flex-wrap: wrap; align-items: center;">
-            <select id="savedTuningsSelect" class="preset-select" style="flex: 1 1 160px; min-width: 0; border-color: rgba(52, 211, 153, 0.45);">
+          <!-- Select on its own full-width line -->
+          <div style="width: 100%; min-width: 0; max-width: 100%; box-sizing: border-box;">
+            <select id="savedTuningsSelect" class="preset-select" style="width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box; border-color: rgba(52, 211, 153, 0.45);">
               <option value="">-- Nenhuma afinação salva no navegador --</option>
             </select>
-            <button type="button" id="loadFromStorageBtn" class="btn" style="flex: 0 0 auto; background: rgba(52, 211, 153, 0.2); border-color: var(--jade); color: #a7f3d0; font-weight: 700;" disabled>
-              📂 Carregar
+          </div>
+          <!-- Action buttons for selected tuning -->
+          <div style="display: flex; gap: 0.45rem; width: 100%; max-width: 100%; box-sizing: border-box;">
+            <button type="button" id="loadFromStorageBtn" class="btn" style="flex: 1 1 auto; min-width: 0; background: rgba(52, 211, 153, 0.2); border-color: var(--jade); color: #a7f3d0; font-weight: 700;" disabled>
+              📂 Carregar Afinação
             </button>
             <button type="button" id="deleteFromStorageBtn" class="btn" style="flex: 0 0 auto; border-color: rgba(251, 113, 133, 0.45); color: #fda4af;" title="Excluir afinação selecionada do navegador" disabled>
-              🗑️
+              🗑️ Excluir
             </button>
           </div>
-          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+          <div style="width: 100%; max-width: 100%; box-sizing: border-box;">
             <input type="file" id="customTuningFileInput" accept=".json,application/json" style="display: none;">
-            <button type="button" id="importJsonBtn" class="btn" style="width: 100%; border-color: rgba(52, 211, 153, 0.45); color: #6ee7b7; font-weight: 700;">
+            <button type="button" id="importJsonBtn" class="btn" style="width: 100%; max-width: 100%; border-color: rgba(52, 211, 153, 0.45); color: #6ee7b7; font-weight: 700; box-sizing: border-box;">
               📁 Abrir Arquivo (.json) do Computador / Celular
             </button>
           </div>
@@ -2487,8 +2492,8 @@
 
       function collectCurrentTuningData(customName) {
         var now = new Date();
-        var dateFormatted = now.toLocaleDateString('pt-BR') + ' às ' + now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-        var finalName = (customName && customName.trim()) ? customName.trim() : ('Afinação Manual (' + dateFormatted + ')');
+        var dateFormatted = now.toLocaleDateString('pt-BR') + ' ' + now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+        var finalName = (customName && customName.trim()) ? customName.trim() : ('Afinação Manual ' + dateFormatted);
 
         var data = {
           appName: 'SimuladorAfinacaoCravoUFSCar',
@@ -2603,7 +2608,8 @@
         list.forEach(function (item) {
           var opt = document.createElement('option');
           opt.value = item.id;
-          opt.textContent = item.name + (item.dateFormatted ? (' (' + item.dateFormatted + ')') : '');
+          var hasDateInName = item.name && item.dateFormatted && (item.name.indexOf(item.dateFormatted) !== -1);
+          opt.textContent = item.name + (!hasDateInName && item.dateFormatted ? (' · ' + item.dateFormatted) : '');
           savedTuningsSelect.appendChild(opt);
         });
 
