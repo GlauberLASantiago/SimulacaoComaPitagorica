@@ -252,17 +252,44 @@
 
     .hero-copy-plate {
       position: absolute;
-      left: clamp(1.25rem, 3.5vw, 3rem);
+      left: clamp(1.25rem, 3.2vw, 2.75rem);
       top: 50%;
       transform: translateY(-50%);
       z-index: 10;
-      background: rgba(12, 10, 9, 0.92);
-      backdrop-filter: blur(12px);
+      background: rgba(12, 10, 9, 0.93);
+      backdrop-filter: blur(14px);
       border: 1px solid var(--sc-hairline-strong);
       border-radius: var(--sc-r-md);
-      padding: var(--sc-5) var(--sc-6);
+      padding: clamp(1rem, 1.8vw, 1.4rem) clamp(1.15rem, 2vw, 1.6rem);
       box-shadow: var(--sc-e2), var(--sc-edge);
-      max-width: min(32rem, 34vw);
+      width: min(34rem, calc(100vw - 2.5rem));
+      max-width: min(33rem, 36vw);
+      max-height: calc(100vh - 5.5rem);
+      overflow-y: auto;
+      box-sizing: border-box;
+    }
+
+    .hero-copy-plate h1 {
+      font-size: clamp(1.65rem, 1.25rem + 1.2vw, 2.35rem) !important;
+      line-height: 1.15;
+      letter-spacing: -0.025em;
+      margin: 0.25rem 0 0.45rem 0;
+      word-break: normal;
+      overflow-wrap: break-word;
+    }
+
+    .hero-copy-plate p {
+      font-size: clamp(0.85rem, 0.8rem + 0.2vw, 0.94rem);
+      line-height: 1.52;
+      color: var(--sc-ink);
+      margin: 0.35rem 0;
+    }
+
+    .hero-copy-plate .note-callout {
+      font-size: 0.77rem;
+      line-height: 1.42;
+      padding: 0.45rem 0.65rem;
+      margin-top: 0.5rem;
     }
 
     .hero-telemetry-chip {
@@ -318,12 +345,28 @@
         left: var(--sc-gutter);
         right: var(--sc-gutter);
         top: auto;
-        bottom: clamp(1rem, 4vh, 2rem);
+        bottom: clamp(0.75rem, 3vh, 1.75rem);
         transform: none;
+        width: auto;
         max-width: none;
-        max-height: 46vh;
+        max-height: 48vh;
         overflow-y: auto;
-        padding: var(--sc-4);
+        padding: 0.85rem 1.05rem;
+      }
+
+      .hero-copy-plate h1 {
+        font-size: clamp(1.35rem, 4.5vw, 1.75rem) !important;
+        line-height: 1.15;
+      }
+
+      .hero-copy-plate p {
+        font-size: 0.82rem;
+        line-height: 1.45;
+      }
+
+      .hero-copy-plate .note-callout {
+        font-size: 0.72rem;
+        padding: 0.35rem 0.55rem;
       }
 
       .hero-telemetry-chip {
@@ -921,11 +964,11 @@
         <div class="sc-copy sc-copy--lead hero-copy-plate" data-sc-cue="0 0.44 0 0.12">
           <div class="sc-label" style="color: var(--sc-accent); margin-bottom: 0.45rem;">Acústica Musical e Afinação ·
             UFSCar</div>
-          <h1 class="sc-display sc-display--xl" data-sc-kinetic="lines">Simulação da Coma Pitagórica</h1>
-          <p style="font-size: 1.02rem; line-height: 1.58; color: var(--sc-ink); margin-top: 0.5rem;">
+          <h1 class="sc-display">Simulação da Coma Pitagórica</h1>
+          <p>
             Aprenda a compreender as relações matemáticas entre os intervalos musicais, identificar diferenças de afinação pelo ouvido, entender a coma pitagórica, a quinta do lobo e o temperamento igual, além de experimentar, na prática, como afinar um instrumento por meio de simulações sonoras e interativas!
           </p>
-          <div class="note-callout" style="margin-top: 0.75rem;">
+          <div class="note-callout">
             <strong>🎵 Como explorar:</strong> Role a página para iniciar a jornada visual e sonora! Descubra primeiro como funciona uma corda esticada (monocórdio), veja a espiral se afastar do círculo perfeito e teste seu ouvido na bancada e na oficina prática de afinação.
           </div>
         </div>
