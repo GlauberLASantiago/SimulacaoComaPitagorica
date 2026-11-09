@@ -1565,12 +1565,34 @@
           </a>
         </div>
 
-        <!-- Institutional Footer -->
-        <footer class="site-footer">
-          <div>
-            <strong>Observação Pedagógica:</strong> Esta simulação utiliza a Notação Científica Internacional de Altura
-            (ISO 16), onde o Dó central do piano é chamado de <strong>Dó4</strong> (261,63 Hz).
+        <!-- Notas do Aplicativo: Observação Pedagógica e Nota Histórica -->
+        <div class="app-notes-section" style="margin-top: var(--sc-7); display: flex; flex-direction: column; gap: 0.9rem;">
+          <div style="background: rgba(23, 19, 17, 0.7); border: 1px solid var(--sc-hairline-strong); border-left: 4px solid var(--gold-fifth); border-radius: var(--sc-r-md); padding: 1.1rem 1.35rem; box-shadow: var(--sc-e1);">
+            <div style="font-family: var(--sc-font-mono); font-size: 0.76rem; font-weight: 700; color: #fde047; text-transform: uppercase; margin-bottom: 0.35rem; display: flex; align-items: center; gap: 0.45rem;">
+              <span>🎓 Observação Pedagógica</span>
+            </div>
+            <p style="margin: 0; font-size: 0.88rem; line-height: 1.55; color: var(--sc-ink);">
+              Esta simulação utiliza a Notação Científica Internacional de Altura (ISO 16), onde o Dó central do piano é chamado de <strong>Dó4</strong> (261,63 Hz).
+            </p>
           </div>
+
+          <div style="background: rgba(23, 19, 17, 0.7); border: 1px solid var(--sc-hairline-strong); border-left: 4px solid #38bdf8; border-radius: var(--sc-r-md); padding: 1.1rem 1.35rem; box-shadow: var(--sc-e1);">
+            <div style="font-family: var(--sc-font-mono); font-size: 0.76rem; font-weight: 700; color: #7dd3fc; text-transform: uppercase; margin-bottom: 0.45rem; display: flex; align-items: center; gap: 0.45rem;">
+              <span>📜 Nota Histórica</span>
+            </div>
+            <p style="margin: 0; font-size: 0.88rem; line-height: 1.6; color: var(--sc-ink);">
+              Embora expressões como “afinação pitagórica”, “coma pitagórica” e “monocórdio de Pitágoras” estejam consagradas na teoria musical, é importante distinguir essas denominações tradicionais da efetiva autoria das descobertas. Pesquisas em história da matemática e da teoria musical questionam diversas atribuições feitas a Pitágoras, especialmente porque os testemunhos disponíveis são tardios, muitas vezes lendários, e não permitem comprovar que ele próprio tenha realizado os experimentos ou desenvolvido os sistemas que levam seu nome. Estudos de Walter Burkert, Andrew Barker e Carl Huffman, entre outros, mostram a necessidade de diferenciar a figura histórica de Pitágoras, a tradição pitagórica e os conhecimentos desenvolvidos posteriormente. Assim, este aplicativo utiliza a terminologia tradicionalmente estabelecida, sem pressupor que todos os conceitos e procedimentos apresentados tenham sido descobertos pessoalmente por Pitágoras. Essa distinção é fundamental para uma abordagem historicamente rigorosa da relação entre música, matemática e acústica.
+            </p>
+            <div style="margin-top: 0.75rem; padding-top: 0.65rem; border-top: 1px solid rgba(250, 246, 240, 0.1); font-family: var(--sc-font-mono); font-size: 0.78rem; color: var(--sc-ink-soft);">
+              <strong>Para mais informações ver fundamentação científica:</strong>
+              <a href="https://plato.stanford.edu/entries/pythagoras/" target="_blank" rel="noopener noreferrer" style="color: #7dd3fc; text-decoration: underline; margin-left: 0.35rem;">Stanford Encyclopedia of Philosophy — Pythagoras</a> e
+              <a href="https://mtosmt.org/issues/mto.16.22.4/mto.16.22.4.rehding.html" target="_blank" rel="noopener noreferrer" style="color: #7dd3fc; text-decoration: underline; margin-left: 0.35rem;">Alexander Rehding — Instruments of Music Theory (2016)</a>.
+            </div>
+          </div>
+        </div>
+
+        <!-- Institutional Footer (Créditos) -->
+        <footer class="site-footer">
           <div>
             Desenvolvido pelo professor Glauber Santiago — DAC/UFSCar ·
             <a href="https://aprenda-musica-comigo.web.app/" target="_blank"
